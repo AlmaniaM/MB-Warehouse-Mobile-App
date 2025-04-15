@@ -1,0 +1,12 @@
+:host {
+  height: 100%;
+}
+ion-refresher {
+  height: auto;
+}
+::ng-deep ion-refresher-content ion-spinner {
+  color: var(--ion-color-primary);
+}
+::ng-deep ion-refresher-content ion-icon {
+  color: var(--ion-color-primary);
+}

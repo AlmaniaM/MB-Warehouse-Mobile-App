@@ -1,0 +1,15 @@
+<ion-header [translucent]="false">
+  <ion-toolbar color="primary">
+    <ion-title>{{ title() }}</ion-title>
+    @if (azureAccount() !== null) {
+      <ion-buttons  slot="start">
+        <ion-menu-toggle [autoHide]="false">
+          <ion-button color="light" (click)="toggleMenu()">
+            <ion-icon slot="icon-only" ios="menu-outline" md="menu-sharp"></ion-icon>
+          </ion-button>
+        </ion-menu-toggle>
+      </ion-buttons>
+    }
+    <ion-img slot="end" class="toolbar-logo" src="../../../assets/GSLongLogoNoBacking.png"></ion-img>
+  </ion-toolbar>
+</ion-header>

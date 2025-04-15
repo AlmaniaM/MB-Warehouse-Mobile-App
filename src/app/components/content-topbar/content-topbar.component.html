@@ -1,0 +1,10 @@
+<ion-header collapse="condense">
+  <ion-toolbar color="primary">
+    <ion-title size="large">{{ title() }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+@if (showRefresher()) {
+  <ion-refresher slot="fixed" (ionRefresh)="refreshPage($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+}

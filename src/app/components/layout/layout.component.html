@@ -1,0 +1,34 @@
+<ion-split-pane contentId="main-content">
+  <ion-menu menuId="main-nav" contentId="main-content" type="overlay" [disabled]="!isMenuOpen()">
+    <ion-content>
+      @if (isLoggingOut()) {
+        <ion-progress-bar type="indeterminate"></ion-progress-bar>
+      }
+      @if (!isLoggingOut()) {
+        <ion-list id="pages-list">
+          <ion-list-header>
+            <ion-label>GSL Chemical Tracking Mobile App</ion-label>
+          </ion-list-header>
+          <ion-note></ion-note>
+          @for (page of appPages; track page.url) {
+            <ion-menu-toggle [autoHide]="false">
+              <ion-item routerDirection="root" [routerLink]="[page.url]" lines="none" detail="false" routerLinkActive="selected">
+                <ion-icon slot="start" [ios]="page.icon + '-outline'" [md]="page.icon + '-sharp'"></ion-icon>
+                <ion-label>{{ page.title }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          }
+        </ion-list>
+      }
+      <ion-list>
+        <ion-menu-toggle [autoHide]="false">
+          <ion-item lines="none" detail="false" button (click)="logout()">
+            <ion-icon color="secondary" slot="start" ios="arrow-undo-outline" md="arrow-undo-sharp"></ion-icon>
+            <ion-label>Logout</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+</ion-split-pane>

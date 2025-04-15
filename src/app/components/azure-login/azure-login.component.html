@@ -1,0 +1,17 @@
+<ion-card class="ion-padding">
+  <ion-card-header>
+    <ion-card-title>Hello,</ion-card-title>
+    <ion-card-subtitle>Please login below</ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content>
+		@if (!isLoggingIn()) {
+      <ion-button expand="block"
+        (click)="login()">
+        Login With Microsoft
+      </ion-button>
+		}
+		@if (isLoggingIn()) {
+      <ion-progress-bar type="indeterminate"></ion-progress-bar>
+		}
+  </ion-card-content>
+</ion-card>

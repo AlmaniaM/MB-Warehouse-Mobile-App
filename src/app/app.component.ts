@@ -1,11 +1,29 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+
+import { IonRouterOutlet, IonApp } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { 
+
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  imports: [IonApp, IonRouterOutlet],
+  standalone: true,
+  imports: [
+    CommonModule, 
+    IonRouterOutlet, 
+    IonApp
+  ],
 })
 export class AppComponent {
-  constructor() {}
+
+  isIframe = window !== window.parent && !window.opener;
+  
+  constructor() {
+    addIcons({
+
+    });
+  }
 }

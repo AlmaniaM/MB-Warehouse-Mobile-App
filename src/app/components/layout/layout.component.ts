@@ -1,4 +1,4 @@
-import { Component, Signal, computed, effect, inject } from '@angular/core';
+import { Component, Signal, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -22,9 +22,7 @@ import { AppPage } from 'src/app/types/app-types';
 
 import { AccountInfo } from '@azure/msal-browser';
 import { AzureAuthenticationService } from 'src/app/auth/azure-auth.service';
-import { ManufacturerService } from 'src/app/services/chemical-product/manufacturer.service';
-import { ChemicalProductService } from 'src/app/services/chemical-product/chemical-product.service';
-import { ChemicalProductSageSkuService } from 'src/app/services/chemical-product/chemical-product-sage-sku.service';
+import { ContainerTypeService } from 'src/app/services/inventory-tracking/container-type.service';
 
 @Component({
   selector: 'app-layout',
@@ -70,13 +68,9 @@ export class LayoutComponent {
     }, 500);
   }
 
-  manufacturerService: ManufacturerService = inject(ManufacturerService);
-  chemicalProductService: ChemicalProductService = inject(ChemicalProductService);
-  chemicalProductSageSkuService: ChemicalProductSageSkuService = inject(ChemicalProductSageSkuService);
+  constainerTypeService: ContainerTypeService = inject(ContainerTypeService);
 
   constructor() {
-    this.manufacturerService.getManufacturers();
-    this.chemicalProductService.getChemicalProducts();
-    this.chemicalProductSageSkuService.getChemicalProductSageSkus();
+    this.constainerTypeService.getContainerTypes();
   }
 }

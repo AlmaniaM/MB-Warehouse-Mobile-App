@@ -39,8 +39,7 @@ export function MSALInstanceFactory(): IPublicClientApplication {
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
 	const protectedResourceMap = new Map<string, Array<string>>();
 	protectedResourceMap.set(environment.azureProfileUrl, microsoftScopes);
-	protectedResourceMap.set(environment.azureChemicalTrackingApiBaseUrl + '*', [environment.azureChemicalTrackingApiScope]);
-	protectedResourceMap.set(environment.azurePermissionsApiBaseUrl + '*', [environment.azurePermissionsApiScope]);
+	protectedResourceMap.set(environment.azureInventoryTrackingApiBaseUrl + '*', [environment.azureInventoryTrackingApiScope]);
 
 	return {
 		interactionType: InteractionType.Popup,

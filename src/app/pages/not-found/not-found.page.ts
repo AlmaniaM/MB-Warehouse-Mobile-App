@@ -1,7 +1,14 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent } from '@ionic/angular/standalone';
+import { 
+  IonCard, 
+  IonCardContent, 
+  IonCardHeader, 
+  IonCardSubtitle, 
+  IonCardTitle, 
+  IonContent 
+} from '@ionic/angular/standalone';
 
 import { PageTopbarComponent } from 'src/app/components/page-topbar/page-topbar.component';
 import { ContentTopbarComponent } from 'src/app/components/content-topbar/content-topbar.component';

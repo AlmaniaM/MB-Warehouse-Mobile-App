@@ -51,7 +51,8 @@ export class LayoutComponent {
   toggleMainMenuService: ToggleMainMenuService = inject(ToggleMainMenuService);
   isMenuOpen: Signal<boolean> = toSignal(this.toggleMainMenuService.mainMenuIsOpen, { initialValue: true });
   appPages: AppPage[] = [
-    { title: 'Chemicals', tabLabel: 'Chemicals', url: '/app/chemicals', fragment: '', icon: 'flask', isExternal: false, showInMenu: true },
+    { title: 'Home', tabLabel: 'Home', url: '/app/home', fragment: '', icon: 'home', isExternal: false, showInMenu: true },
+    { title: 'Containers', tabLabel: 'Containers', url: '/app/containers', fragment: '', icon: 'cube', isExternal: false, showInMenu: true },
   ];
 
   azureAuthService: AzureAuthenticationService = inject(AzureAuthenticationService);

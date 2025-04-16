@@ -18,13 +18,32 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'home',
+        redirectTo: 'containers',
         pathMatch: 'full'
       },
       {
         path: 'home',
         loadComponent: () => import('./pages/home/home.page').then(page => page.HomePage)
       },
+      {
+        path: 'containers',
+        loadComponent: () => import('./pages/container-tracking/container-tracking.page').then(page => page.ContainerTrackingPage),
+        children: [
+          {
+            path: '',
+            redirectTo: 'send',
+            pathMatch: 'full'
+          },
+          {
+            path: 'send',
+            loadComponent: () => import('./pages/send-containers/send-containers.page').then(page => page.SendContainersPage)
+          },
+          {
+            path: 'receive',
+            loadComponent: () => import('./pages/receive-containers/receive-containers.page').then(page => page.ReceiveContainersPage)
+          }
+        ]
+      }
     ]
   },
   {
@@ -35,5 +54,5 @@ export const routes: Routes = [
     path: '**',
     redirectTo: 'not-found',
     pathMatch: 'full'
-  }
+  },
 ];

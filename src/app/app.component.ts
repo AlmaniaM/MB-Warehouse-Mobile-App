@@ -4,7 +4,18 @@ import { Component } from '@angular/core';
 import { IonRouterOutlet, IonApp } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
-
+  homeSharp,
+  homeOutline,
+  cubeSharp,
+  cubeOutline,
+  arrowUpSharp,
+  arrowUpOutline,
+  arrowDownSharp,
+  arrowDownOutline,
+  arrowUndoSharp,
+  arrowUndoOutline,
+  menuSharp,
+  menuOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -23,7 +34,18 @@ export class AppComponent {
   
   constructor() {
     addIcons({
-
+      homeSharp,
+      homeOutline,
+      cubeSharp,
+      cubeOutline,
+      arrowUpSharp,
+      arrowUpOutline,
+      arrowDownSharp,
+      arrowDownOutline,
+      arrowUndoSharp,
+      arrowUndoOutline,
+      menuSharp,
+      menuOutline,
     });
   }
 }

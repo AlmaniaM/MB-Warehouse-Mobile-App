@@ -1,0 +1,88 @@
+<ion-card class="ledger-table-card">  <ion-card-header>
+    <ion-card-title>
+      Container Ledger
+      @if (containerTypes() && containerTypes().length === 1) {
+        - {{ containerTypes()![0].name }}
+      }
+      @if (containerTypes() && containerTypes().length > 1) {
+        - Multiple Types ({{ containerTypes().length }})
+      }
+    </ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="loading-container">
+        <ion-spinner name="circular"></ion-spinner>
+        <ion-text>Loading ledger entries...</ion-text>
+      </div>
+    }
+    <!-- Empty State -->
+    @if (isEmpty()) {
+      <div class="empty-state">
+        <ion-text color="medium">
+          <p>No ledger entries found</p>
+        </ion-text>
+      </div>
+    }
+    <!-- Ledger Entries List -->
+    @if (hasEntries()) {
+      <ion-list class="ledger-list"
+        ><ion-item
+          *ngFor="let entry of displayedEntries()"
+          lines="full"
+          class="ledger-item"
+          button="false"
+          detail="false"
+        >
+          <div class="ledger-entry-container">
+            <!-- Top Section: Container Type & Date -->
+            <div class="entry-header">
+              <div class="container-type">
+                {{ entry.containerTypeName || "Unknown Type" }}
+              </div>
+              <div class="entry-date">
+                {{ entry.date | date : "MMM d, y" }}
+              </div>
+            </div>
+
+            <!-- Middle Section: Customer & Quantity -->
+            <div class="entry-details">
+              <div class="customer-info" *ngIf="entry.customerName">
+                {{ entry.customerName }}
+              </div>
+              <div class="quantity-badge">
+                <ion-badge [color]="getQuantityColor(entry.quantity)">
+                  {{ formatQuantity(entry.quantity) }}
+                </ion-badge>
+              </div>
+            </div>
+
+            <!-- Bottom Section: Balance & Note -->
+            <div class="entry-footer">
+              <div class="balance">Balance: {{ entry.balance || 0 }}</div>
+              <div class="note" *ngIf="entry.note">
+                <ion-text color="medium">{{ entry.note }}</ion-text>
+              </div>
+            </div>
+          </div>
+        </ion-item>
+      </ion-list>
+    }
+
+    <!-- Infinite Scroll -->
+    @if (hasEntries() && hasMoreEntries()) {
+      <ion-infinite-scroll
+        (ionInfinite)="loadMoreData($event)"
+        threshold="100px"
+        position="bottom"
+      >
+        <ion-infinite-scroll-content
+          loadingSpinner="bubbles"
+          loadingText="Loading more entries..."
+        >
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    }
+  </ion-card-content>
+</ion-card>

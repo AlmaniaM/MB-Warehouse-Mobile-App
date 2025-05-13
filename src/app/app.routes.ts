@@ -28,20 +28,23 @@ export const routes: Routes = [
       {
         path: 'containers',
         loadComponent: () => import('./pages/container-tracking/container-tracking.page').then(page => page.ContainerTrackingPage),
-        children: [
-          {
-            path: '',
-            redirectTo: 'send',
-            pathMatch: 'full'
-          },
-          {
-            path: 'send',
-            loadComponent: () => import('./pages/send-containers/send-containers.page').then(page => page.SendContainersPage)
-          },
-          {
-            path: 'receive',
-            loadComponent: () => import('./pages/receive-containers/receive-containers.page').then(page => page.ReceiveContainersPage)
-          }
+        children: [{
+          path: '',
+          redirectTo: 'send',
+          pathMatch: 'full'
+        },
+        {
+          path: 'send',
+          loadComponent: () => import('./pages/send-containers/send-containers.page').then(page => page.SendContainersPage)
+        },
+        {
+          path: 'receive',
+          loadComponent: () => import('./pages/receive-containers/receive-containers.page').then(page => page.ReceiveContainersPage)
+        },
+        {
+          path: 'ledger',
+          loadComponent: () => import('./pages/container-ledger/container-ledger.page').then(page => page.ContainerLedgerPage)
+        }
         ]
       }
     ]

@@ -1,6 +1,9 @@
 <app-page-topbar title="Container Tracking"></app-page-topbar>
 <ion-content>
-  <app-content-topbar title="Container Tracking" [showRefresher]="false"></app-content-topbar>
+  <app-content-topbar
+    title="Container Tracking"
+    [showRefresher]="false"
+  ></app-content-topbar>
   <ion-tabs>
     <ion-tab-bar slot="bottom" [color]="'primary'">
       <ion-tab-button tab="send">
@@ -8,9 +11,17 @@
         <ion-label>Send</ion-label>
       </ion-tab-button>
       <ion-tab-button tab="receive">
-        <ion-icon [ios]="'arrow-down-outline'" [md]="'arrow-down-sharp'"></ion-icon>
+        <ion-icon
+          [ios]="'arrow-down-outline'"
+          [md]="'arrow-down-sharp'"
+        ></ion-icon>
         <ion-label>Receive</ion-label>
       </ion-tab-button>
+      <ion-tab-button tab="ledger">
+        <ion-icon [ios]="'book-outline'" [md]="'book-sharp'"></ion-icon>
+        <ion-label>Ledger</ion-label>
+      </ion-tab-button>
     </ion-tab-bar>
+    <ion-router-outlet></ion-router-outlet>
   </ion-tabs>
 </ion-content>

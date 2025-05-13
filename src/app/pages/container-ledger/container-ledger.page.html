@@ -1,0 +1,72 @@
+<ion-content class="ion-padding">
+  <ion-card class="ledger-card">
+    <ion-card-header>
+      <ion-card-title>Container Ledger</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>      <!-- Filter Controls -->      <app-dropdown-select
+        [label]="'Container Type'"
+        [placeholder]="'Select Container Types'"
+        [options]="containerTypeOptions()"
+        [allowNullOption]="false"
+        [multiple]="true"
+        [(selectedValue)]="selectedContainerTypes"
+        (selectionChange)="onContainerTypeSelectionChange($event)"
+      ></app-dropdown-select>
+
+      <app-dropdown-select
+        [label]="'Customer'"
+        [placeholder]="'Select Customers'"
+        [options]="customerOptions()"
+        [allowNullOption]="false"
+        [multiple]="true"
+        [(selectedValue)]="selectedCustomers"
+        (selectionChange)="onCustomerSelectionChange($event)"      ></app-dropdown-select>
+      <!-- Active Filters -->
+      @if (selectedContainerTypes.length > 0 || selectedCustomers.length > 0) {
+        <div class="active-filters">
+          <div class="active-filters-header">Active Filters:</div>
+          <div class="filter-badges">
+            @if (selectedContainerTypes.length > 0) {              <ion-chip color="primary">
+                Container Types: {{ selectedContainerTypesText() }}
+                <ion-icon name="close-circle-outline" (click)="clearContainerTypes()"></ion-icon>
+              </ion-chip>
+            }            @if (selectedCustomers.length > 0) {              <ion-chip color="primary">
+                Customers: {{ selectedCustomersText() }}
+                <ion-icon name="close-circle-outline" (click)="clearCustomers()"></ion-icon>
+              </ion-chip>
+            }
+          </div>      </div>
+      }      <!-- Filter Preview Info -->
+      @if (selectedContainerTypes.length > 0 || selectedCustomers.length > 0) {
+        <div class="filter-preview">
+          @if (isPreviewLoading()) {
+            <ion-spinner name="dots" color="tertiary" style="width: 18px; height: 18px;"></ion-spinner>
+          } @else {
+            <ion-icon name="search-outline"></ion-icon>
+          }
+          {{ previewFilterText() }}
+        </div>
+      }
+      <!-- Filtered Results Info -->
+      <div class="filtered-results" *ngIf="!isLoading()">
+        {{ filteredEntriesText() }}
+      </div><div class="button-row">
+        <ion-button id="filterBtn" expand="block" color="primary" (click)="filterLedger()">
+          <ion-icon slot="start" name="filter-outline"></ion-icon>
+          Apply Filters          @if (selectedContainerTypes.length > 0 || selectedCustomers.length > 0) {
+            <ion-badge slot="end">{{ selectedContainerTypes.length + selectedCustomers.length }}</ion-badge>
+          }
+        </ion-button>
+        <ion-button id="resetBtn" expand="block" fill="outline" (click)="resetFilters()">
+          <ion-icon slot="start" name="refresh-outline"></ion-icon>
+          Reset
+        </ion-button>
+      </div>      <!-- Container Ledger Table Component -->
+      <app-container-ledger-table
+        [containerTypes]="selectedContainerTypes()"
+        [ledgerEntries]="ledgerEntries()"
+        [isLoading]="isLoading()"
+      ></app-container-ledger-table>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

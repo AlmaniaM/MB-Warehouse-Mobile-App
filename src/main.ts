@@ -15,10 +15,17 @@ import { environment } from './environments/environment';
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 
-export const appConfig: ApplicationConfig = { 
-	providers: [
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideIonicAngular(),
+export const appConfig: ApplicationConfig = {
+	providers: [    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    provideIonicAngular({
+      animated: true,
+      mode: 'md',
+      scrollAssist: true,
+      swipeBackEnabled: true,
+      rippleEffect: true,
+      inputShims: true,
+      backButtonDefaultHref: '/'
+    }),
 		provideZoneChangeDetection({ eventCoalescing: true }),
 		provideRouter(routes, withComponentInputBinding(), withPreloading(PreloadAllModules)),
 		importProvidersFrom(BrowserAnimationsModule),

@@ -1,0 +1,119 @@
+/* filepath: s:\development\freelancing\groundwork-systems\repos\mbn\MB-Warehouse-Mobile-App\src\app\components\container-ledger-table\container-ledger-table.component.scss */
+.ledger-table-card {
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+  background: transparent;
+  height: auto;
+  overflow-y: visible;
+  position: relative;
+}
+
+ion-card-content {
+  overflow-y: auto;
+  max-height: 65vh;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+ion-list {
+  padding: 0;
+  background: transparent;
+  position: relative;
+  z-index: 10;
+  touch-action: auto !important;
+  pointer-events: auto !important;
+}
+
+.ledger-list {
+  height: auto;
+  overflow-y: visible;
+  width: 100%;
+}
+
+.ledger-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  --inner-padding-start: 0;
+  margin-bottom: 0.5rem;
+  --ripple-color: transparent;
+  touch-action: auto !important;
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+
+.ledger-entry-container {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container-type {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.entry-date {
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+}
+
+.entry-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.25rem 0;
+}
+
+.customer-info {
+  font-size: 0.9rem;
+}
+
+.quantity-badge {
+  ion-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+}
+
+.entry-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.balance {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.note {
+  font-style: italic;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}

@@ -1,0 +1,20 @@
+<ion-item [disabled]="disabled()" button="false">
+  <ion-label position="stacked">{{ label() }}</ion-label>
+  <ion-select
+    [placeholder]="placeholder()"
+    [multiple]="multiple()"
+    [interface]="interface()"
+    [compareWith]="compareWith"
+    [ngModel]="selectedValue()"
+    (ionChange)="handleChange($event)"
+  >
+    @if (allowNullOption()) {
+      <ion-select-option [value]="null">{{ nullOptionLabel() }}</ion-select-option>
+    }
+    @for (option of options(); track option.value) {
+      <ion-select-option [value]="option.value">
+        {{ option.label }}
+      </ion-select-option>
+    }
+  </ion-select>
+</ion-item>

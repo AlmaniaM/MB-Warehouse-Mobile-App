@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { CustomerService } from '../source-lists/customer.service';
 
 export interface ContainerLedgerEntry {
   id: number;
@@ -64,11 +65,21 @@ export class ContainerTrackingService {
   public readonly isFetchingCustomerContainerLedgers = signal<boolean>(false);
   public readonly containerTypeQuantityTotals = signal<ContainerTypeQuantityTotal[]>([]);
   public readonly isFetchingContainerTypeQuantityTotals = signal<boolean>(false);
-
   private readonly baseUrl: string = `${environment.azureInventoryTrackingApiBaseUrl}mbn/containertracking`;
   private readonly httpClient = inject(HttpClient);
+  private readonly customerService = inject(CustomerService);
 
-  public getAllContainerLedgerEntries(): void {
+  // Create Container Ledger Transaction
+  public createContainerLedgerTransaction(transaction: ContainerLedgerTransaction): Observable<ContainerLedgerTransaction> {
+    return this.httpClient.post<ContainerLedgerTransaction>(`${this.baseUrl}/ledger`, transaction);
+  }
+
+  public getAllContainerLedgerEntries(force: boolean = false): void {
+    // Skip HTTP request if we already have data and force is false
+    if (this.containerLedgerEntries().length > 0 && !force) {
+      return;
+    }
+
     this.isFetchingContainerLedgerEntries.set(true);
     this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`)
       .subscribe({
@@ -97,8 +108,17 @@ export class ContainerTrackingService {
         }
       });
   }
+  public getContainerLedgerEntriesByType(containerTypeId: number, force: boolean = false): void {
+    // Skip HTTP request if we already have data for this container type and force is false
+    const existingEntries = this.containerLedgerEntries();
+    const alreadyFiltered = existingEntries.length > 0 && existingEntries.every(
+      entry => entry.containerTypeId === containerTypeId
+    );
 
-  public getContainerLedgerEntriesByType(containerTypeId: number): void {
+    if (alreadyFiltered && !force) {
+      return;
+    }
+
     this.isFetchingContainerLedgerEntries.set(true);
     this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger/type/${containerTypeId}`)
       .subscribe({
@@ -122,8 +142,12 @@ export class ContainerTrackingService {
         }
       });
   }
+  public getAllCustomerContainerLedgerEntries(force: boolean = false): void {
+    // Skip HTTP request if we already have data and force is false
+    if (this.customerContainerLedgerEntries().length > 0 && !force) {
+      return;
+    }
 
-  public getAllCustomerContainerLedgerEntries(): void {
     this.isFetchingCustomerContainerLedgers.set(true);
     this.httpClient.get<CustomerContainerLedgerEntry[]>(`${this.baseUrl}/customerledger`)
       .subscribe({
@@ -137,8 +161,12 @@ export class ContainerTrackingService {
         }
       });
   }
+  public getContainerTypeQuantityTotals(force: boolean = false): void {
+    // Skip HTTP request if we already have data and force is false
+    if (this.containerTypeQuantityTotals().length > 0 && !force) {
+      return;
+    }
 
-  public getContainerTypeQuantityTotals(): void {
     this.isFetchingContainerTypeQuantityTotals.set(true);
     this.httpClient.get<ContainerTypeQuantityTotal[]>(`${this.baseUrl}/containertypetotals`)
       .subscribe({
@@ -155,8 +183,17 @@ export class ContainerTrackingService {
 
   public createTransaction(containerLedgerTransaction: ContainerLedgerTransaction): Observable<ContainerLedgerTransaction> {
     return this.httpClient.post<ContainerLedgerTransaction>(`${this.baseUrl}/ledger`, containerLedgerTransaction);
-  }
-  public getContainerLedgerEntriesByCustomer(customerId: number): void {
+  } public getContainerLedgerEntriesByCustomer(customerId: number, force: boolean = false): void {
+    // Skip HTTP request if we already have data for this customer and force is false
+    const existingEntries = this.containerLedgerEntries();
+    const customerName = this.customerService.getCustomerNameById(customerId);
+    const alreadyFiltered = existingEntries.length > 0 &&
+      existingEntries.every(entry => entry.customerName === customerName);
+
+    if (alreadyFiltered && !force) {
+      return;
+    }
+
     this.isFetchingContainerLedgerEntries.set(true);
     this.httpClient.get<CustomerContainerLedgerEntry[]>(`${this.baseUrl}/customerledger/customer/${customerId}`)
       .subscribe({
@@ -187,7 +224,7 @@ export class ContainerTrackingService {
               ...entry,
               balance: newBalance
             };
-          });          this.containerLedgerEntries.set(entriesWithBalance);
+          }); this.containerLedgerEntries.set(entriesWithBalance);
           this.isFetchingContainerLedgerEntries.set(false);
         },
         error: (error) => {
@@ -195,14 +232,45 @@ export class ContainerTrackingService {
           this.isFetchingContainerLedgerEntries.set(false);
         }
       });
-  }  public getContainerLedgerEntriesByMultipleFilters(containerTypeIds: number[] = [], customerIds: number[] = []): void {
-    this.isFetchingContainerLedgerEntries.set(true);
-
+  } public getContainerLedgerEntriesByMultipleFilters(containerTypeIds: number[] = [], customerIds: number[] = [], force: boolean = false): void {
     // If no filters, get all entries
     if (containerTypeIds.length === 0 && customerIds.length === 0) {
-      this.getAllContainerLedgerEntries();
+      this.getAllContainerLedgerEntries(force);
       return;
     }
+
+    // Check if we can use cached data
+    const existingEntries = this.containerLedgerEntries();
+
+    if (!force && existingEntries.length > 0) {
+      // For container type filters, check if current entries match the filter
+      if (containerTypeIds.length > 0 && customerIds.length === 0) {
+        const containerTypeIdSet = new Set(containerTypeIds);
+        const matchesFilter = existingEntries.every(
+          entry => entry.containerTypeId !== null && containerTypeIdSet.has(entry.containerTypeId)
+        );
+
+        if (matchesFilter) {
+          return; // Use cached data
+        }
+      }
+
+      // For customer filters, similar check
+      if (customerIds.length > 0 && containerTypeIds.length === 0) {
+        const customerNames = customerIds.map(id => this.customerService.getCustomerNameById(id)).filter(name => name !== null);
+        const customerNameSet = new Set(customerNames);
+
+        const matchesFilter = existingEntries.every(
+          entry => entry.customerName && customerNameSet.has(entry.customerName)
+        );
+
+        if (matchesFilter) {
+          return; // Use cached data
+        }
+      }
+    }
+
+    this.isFetchingContainerLedgerEntries.set(true);
 
     // If only filtering by container types, use the existing method
     if (containerTypeIds.length > 0 && customerIds.length === 0) {
@@ -325,6 +393,112 @@ export class ContainerTrackingService {
         ...entry,
         balance: newBalance
       };
+    });
+  }
+
+  // New method to filter entries by date range
+  private filterEntriesByDateRange(entries: ContainerLedgerEntry[], startDate: string | null, endDate: string | null): ContainerLedgerEntry[] {
+    if (!startDate && !endDate) {
+      return entries;
+    }
+
+    return entries.filter(entry => {
+      if (!entry.date) return false;
+
+      const entryDate = new Date(entry.date);
+
+      if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        return entryDate >= start && entryDate <= end;
+      } else if (startDate) {
+        const start = new Date(startDate);
+        return entryDate >= start;
+      } else if (endDate) {
+        const end = new Date(endDate);
+        return entryDate <= end;
+      }
+
+      return true;
+    });
+  }
+
+  // Get container ledger entries with multiple filters including date range
+  public getContainerLedgerEntriesWithDateRange(
+    containerTypeIds: number[] = [],
+    startDate: string | null = null,
+    endDate: string | null = null,
+    force: boolean = false
+  ): void {
+    // If no filters, get all entries
+    if (containerTypeIds.length === 0 && !startDate && !endDate) {
+      this.getAllContainerLedgerEntries(force);
+      return;
+    }
+
+    this.isFetchingContainerLedgerEntries.set(true);
+
+    // Get all entries and filter client-side
+    this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`)
+      .subscribe({
+        next: (entries: ContainerLedgerEntry[]) => {
+          let filteredEntries = entries;
+
+          // Filter by container types if needed
+          if (containerTypeIds.length > 0) {
+            const containerTypeIdSet = new Set(containerTypeIds);
+            filteredEntries = filteredEntries.filter(
+              entry => entry.containerTypeId !== null && containerTypeIdSet.has(entry.containerTypeId)
+            );
+          }
+
+          // Filter by date range if needed
+          filteredEntries = this.filterEntriesByDateRange(filteredEntries, startDate, endDate);
+
+          // Calculate running balance for filtered entries
+          const entriesWithBalance = this.calculateBalance(filteredEntries);
+
+          this.containerLedgerEntries.set(entriesWithBalance);
+          this.isFetchingContainerLedgerEntries.set(false);
+        },
+        error: (error) => {
+          console.error('Error fetching and filtering container ledger entries:', error);
+          this.isFetchingContainerLedgerEntries.set(false);
+        }
+      });
+  }
+
+  // Preview count of filtered entries with date range
+  public previewFilteredEntriesWithDateRange(
+    containerTypeIds: number[] = [],
+    startDate: string | null = null,
+    endDate: string | null = null
+  ): Observable<number> {
+    return new Observable<number>(observer => {
+      this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`)
+        .subscribe({
+          next: (entries: ContainerLedgerEntry[]) => {
+            let filteredEntries = entries;
+
+            // Filter by container types if needed
+            if (containerTypeIds.length > 0) {
+              const containerTypeIdSet = new Set(containerTypeIds);
+              filteredEntries = filteredEntries.filter(
+                entry => entry.containerTypeId !== null && containerTypeIdSet.has(entry.containerTypeId)
+              );
+            }
+
+            // Filter by date range if needed
+            filteredEntries = this.filterEntriesByDateRange(filteredEntries, startDate, endDate);
+
+            observer.next(filteredEntries.length);
+            observer.complete();
+          },
+          error: (error) => {
+            console.error('Error previewing filter count:', error);
+            observer.error(error);
+          }
+        });
     });
   }
 

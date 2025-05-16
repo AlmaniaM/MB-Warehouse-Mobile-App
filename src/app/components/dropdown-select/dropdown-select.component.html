@@ -5,7 +5,7 @@
     [multiple]="multiple()"
     [interface]="interface()"
     [compareWith]="compareWith"
-    [ngModel]="selectedValue()"
+    [(ngModel)]="selectedValue"
     (ionChange)="handleChange($event)"
   >
     @if (allowNullOption()) {

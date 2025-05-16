@@ -3,50 +3,77 @@ import { CommonModule, DatePipe } from '@angular/common';
 import {
   IonItem,
   IonList,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
   IonSpinner,
   IonText,
   IonBadge,
   IonInfiniteScroll,
-  IonInfiniteScrollContent
+  IonInfiniteScrollContent,
+  IonIcon,
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol
 } from '@ionic/angular/standalone';
 import { ContainerLedgerEntry } from '../../services/container-tracking/container-tracking.service';
 import { ContainerType } from '../../services/inventory-tracking/container-type.service';
+import { addIcons } from 'ionicons';
+import { arrowUp, arrowDown } from 'ionicons/icons';
 
 @Component({
   selector: 'app-container-ledger-table',
   templateUrl: './container-ledger-table.component.html',
-  styleUrls: ['./container-ledger-table.component.scss'],
-  standalone: true,
-  imports: [
+  styleUrls: ['./container-ledger-table.component.scss'], standalone: true, imports: [
     CommonModule,
     DatePipe,
     IonItem,
     IonList,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
     IonSpinner,
     IonText,
     IonBadge,
     IonInfiniteScroll,
-    IonInfiniteScrollContent]
+    IonInfiniteScrollContent,
+    IonIcon,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+  ]
 })
-export class ContainerLedgerTableComponent {  // Input signals
+export class ContainerLedgerTableComponent {
+  // Input signals
   readonly containerTypes = input<ContainerType[]>([]);
   readonly ledgerEntries = input<ContainerLedgerEntry[]>([]);
   readonly isLoading = input<boolean>(false);
+  readonly disableSummary = input<boolean>(false);
 
   // Component state
   readonly displayedEntries = signal<ContainerLedgerEntry[]>([]);
   readonly pageSize = signal<number>(15);
   readonly currentPage = signal<number>(0);
 
-  private readonly dataReloadNeeded = signal<boolean>(true);
+  // Quantity totals computed property
+  quantityTotals = computed(() => {
+    const entries = this.filteredEntries();
+    let total = 0;
+    let received = 0;
+    let shipped = 0;
+
+    entries.forEach(entry => {
+      if (entry.quantity) {
+        total += entry.quantity;
+        if (entry.quantity > 0) {
+          received += entry.quantity;
+        } else if (entry.quantity < 0) {
+          shipped += Math.abs(entry.quantity);
+        }
+      }
+    });
+
+    return { total, received, shipped };
+  });
+
   filteredEntries = computed(() => {
     const entries = this.ledgerEntries();
     const types = this.containerTypes();
@@ -68,15 +95,11 @@ export class ContainerLedgerTableComponent {  // Input signals
       return new Date(b.date).getTime() - new Date(a.date).getTime();
     });
 
-    console.log('After filtering and sorting, total records:', filtered.length);
     return filtered;
   });
 
   hasMoreEntries = computed(() => {
     const hasMore = this.filteredEntries().length > this.displayedEntries().length;
-    console.log('hasMoreEntries:', hasMore,
-      'filtered:', this.filteredEntries().length,
-      'displayed:', this.displayedEntries().length);
     return hasMore;
   });
 
@@ -89,6 +112,12 @@ export class ContainerLedgerTableComponent {  // Input signals
   });
 
   constructor() {
+    // Register icons
+    addIcons({
+      'arrow-up': arrowUp,
+      'arrow-down': arrowDown
+    });
+
     effect(() => {
       const entries = this.ledgerEntries();
       const types = this.containerTypes();
@@ -123,17 +152,8 @@ export class ContainerLedgerTableComponent {  // Input signals
     const endIndex = startIndex + this.pageSize();
     const filtered = this.filteredEntries();
 
-    console.log('Pagination info:', {
-      currentPage: this.currentPage(),
-      pageSize: this.pageSize(),
-      startIndex,
-      endIndex,
-      filteredLength: filtered.length
-    });
-
     if (startIndex < filtered.length) {
       const newItems = filtered.slice(startIndex, endIndex);
-      console.log('Loading more items:', newItems.length);
 
       if (this.currentPage() === 0) {
         this.displayedEntries.set(newItems);
@@ -148,19 +168,24 @@ export class ContainerLedgerTableComponent {  // Input signals
       event.target.complete();
 
       if (endIndex >= filtered.length) {
-        console.log('Disabling infinite scroll');
         event.target.disabled = true;
       }
     }
   }
 
   getQuantityColor(quantity: number | null): string {
-    if (quantity === null || quantity === undefined) return 'medium';
+    if (quantity === null || quantity === undefined || quantity === 0) return 'medium';
     return quantity > 0 ? 'success' : 'danger';
   }
+
   formatQuantity(quantity: number | null): string {
-    if (quantity === null || quantity === undefined) return '0';
+    if (quantity === null || quantity === undefined || quantity === 0) return '0';
     return quantity > 0 ? `+${quantity}` : `${quantity}`;
+  }
+
+  getQuantityArrow(quantity: number | null): string {
+    if (quantity === null || quantity === undefined || quantity === 0) return '';
+    return quantity > 0 ? 'arrow-up' : 'arrow-down';
   }
 
   resetInfiniteScroll(event: CustomEvent): void {

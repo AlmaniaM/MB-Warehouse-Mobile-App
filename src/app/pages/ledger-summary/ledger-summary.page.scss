@@ -17,46 +17,9 @@ ion-content {
   font-weight: 600;
 }
 
-app-dropdown-select {
-  border-bottom: 1px solid var(--ion-color-medium);
-  margin-bottom: 1rem;
-}
-
-.container-type-selector {
-  margin-bottom: 20px;
-  background-color: var(--ion-color-light);
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.selector-header {
-  font-weight: 500;
-  margin-bottom: 12px;
-  color: var(--ion-color-dark);
-}
-
-.container-types-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
-}
-
-.container-type-item {
-  background-color: var(--ion-color-light-shade);
-  padding: 12px;
-  border-radius: 6px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: var(--ion-color-medium-tint);
-  }
-
-  &.selected {
-    background-color: var(--ion-color-primary);
-    color: white;
-  }
+.ledger-content {
+  width: 100%;
+  overflow-y: visible;
 }
 
 ion-item {
@@ -142,17 +105,6 @@ ion-select {
   margin-bottom: 8px;
 }
 
-.filter-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-ion-chip {
-  --background: var(--ion-color-primary-tint);
-  --color: var(--ion-color-primary-contrast);
-}
-
 .filtered-results {
   margin-top: 12px;
   margin-bottom: 16px;
@@ -164,21 +116,24 @@ ion-chip {
   color: var(--ion-color-medium);
 }
 
-.filter-preview {
-  margin-top: 12px;
-  margin-bottom: 4px;
-  padding: 8px 12px;
-  background-color: var(--ion-color-tertiary-tint);
-  border-radius: 8px;
-  text-align: left;
-  font-weight: 500;
-  color: var(--ion-color-tertiary-shade);
-  display: flex;
-  align-items: center;
-  font-size: 0.9em;
+/* FAB button styling */
+ion-fab {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+}
 
-  ion-icon {
-    margin-right: 8px;
-    font-size: 1.2em;
+/* Modal styling */
+ion-modal {
+  --border-radius: 8px;
+  --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Ensure modal has a maximum width on larger screens */
+@media (min-width: 768px) {
+  ion-modal {
+    --width: 600px;
+    --height: auto;
   }
 }

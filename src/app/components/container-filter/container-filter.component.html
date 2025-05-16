@@ -1,0 +1,160 @@
+<div class="filter-container">
+  <!-- Filter Controls -->
+  <app-dropdown-select
+    [label]="'Container Type'"
+    [placeholder]="'Select Container Types'"
+    [options]="containerTypeOptions()"
+    [allowNullOption]="false"
+    [multiple]="true"
+    [(selectedValue)]="selectedContainerTypes"
+    (selectionChange)="onContainerTypeSelectionChange($event)"
+  />
+
+  <!-- Date Range Controls -->
+  <div class="date-range-section">
+    <ion-label class="date-range-label">Date Range</ion-label>
+    <div class="date-button-row">
+      <ion-button
+        class="date-button"
+        expand="block"
+        fill="outline"
+        (click)="isStartDateOpen = true"
+      >
+        <span class="date-button-label">Start:</span>
+        {{
+          selectedDateRange().startDate
+            ? (selectedDateRange().startDate | date : "MM/dd/yyyy")
+            : "Any"
+        }}
+        <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
+      </ion-button>
+      <ion-button
+        class="date-button"
+        expand="block"
+        fill="outline"
+        (click)="isEndDateOpen = true"
+      >
+        <span class="date-button-label">End:</span>
+        {{
+          selectedDateRange().endDate
+            ? (selectedDateRange().endDate | date : "MM/dd/yyyy")
+            : "Any"
+        }}
+        <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+  <!-- Start Date Picker Modal -->
+  <ion-modal
+    [isOpen]="isStartDateOpen"
+    (didDismiss)="isStartDateOpen = false"
+    class="date-picker-modal"
+    [cssClass]="'date-picker-modal'"
+    [presentingElement]="null"
+  >
+    <ng-template>
+      <ion-datetime
+        presentation="date"
+        [showDefaultButtons]="true"
+        (ionChange)="onStartDateChange($event)"
+        [value]="selectedDateRange().startDate"
+      ></ion-datetime>
+    </ng-template>
+  </ion-modal>
+
+  <!-- End Date Picker Modal -->
+  <ion-modal
+    [isOpen]="isEndDateOpen"
+    (didDismiss)="isEndDateOpen = false"
+    class="date-picker-modal"
+    [cssClass]="'date-picker-modal'"
+    [presentingElement]="null"
+  >
+    <ng-template>
+      <ion-datetime
+        presentation="date"
+        [showDefaultButtons]="true"
+        (ionChange)="onEndDateChange($event)"
+        [value]="selectedDateRange().endDate"
+      ></ion-datetime>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Active Filters -->
+  <!-- Disabled for now. Do not delete. -->
+  @if (hasActiveFilters() && false) {
+  <div class="active-filters">
+    <div class="active-filters-header">Active Filters:</div>
+    <div class="filter-badges">
+      @if (selectedContainerTypes().length > 0) {
+      <ion-chip color="primary">
+        Container Types: {{ containerTypesText() }}
+        <ion-icon
+          name="close-circle-outline"
+          (click)="clearContainerTypes()"
+        ></ion-icon>
+      </ion-chip>
+      } @if (selectedDateRange().startDate || selectedDateRange().endDate) {
+      <ion-chip color="primary">
+        Dates: {{ dateRangeText() }}
+        <ion-icon
+          name="close-circle-outline"
+          (click)="clearDateRange()"
+        ></ion-icon>
+      </ion-chip>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Filter Preview Info -->
+  <!-- Disabled for now. Do not delete. -->
+  @if (hasActiveFilters() && false) {
+  <div class="filter-preview">
+    @if (isPreviewLoading()) {
+    <ion-spinner
+      name="dots"
+      color="tertiary"
+      style="width: 18px; height: 18px"
+    ></ion-spinner>
+    } @else {
+    <ion-icon name="search-outline"></ion-icon>
+    }
+    {{ previewFilterText() }}
+  </div>
+  }
+
+  <!-- Button Row -->
+  <div class="button-row">
+    <ion-button
+      id="filterBtn"
+      expand="block"
+      color="primary"
+      (click)="onApplyFilters()"
+    >
+      <ion-icon slot="start" name="filter-outline"></ion-icon>
+      Apply Filters @if (filterBadgeCount() > 0) {
+      <ion-badge slot="end">{{ filterBadgeCount() }}</ion-badge>
+      }
+    </ion-button>
+    <ion-button
+      id="resetBtn"
+      expand="block"
+      fill="outline"
+      (click)="onResetFilters()"
+    >
+      <ion-icon slot="start" name="refresh-outline"></ion-icon>
+      Reset
+    </ion-button>
+    <ion-button
+      id="refreshBtn"
+      expand="block"
+      fill="outline"
+      color="secondary"
+      (click)="onRefreshData()"
+    >
+      <ion-icon slot="start" name="sync-outline"></ion-icon>
+      Refresh Data
+    </ion-button>
+  </div>
+</div>

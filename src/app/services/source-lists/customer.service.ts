@@ -5,147 +5,162 @@ import { environment } from '../../../environments/environment';
 import { ToastService } from '../../services/utils/toast.service';
 
 export const defaultCustomer: Customer = {
-	id: -1,
-	name: '',
-	primaryContactName: null,
-	primaryContactNumber: null,
-	primaryContactEmail: null,
-	primaryContactNotes: null,
-	active: true,
-	autoTimestampInsert: null,
-	parentId: null,
-	entityType: 'Company',
-	appUser: null,
-	outsideSalesCommissionRate: null
+  id: -1,
+  name: '',
+  primaryContactName: null,
+  primaryContactNumber: null,
+  primaryContactEmail: null,
+  primaryContactNotes: null,
+  active: true,
+  autoTimestampInsert: null,
+  parentId: null,
+  entityType: 'Company',
+  appUser: null,
+  outsideSalesCommissionRate: null
 }
 
 export interface Customer {
   [key: string]: any;
-	id: number;
-	name: string;
-	primaryContactName: string | null;
-	primaryContactNumber: string | null;
-	primaryContactEmail: string | null;
-	primaryContactNotes: string | null;
-	active: boolean;
-	autoTimestampInsert: Date | null;
-	parentId: number | null;
-	entityType: 'Outside Sales Company' | 'Company' | 'Ranch' | 'Grower';
-	appUser: string | null;
-	outsideSalesCommissionRate: number | null;
+  id: number;
+  name: string;
+  primaryContactName: string | null;
+  primaryContactNumber: string | null;
+  primaryContactEmail: string | null;
+  primaryContactNotes: string | null;
+  active: boolean;
+  autoTimestampInsert: Date | null;
+  parentId: number | null;
+  entityType: 'Outside Sales Company' | 'Company' | 'Ranch' | 'Grower';
+  appUser: string | null;
+  outsideSalesCommissionRate: number | null;
 }
 
 @Injectable({
-	providedIn: 'root'
+  providedIn: 'root'
 })
 export class CustomerService {
-	private httpClient: HttpClient = inject(HttpClient);
-	private toastService: ToastService = inject(ToastService);
+  private httpClient: HttpClient = inject(HttpClient);
+  private toastService: ToastService = inject(ToastService);
 
-	// Signal-based state
-	readonly customersList = signal<Customer[]>([]);
-	readonly status = signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'>('stable');
-	readonly previousDataOperation = signal<'created' | 'updated' | 'deleted' | null>(null);
-	readonly requestError = signal<any>(null);
+  // Signal-based state
+  readonly customers = signal<Customer[]>([]);
+  readonly status = signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'>('stable');
+  readonly previousDataOperation = signal<'created' | 'updated' | 'deleted' | null>(null);
+  readonly requestError = signal<any>(null);
 
-	getCustomers() {
-		const previousStatus = this.status();
-		this.status.set('fetching');
+  getCustomers(force: boolean = false) {
+    // Skip HTTP request if we already have data and force is false
+    if (this.customers().length > 0 && !force) {
+      return;
+    }
 
-		const url = environment.azureInventoryTrackingApiBaseUrl + 'mbn/sourcelists/customers';
-		this.httpClient
-			.get<Customer[]>(url)
-			.pipe(
-				catchError(error => {
-					throw error;
-				})
-			)
-			.subscribe({
-				next: records => {
-					// Update signals
-					this.customersList.set(records);
+    const previousStatus = this.status();
+    this.status.set('fetching');
 
-					if (previousStatus === 'creating') {
-						this.previousDataOperation.set('created');
-					} else if (previousStatus === 'updating') {
-						this.previousDataOperation.set('updated');
-					} else if (previousStatus === 'deleting') {
-						this.previousDataOperation.set('deleted');
-					} else {
-						this.previousDataOperation.set(null);
-					}
-					this.status.set('stable');
-				},
-				error: (error: HttpErrorResponse) => {
-					this.registerRequestError(error, 'get');
-					this.status.set('error');
-				}
-			});
-	}
-	getCustomersByIds(ids: string[]) {
-		const previousStatus = this.status();
-		this.status.set('fetching');
+    const url = environment.azureInventoryTrackingApiBaseUrl + 'mbn/sourcelists/customers';
+    this.httpClient
+      .get<Customer[]>(url)
+      .pipe(
+        catchError(error => {
+          throw error;
+        })
+      )
+      .subscribe({
+        next: records => {
+          // Update signals
+          this.customers.set(records);
 
-		let requests = new Array<Observable<Customer>>();
+          if (previousStatus === 'creating') {
+            this.previousDataOperation.set('created');
+          } else if (previousStatus === 'updating') {
+            this.previousDataOperation.set('updated');
+          } else if (previousStatus === 'deleting') {
+            this.previousDataOperation.set('deleted');
+          } else {
+            this.previousDataOperation.set(null);
+          }
+          this.status.set('stable');
+        },
+        error: (error: HttpErrorResponse) => {
+          this.registerRequestError(error, 'get');
+          this.status.set('error');
+        }
+      });
+  } getCustomersByIds(ids: string[], force: boolean = false) {
+    // Skip HTTP request if we have all required customer data and force is false
+    if (!force && this.customers().length > 0) {
+      const existingIds = new Set(this.customers().map(c => c.id.toString()));
+      const allIdsExist = ids.every(id => existingIds.has(id));
 
-		ids.forEach(id => {
-			const url = environment.azureInventoryTrackingApiBaseUrl + 'mbn/sourcelists/customer/' + id;
-			requests.push(this.httpClient.get<Customer>(url));
-		});
+      if (allIdsExist) {
+        return; // We already have all the customers we need
+      }
+    }
 
-		forkJoin(requests)
-			.pipe(
-				catchError(error => {
-					throw error;
-				})
-			)
-			.subscribe({
-				next: customers => {
-					const records = customers.reduce((acc: Customer[], val) => acc.concat(val), []);
+    const previousStatus = this.status();
+    this.status.set('fetching');
 
-					// Update signals
-					this.customersList.set(records);
+    let requests = new Array<Observable<Customer>>();
 
-					if (previousStatus === 'creating') {
-						this.previousDataOperation.set('created');
-					} else if (previousStatus === 'updating') {
-						this.previousDataOperation.set('updated');
-					} else if (previousStatus === 'deleting') {
-						this.previousDataOperation.set('deleted');
-					} else {
-						this.previousDataOperation.set(null);
-					}
-					this.status.set('stable');
-				},
-				error: (error: HttpErrorResponse) => {
-					this.registerRequestError(error, 'get');
-					this.status.set('error');
-				}
-			});
-	}
-	registerRequestError(error: HttpErrorResponse, cause: 'get' | 'create' | 'update' | 'delete') {
-		this.requestError.set({ errorResponse: error, causedBy: cause });
+    ids.forEach(id => {
+      const url = environment.azureInventoryTrackingApiBaseUrl + 'mbn/sourcelists/customer/' + id;
+      requests.push(this.httpClient.get<Customer>(url));
+    });
 
-		if (typeof error.error === 'string') {
-			this.toastService.openToast(error.error);
-			return;
-		}
-		this.toastService.openToast(error.message);
-	}
+    forkJoin(requests)
+      .pipe(
+        catchError(error => {
+          throw error;
+        })
+      )
+      .subscribe({
+        next: customers => {
+          const records = customers.reduce((acc: Customer[], val) => acc.concat(val), []);
 
-	// Helper method to get customer name by ID
-	getCustomerNameById(customerId: number): string | null {
-		const customer = this.customersList().find(c => c.id === customerId);
-		return customer ? customer.name : null;
-	}
+          // Update signals
+          this.customers.set(records);
 
-	// Helper method to get customer by ID
-	getCustomerById(customerId: number): Customer | null {
-		return this.customersList().find(c => c.id === customerId) || null;
-	}
+          if (previousStatus === 'creating') {
+            this.previousDataOperation.set('created');
+          } else if (previousStatus === 'updating') {
+            this.previousDataOperation.set('updated');
+          } else if (previousStatus === 'deleting') {
+            this.previousDataOperation.set('deleted');
+          } else {
+            this.previousDataOperation.set(null);
+          }
+          this.status.set('stable');
+        },
+        error: (error: HttpErrorResponse) => {
+          this.registerRequestError(error, 'get');
+          this.status.set('error');
+        }
+      });
+  }
 
-	// Helper method to get all active customers
-	getActiveCustomers(): Customer[] {
-		return this.customersList().filter(c => c.active);
-	}
+  registerRequestError(error: HttpErrorResponse, cause: 'get' | 'create' | 'update' | 'delete') {
+    this.requestError.set({ errorResponse: error, causedBy: cause });
+
+    if (typeof error.error === 'string') {
+      this.toastService.openToast(error.error);
+      return;
+    }
+    this.toastService.openToast(error.message);
+  }
+
+  // Helper method to get customer name by ID
+  getCustomerNameById(customerId: number): string | null {
+    const customer = this.customers().find(c => c.id === customerId);
+    return customer ? customer.name : null;
+  }
+
+  // Helper method to get customer by ID
+  getCustomerById(customerId: number): Customer | null {
+    return this.customers().find(c => c.id === customerId) || null;
+  }
+
+  // Helper method to get all active customers
+  getActiveCustomers(): Customer[] {
+    return this.customers().filter(c => c.active);
+  }
 }

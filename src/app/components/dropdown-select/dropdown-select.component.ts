@@ -1,6 +1,6 @@
-import { Component, forwardRef, input, model, output, signal } from '@angular/core';
+import { Component, input, model, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import {
   IonItem,
   IonLabel,
@@ -25,16 +25,9 @@ export interface DropdownOption<T> {
     IonLabel,
     IonSelect,
     IonSelectOption
-  ],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => DropdownSelectComponent),
-      multi: true
-    }
   ]
 })
-export class DropdownSelectComponent<T> implements ControlValueAccessor {
+export class DropdownSelectComponent<T> {
   // Input signals
   readonly label = input<string>('');
   readonly placeholder = input<string>('Select an option');
@@ -45,39 +38,15 @@ export class DropdownSelectComponent<T> implements ControlValueAccessor {
   readonly nullOptionLabel = input<string>('All');
   readonly disabled = input<boolean>(false);
 
+  // Model signal for two-way binding
+  readonly selectedValue = model<T | T[] | null>(null);
+
   // Output signals
   readonly selectionChange = output<T | T[] | null>();
-
-  // Internal state as signals
-  readonly selectedValue = signal<T | T[] | null>(null);
-
-  private onChange: any = () => {};
-  private onTouched: any = () => {};
-
-  constructor() {}
-
-  writeValue(value: T | T[] | null): void {
-    this.selectedValue.set(value);
-  }
-
-  registerOnChange(fn: any): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: any): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    // Note: Can't set the value of an input signal directly
-    // However, the HTML template will respect the disabled() signal value
-  }
 
   handleChange(event: any): void {
     const value = event.detail.value;
     this.selectedValue.set(value);
-    this.onChange(value);
-    this.onTouched();
     this.selectionChange.emit(value);
   }
 

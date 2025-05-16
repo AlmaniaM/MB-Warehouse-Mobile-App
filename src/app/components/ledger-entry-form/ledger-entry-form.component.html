@@ -1,0 +1,146 @@
+<div class="form-container">
+  <div class="form-content">
+    <!-- Container Type -->
+    <ion-item>
+      <ion-label position="stacked">Container Type *</ion-label>
+      <ion-select
+        placeholder="Select a container type"
+        [value]="selectedContainerType()"
+        (ionChange)="selectedContainerType.set($event.detail.value)"
+        interface="popover"
+      >
+        @for (type of containerTypes(); track type.id) {
+        <ion-select-option [value]="type">{{ type.name }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <!-- Quantity -->
+    <ion-item>
+      <ion-label position="stacked">Quantity *</ion-label>
+      <ion-input
+        type="number"
+        [value]="quantity()"
+        (ionChange)="setQuantity($event.detail.value)"
+        placeholder="Enter quantity"
+      ></ion-input>
+    </ion-item>
+
+    <!-- Date -->
+    <ion-item button (click)="isDatePickerOpen.set(true)">
+      <ion-label position="stacked">Date *</ion-label>
+      <ion-input readonly [value]="date() | date : 'MMM d, y'">
+        <ion-icon slot="end" name="calendar-outline"></ion-icon>
+      </ion-input>
+    </ion-item>
+
+    <!-- Date Picker Modal -->
+    <ion-modal
+      [isOpen]="isDatePickerOpen()"
+      (didDismiss)="isDatePickerOpen.set(false)"
+      class="date-picker-modal"
+    >
+      <ng-template>
+        <ion-datetime
+          presentation="date"
+          [value]="date()"
+          (ionChange)="onDateSelected($event)"
+          [showDefaultButtons]="true"
+        ></ion-datetime>
+      </ng-template>
+    </ion-modal>
+
+    <!-- From/To Type Selection -->
+    <div class="type-selector">
+      <ion-item>
+        <ion-label position="stacked">From</ion-label>
+        <ion-select
+          [value]="fromType()"
+          (ionChange)="fromType.set($event.detail.value); onFromTypeChange()"
+          interface="popover"
+        >
+          <ion-select-option value="MBN">MBN</ion-select-option>
+          <ion-select-option value="Customer">Customer</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">To</ion-label>
+        <ion-select
+          [value]="toType()"
+          (ionChange)="toType.set($event.detail.value); onToTypeChange()"
+          interface="popover"
+        >
+          <ion-select-option value="MBN">MBN</ion-select-option>
+          <ion-select-option value="Customer">Customer</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <!-- Customer Selection (only shown if either from or to type is Customer) -->
+    @if (fromType() === 'Customer' || toType() === 'Customer') {
+    <ion-item>
+      <ion-label position="stacked">Customer *</ion-label>
+      <ion-select
+        placeholder="Select a customer"
+        [value]="selectedCustomer()"
+        (ionChange)="selectedCustomer.set($event.detail.value)"
+        interface="popover"
+      >
+        @for (customer of customers(); track customer.id) {
+        <ion-select-option [value]="customer">{{
+          customer.name
+        }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <!-- Customer Invoice Number (optional) -->
+    <ion-item>
+      <ion-label position="stacked">Invoice Number</ion-label>
+      <ion-input
+        type="text"
+        [value]="customerInvoiceNumber()"
+        (ionChange)="setCustomerInvoiceNumber($event.detail.value)"
+        placeholder="Enter invoice number"
+      ></ion-input>
+    </ion-item>
+
+    <!-- Customer Ranch (optional) -->
+    <ion-item>
+      <ion-label position="stacked">Ranch</ion-label>
+      <ion-input
+        type="text"
+        [value]="customerRanch()"
+        (ionChange)="customerRanch.set($event.detail.value || '')"
+        placeholder="Enter ranch"
+      ></ion-input>
+    </ion-item>
+    }
+
+    <!-- Notes (optional) -->
+    <ion-item>
+      <ion-label position="stacked">Notes</ion-label>
+      <ion-textarea
+        [value]="note()"
+        (ionChange)="note.set($event.detail.value || '')"
+        placeholder="Enter notes"
+        rows="3"
+      ></ion-textarea>
+    </ion-item>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="form-actions">
+    <ion-button fill="outline" (click)="resetForm()"> Reset </ion-button>
+    <ion-button
+      color="primary"
+      [disabled]="!formValid() || isLoading()"
+      (click)="submitForm()"
+    >
+      @if (isLoading()) {
+      <ion-spinner name="dots" color="light"></ion-spinner>
+      } @else { Submit }
+    </ion-button>
+  </div>
+</div>

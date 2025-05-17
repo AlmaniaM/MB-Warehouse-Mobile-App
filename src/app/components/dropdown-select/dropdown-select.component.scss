@@ -1,0 +1,71 @@
+ion-item {
+  --ripple-color: transparent;
+  cursor: pointer;
+}
+
+ion-select {
+  width: 100%;
+  --padding-start: 0;
+  cursor: pointer;
+}
+
+ion-input {
+  width: 100%;
+  --padding-start: 0;
+  cursor: pointer;
+
+  &::part(native) {
+    padding-right: 16px;
+  }
+}
+
+ion-icon {
+  margin-left: 8px;
+}
+
+.search-input-container {
+  background-color: var(--ion-background-color);
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+ion-searchbar {
+  --border-radius: 8px;
+  --box-shadow: none;
+  --background: var(--ion-color-light);
+  padding: 0;
+}
+
+:host ::ng-deep .select-interface-option {
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+ion-list {
+  --ion-item-background: transparent;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.selected {
+  --background: var(--ion-color-light);
+  font-weight: 500;
+
+  ion-icon {
+    color: var(--ion-color-primary);
+  }
+}
+
+ion-checkbox {
+  margin-right: 8px;
+  --size: 20px;
+  --checkbox-background-checked: var(--ion-color-primary);
+  --border-color-checked: var(--ion-color-primary);
+}
+
+.multi-selection-actions {
+  padding: 8px 16px 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

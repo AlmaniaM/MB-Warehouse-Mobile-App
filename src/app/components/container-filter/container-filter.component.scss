@@ -1,0 +1,63 @@
+.filter-container {
+  margin-bottom: 16px;
+}
+
+// Add styles for the date picker modals to center them
+ion-modal.date-picker-modal {
+  --width: fit-content;
+  --height: fit-content;
+  --border-radius: 8px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+
+// Make sure the datetime component itself is also styled properly
+ion-datetime {
+  --background: var(--ion-background-color);
+  border-radius: 8px;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 16px;
+
+  #filterBtn {
+    grid-column: span 2;
+  }
+}
+
+.date-range-section {
+  margin: 16px 0;
+}
+
+.date-range-label {
+  color: var(--ion-color-medium);
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: block;
+  padding-left: 4px;
+}
+
+.date-button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.date-button {
+  --border-radius: 4px;
+  height: 40px;
+  margin: 0;
+
+  .date-button-label {
+    font-weight: 500;
+    margin-right: 4px;
+  }
+
+  ion-icon {
+    font-size: 18px;
+  }
+}

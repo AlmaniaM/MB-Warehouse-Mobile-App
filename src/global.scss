@@ -16,7 +16,31 @@
 ion-item {
   --min-height: 48px;
 }
+
 ion-title {
   padding-bottom: 6px;
   padding-top: 6px;
+}
+
+/* Fix for unresponsive elements */
+ion-content {
+  --keyboard-offset: 0 !important;
+}
+
+/* Enable pointer events and touch action globally */
+ion-content,
+ion-list,
+ion-item,
+ion-card,
+ion-card-content,
+ion-button,
+ion-select {
+  pointer-events: auto !important;
+  touch-action: auto !important;
+}
+
+/* Fix for touch interactions on iOS i.e. notches at the top of the device */
+.ios {
+  --ion-safe-area-top: env(safe-area-inset-top);
+  --ion-safe-area-bottom: env(safe-area-inset-bottom);
 }

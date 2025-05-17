@@ -1,0 +1,28 @@
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button (click)="openCreateLedgerForm()">
+    <ion-icon name="add-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+<ion-modal
+  [isOpen]="isCreateLedgerFormOpen()"
+  (didDismiss)="closeCreateLedgerForm()"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Create Ledger Entry</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeCreateLedgerForm()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <app-ledger-entry-form
+        (formSubmitted)="onLedgerFormSubmit($event)"
+      ></app-ledger-entry-form>
+    </ion-content>
+  </ng-template>
+</ion-modal>

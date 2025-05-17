@@ -1,0 +1,149 @@
+<div class="ledger-table-container">
+  <div class="ledger-table-header">
+    <h2 class="ledger-title">
+      Container Ledger
+      @if (containerTypes() && containerTypes().length === 1) {
+       - {{ containerTypes()![0].name }} }
+      @if (containerTypes() && containerTypes().length > 1) {
+        - Multiple Types ({{
+        containerTypes().length
+      }}) }
+    </h2>
+  </div>
+  <div class="ledger-table-content">
+    <!-- Loading State -->
+    @if (isLoading()) {
+    <div class="loading-container">
+      <ion-spinner name="circular"></ion-spinner>
+      <ion-text>Loading ledger entries...</ion-text>
+    </div>
+    }
+
+    <!-- Empty State -->
+    @if (isEmpty()) {
+    <div class="empty-state">
+      <ion-text color="medium">
+        <p>No ledger entries found</p>
+      </ion-text>
+    </div>
+    }
+
+    <!-- Quantity Totals Summary -->
+    @if (hasEntries() && !this.disableSummary()) {
+    <ion-card class="quantity-totals-card">
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12">
+              <h2 class="ion-text-center summary-title">Container Summary</h2>
+            </ion-col>
+          </ion-row>
+          <ion-row class="totals-row">
+            <ion-col size="4" class="ion-text-center">
+              <div class="total-label">Received</div>
+              <div class="total-value success">
+                <ion-icon name="arrow-up" color="success"></ion-icon>
+                <span>{{ quantityTotals().received }}</span>
+              </div>
+            </ion-col>
+            <ion-col size="4" class="ion-text-center">
+              <div class="total-label">Shipped</div>
+              <div class="total-value danger">
+                <ion-icon name="arrow-down" color="danger"></ion-icon>
+                <span>{{ quantityTotals().shipped }}</span>
+              </div>
+            </ion-col>
+            <ion-col size="4" class="ion-text-center">
+              <div class="total-label">Balance</div>
+              <div
+                [ngClass]="{
+                  'total-value': true,
+                  success: quantityTotals().total > 0,
+                  danger: quantityTotals().total < 0,
+                  medium: quantityTotals().total === 0
+                }"
+              >
+                @if (quantityTotals().total > 0) {
+                <ion-icon name="arrow-up" color="success"></ion-icon>
+                } @if (quantityTotals().total < 0) {
+                <ion-icon name="arrow-down" color="danger"></ion-icon>
+                }
+                <span>{{ quantityTotals().total }}</span>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+    }
+
+    <!-- Ledger Entries List -->
+    <ion-list class="ledger-list">
+      @for (entry of displayedEntries(); track entry) {
+      <ion-item lines="full" class="ledger-item" button="false" detail="false">
+        <div class="ledger-entry-container">
+          <!-- Top Section: Container Type & Date -->
+          <div class="entry-header">
+            <div class="container-type">
+              {{ entry.containerTypeName || "Unknown Type" }}
+            </div>
+            <div class="entry-date">
+              {{ entry.date | date : "MMM d, y" }}
+            </div>
+          </div>
+
+          <!-- Middle Section: Customer Info -->
+          <div class="entry-details">
+            @if (entry.customerName) {
+            <div class="customer-info">
+              {{ entry.customerName }}
+            </div>
+            }
+          </div>
+
+          <!-- Bottom Section: Balance, Quantity & Note -->
+          <div class="entry-footer">
+            <div class="balance-quantity-row">
+              <div class="balance">
+                Balance: {{ entry.balance || 0 }}
+                <ion-icon
+                  [name]="getQuantityArrow(entry.quantity)"
+                  [color]="getQuantityColor(entry.quantity)"
+                  class="balance-arrow"
+                >
+                </ion-icon>
+              </div>
+              <div class="quantity-badge">
+                <ion-badge [color]="getQuantityColor(entry.quantity)">
+                  {{ formatQuantity(entry.quantity) }}
+                </ion-badge>
+              </div>
+            </div>
+
+            @if (entry.note) {
+            <div class="note">
+              <ion-text color="medium">{{ entry.note }}</ion-text>
+            </div>
+            }
+          </div>
+        </div>
+      </ion-item>
+      }
+    </ion-list>
+
+    <!-- Infinite Scroll -->
+    @if (hasEntries() && hasMoreEntries()) {
+    <ion-infinite-scroll
+      (ionInfinite)="loadMoreData($event)"
+      threshold="100px"
+      position="bottom"
+    >
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more entries..."
+      >
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    }
+  </div>
+</div>

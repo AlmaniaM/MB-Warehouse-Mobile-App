@@ -64,8 +64,6 @@ type FilterOptions = {
   force?: boolean;
 }
 
-type ApiResponse<T> = Observable<T>;
-
 @Injectable({
   providedIn: 'root',
 })
@@ -82,7 +80,7 @@ export class ContainerTrackingService {
   private readonly httpClient = inject(HttpClient);
   private readonly customerService = inject(CustomerService);
 
-  createContainerLedgerTransaction(transaction: ContainerLedgerTransaction): ApiResponse<ContainerLedgerTransaction> {
+  createContainerLedgerTransaction(transaction: ContainerLedgerTransaction): Observable<ContainerLedgerTransaction> {
     return this.httpClient.post<ContainerLedgerTransaction>(`${this.baseUrl}/ledger`, transaction);
   }
 
@@ -314,7 +312,8 @@ export class ContainerTrackingService {
       return;
     }
 
-    this.isFetchingContainerLedgerEntries.set(true); this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`)
+    this.isFetchingContainerLedgerEntries.set(true);
+    this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`)
       .pipe(
         map(entries => {
           const filteredEntries = this.filterEntries(entries, {

@@ -15,7 +15,7 @@ import {
 import { PageTopbarComponent } from '../../components/page-topbar/page-topbar.component';
 import { ContentTopbarComponent } from 'src/app/components/content-topbar/content-topbar.component';
 import { addIcons } from 'ionicons';
-import { gridSharp } from 'ionicons/icons';
+import { gridSharp, peopleOutline, peopleSharp, bookOutline, bookSharp, gridOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-container-tracking',
@@ -37,9 +37,14 @@ import { gridSharp } from 'ionicons/icons';
   ]
 })
 export class ContainerTrackingPage {
-  constructor() {
-    addIcons({
-      'grid-sharp': gridSharp,
-    });
-  }
+    constructor() {
+      addIcons({
+        'grid-outline': gridOutline,
+        'grid-sharp': gridSharp,
+        'people-outline': peopleOutline,
+        'people-sharp': peopleSharp,
+        'book-outline': bookOutline,
+        'book-sharp': bookSharp
+      });
+    }
 }

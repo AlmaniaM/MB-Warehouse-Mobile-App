@@ -1,0 +1,24 @@
+.filter-section {
+  margin-bottom: 1.5rem;
+  background-color: var(--ion-color-light);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.filter-actions {
+  margin-top: 1rem;
+}
+
+ion-button {
+  --border-radius: 6px;
+}
+
+/* Fix for spacing in ion-grid */
+ion-grid {
+  padding: 0;
+}
+
+/* Fix for spacing in column */
+ion-col {
+  padding: 0.25rem;
+}

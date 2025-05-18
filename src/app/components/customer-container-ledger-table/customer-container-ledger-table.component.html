@@ -1,0 +1,236 @@
+<div class="ledger-table-container">
+  <div class="ledger-table-header">
+    <h2 class="ledger-title">Customer Container Ledger</h2>
+  </div>
+  <div class="ledger-table-content">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <ion-spinner name="circular"></ion-spinner>
+      <ion-text>Loading ledger entries...</ion-text>
+    </div>
+    } @if (isEmpty()) {
+    <div class="empty-state">
+      <ion-text color="medium">
+        <p>No customer container ledger entries found</p>
+      </ion-text>
+    </div>
+    }
+
+    <ion-accordion-group [multiple]="true" [value]="defaultExpandedAccordions">
+      <ion-accordion value="filters">
+        <ion-item slot="header">
+          <ion-label>Filters</ion-label>
+        </ion-item>
+        <div slot="content" class="filters-content">
+          <!-- Year Filter -->
+          <app-dropdown-select
+            [label]="'Year'"
+            [placeholder]="'Select Year'"
+            [options]="yearOptions()"
+            [selectedValue]="selectedYear()"
+            (selectionChange)="onYearChange($event)"
+            [allowNullOption]="true"
+            [nullOptionLabel]="'All Years'"
+          ></app-dropdown-select>
+
+          <!-- Container Type Filter -->
+          <app-dropdown-select
+            [label]="'Container Type'"
+            [placeholder]="'Select Container Type'"
+            [options]="containerTypeOptions()"
+            [selectedValue]="selectedContainerTypes()"
+            (selectionChange)="onContainerTypeChange($event)"
+            [allowNullOption]="true"
+            [nullOptionLabel]="'All Types'"
+            [multiple]="true"
+          ></app-dropdown-select>
+
+          <!-- Customer Filter -->
+          <app-dropdown-select
+            [label]="'Customer'"
+            [placeholder]="'Select Customer'"
+            [options]="customerOptions()"
+            [selectedValue]="selectedCustomers()"
+            (selectionChange)="onCustomerChange($event)"
+            [allowNullOption]="true"
+            [nullOptionLabel]="'All Customers'"
+            [multiple]="true"
+          ></app-dropdown-select>
+          <div class="filter-section">
+            <div class="filter-actions">
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-button
+                      expand="block"
+                      color="primary"
+                      (click)="applyFilters()"
+                      [disabled]="isLoading()"
+                    >
+                      <ion-icon name="filter-outline" slot="start"></ion-icon>
+                      Apply Filters
+                    </ion-button>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-button
+                      expand="block"
+                      fill="outline"
+                      (click)="resetFilters()"
+                      [disabled]="isLoading() || !hasActiveFilters()"
+                    >
+                      <ion-icon
+                        name="close-circle-outline"
+                        slot="start"
+                      ></ion-icon>
+                      Reset
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="12">
+                    <ion-button
+                      expand="block"
+                      fill="clear"
+                      color="medium"
+                      (click)="loadMoreData()"
+                      [disabled]="isLoading()"
+                    >
+                      <ion-icon name="refresh-outline" slot="start"></ion-icon>
+                      @if (isLoading()) {
+                      <ion-spinner name="dots" color="medium"></ion-spinner>
+                      } @else { Refresh Data }
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </div>
+          </div>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+
+    @if (hasEntries() && !disableSummary()) {
+    <ion-accordion-group [multiple]="true" [value]="defaultExpandedAccordions">
+      <ion-accordion value="summary">
+        <ion-item slot="header">
+          <ion-label>Container Summary</ion-label>
+        </ion-item>
+        <div slot="content">
+          <ion-card class="quantity-totals-card">
+            <ion-card-content>
+              <ion-grid>
+                <ion-row class="totals-row">
+                  <ion-col size="4" class="ion-text-center">
+                    <div class="total-label">Received</div>
+                    <div class="total-value success">
+                      <ion-icon name="arrow-up" color="success"></ion-icon>
+                      <span>{{ quantityTotals().received }}</span>
+                    </div>
+                  </ion-col>
+                  <ion-col size="4" class="ion-text-center">
+                    <div class="total-label">Shipped</div>
+                    <div class="total-value danger">
+                      <ion-icon name="arrow-down" color="danger"></ion-icon>
+                      <span>{{ quantityTotals().shipped }}</span>
+                    </div>
+                  </ion-col>
+                  <ion-col size="4" class="ion-text-center">
+                    <div class="total-label">Balance</div>
+                    <div
+                      [ngClass]="{
+                        'total-value': true,
+                        success: quantityTotals().total > 0,
+                        danger: quantityTotals().total < 0,
+                        medium: quantityTotals().total === 0
+                      }"
+                    >
+                      @if (quantityTotals().total > 0) {
+                      <ion-icon name="arrow-up" color="success"></ion-icon>
+                      } @if (quantityTotals().total < 0) {
+                      <ion-icon name="arrow-down" color="danger"></ion-icon>
+                      }
+                      <span>{{ quantityTotals().total }}</span>
+                    </div>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    }
+
+    <ion-list class="ledger-list">
+      @for (entry of displayedEntries(); track entry.id) {
+      <ion-item lines="full" class="ledger-item" button="false" detail="false">
+        <div class="ledger-entry-container">
+          <div class="entry-header">
+            <div class="container-type">
+              {{ entry.containerTypeName || "Unknown Type" }}
+            </div>
+            <div class="entry-date">
+              {{ entry.date | date : "MMM d, y" }}
+            </div>
+          </div>
+
+          <div class="entry-details">
+            @if (entry.customerName) {
+            <div class="customer-info">
+              {{ entry.customerName }}
+              @if (entry.customerRanch) {
+              <span class="customer-ranch">{{ entry.customerRanch }}</span>
+              }
+            </div>
+            } @if (entry.customerInvoiceNumber) {
+            <div class="invoice-info">
+              Invoice: {{ entry.customerInvoiceNumber }}
+            </div>
+            }
+          </div>
+
+          <div class="quantity-section">
+            @if (entry.quantity !== null) {
+            <div
+              class="quantity-info"
+              [ngClass]="{
+                positive: entry.quantity > 0,
+                negative: entry.quantity < 0
+              }"
+            >
+              @if (entry.quantity > 0) {
+              <ion-icon name="arrow-up" color="success"></ion-icon>
+              } @if (entry.quantity < 0) {
+              <ion-icon name="arrow-down" color="danger"></ion-icon>
+              }
+              <span class="quantity-value">{{
+                formatQuantity(entry.quantity)
+              }}</span>
+            </div>
+            } @if (entry.note) {
+            <div class="note">{{ entry.note }}</div>
+            }
+          </div>
+        </div>
+      </ion-item>
+      }
+    </ion-list>
+
+    <ion-infinite-scroll
+      [disabled]="!hasMoreEntries()"
+      (ionInfinite)="loadMoreData($event)"
+    >
+      <ion-infinite-scroll
+        (ionInfinite)="loadMoreData($event)"
+        threshold="100px"
+        position="bottom"
+      >
+        <ion-infinite-scroll-content
+          loadingSpinner="bubbles"
+          loadingText="Loading more entries..."
+        >
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-infinite-scroll>
+  </div>
+</div>

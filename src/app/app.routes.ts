@@ -41,6 +41,14 @@ export const routes: Routes = [
           {
             path: 'receive',
             loadComponent: () => import('./pages/receive-containers/receive-containers.page').then(page => page.ReceiveContainersPage)
+          },
+          {
+            path: 'ledger',
+            loadComponent: () => import('./pages/container-ledger/container-ledger.page').then(page => page.ContainerLedgerPage)
+          },
+          {
+            path: 'ledger-summary',
+            loadComponent: () => import('./pages/ledger-summary/ledger-summary.page').then(page => page.LedgerSummaryPage)
           }
         ]
       }

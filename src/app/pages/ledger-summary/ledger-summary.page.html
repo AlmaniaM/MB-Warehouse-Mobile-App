@@ -1,0 +1,30 @@
+<ion-content>
+  <div class="ledger-container">
+    <h1 class="ledger-title">Ledger Summary</h1>
+    <div class="ledger-content">
+      <!-- Global Container Filter Component -->
+      <app-container-filter
+        (applyFilters)="filterLedger()"
+        (resetFilters)="resetFilters()"
+        (refreshData)="refreshAllData()"
+      ></app-container-filter>
+
+      <!-- Filtered Results Info -->
+      @if (!isLoading()) {
+      <div class="filtered-results">{{ filteredEntriesText() }}</div>
+      }
+
+      <!-- Container Ledger Table Component -->
+      <app-container-ledger-table
+        [containerTypes]="containerFilterService.selectedContainerTypes()"
+        [ledgerEntries]="ledgerEntries()"
+        [isLoading]="isLoading()"
+      ></app-container-ledger-table>
+    </div>
+  </div>
+
+  <!-- Reusable Ledger Entry FAB Component -->
+  <app-ledger-entry-fab
+    (entryCreated)="onLedgerEntryCreated($event)"
+  ></app-ledger-entry-fab>
+</ion-content>

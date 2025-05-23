@@ -1,0 +1,14 @@
+<ion-content>
+  <app-customer-container-ledger-table
+    #ledgerTable
+    [containerTypes]="containerTypes()"
+    [customers]="customers()"
+    [ledgerEntries]="ledgerEntries()"
+    [isLoading]="isLoading()"
+    [disableSummary]="true"
+  ></app-customer-container-ledger-table>
+
+  <app-ledger-entry-fab
+    (entryCreated)="onLedgerEntryCreated($event)"
+  ></app-ledger-entry-fab>
+</ion-content>

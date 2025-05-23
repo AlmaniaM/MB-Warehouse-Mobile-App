@@ -122,9 +122,11 @@
 
   <!-- Form Actions -->
   <div class="form-actions">
-    <ion-button fill="outline" (click)="resetForm()"> Reset </ion-button>
+    <ion-button fill="outline" color="primary" (click)="resetForm()">
+      Reset
+    </ion-button>
     <ion-button
-      color="primary"
+      color="secondary"
       [disabled]="!formValid() || isLoading()"
       (click)="submitForm()"
     >

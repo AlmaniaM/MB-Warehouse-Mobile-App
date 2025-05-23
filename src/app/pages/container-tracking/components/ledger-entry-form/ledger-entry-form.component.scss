@@ -2,11 +2,13 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  background-color: #ffffff;
 }
 
 .form-content {
   flex: 1;
   overflow-y: auto;
+  padding: 8px 0;
 }
 
 .form-actions {
@@ -14,22 +16,29 @@
   justify-content: space-between;
   padding: 16px 0;
   border-top: 1px solid var(--ion-color-light-shade);
+  background-color: #f8f8f8;
+  padding: 16px;
+  margin: 0 -16px -16px -16px;
 }
 
 ion-item {
   --padding-start: 0;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  --border-color: var(--ion-color-medium-shade);
+  --highlight-color-valid: var(--ion-color-secondary);
 }
 
 .type-selector {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 ion-label {
   margin-bottom: 4px;
+  color: var(--ion-color-dark);
+  font-weight: 500;
 }
 
 ion-modal.date-picker-modal {
@@ -44,4 +53,7 @@ ion-datetime {
   border-radius: 8px;
   max-width: 350px;
   margin: 0 auto;
+
+  --ion-color-primary: var(--ion-color-secondary);
+  --ion-color-primary-contrast: var(--ion-color-secondary-contrast);
 }

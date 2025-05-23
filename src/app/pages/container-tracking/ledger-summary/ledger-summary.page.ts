@@ -1,15 +1,15 @@
-import { Component, computed, effect, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular/standalone';
 import { ToastController } from '@ionic/angular/standalone';
 
-import { ContainerTypeService } from '../../services/inventory-tracking/container-type.service';
-import { ContainerLedgerEntry, ContainerTrackingService } from '../../services/container-tracking/container-tracking.service';
-import { ContainerLedgerTableComponent } from '../../components/container-ledger-table/container-ledger-table.component';
-import { ContainerFilterService } from '../../services/container-tracking/container-filter.service';
-import { ContainerFilterComponent } from '../../components/container-filter/container-filter.component';
-import { LedgerEntryFabComponent } from '../../components/ledger-entry-fab/ledger-entry-fab.component';
+import { ContainerTypeService } from '../../../services/inventory-tracking/container-type.service';
+import { ContainerLedgerEntry, ContainerTrackingService } from '../../../services/container-tracking/container-tracking.service';
+import { ContainerLedgerTableComponent } from '../components/container-ledger-table/container-ledger-table.component';
+import { ContainerFilterService } from '../../../services/container-tracking/container-filter.service';
+import { ContainerFilterComponent } from '../components/container-filter/container-filter.component';
+import { LedgerEntryFabComponent } from '../components/ledger-entry-fab/ledger-entry-fab.component';
 
 @Component({
   selector: 'app-ledger-summary',
@@ -26,6 +26,11 @@ import { LedgerEntryFabComponent } from '../../components/ledger-entry-fab/ledge
   ]
 })
 export class LedgerSummaryPage implements OnInit {
+  private readonly containerTypeService = inject(ContainerTypeService);
+  private readonly containerTrackingService = inject(ContainerTrackingService);
+  public readonly containerFilterService = inject(ContainerFilterService);
+  private readonly toastController = inject(ToastController);
+
   readonly ledgerEntries = signal<ContainerLedgerEntry[]>([]);
 
   readonly isLoading = computed(() => {
@@ -63,12 +68,7 @@ export class LedgerSummaryPage implements OnInit {
     return `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'} for ${filters.join(' and ')}`;
   });
 
-  constructor(
-    private containerTypeService: ContainerTypeService,
-    private containerTrackingService: ContainerTrackingService,
-    public containerFilterService: ContainerFilterService,
-    private toastController: ToastController
-  ) {
+  constructor() {
     effect(() => {
       const ledgerEntries = this.containerTrackingService.containerLedgerEntries();
       this.ledgerEntries.set(ledgerEntries);

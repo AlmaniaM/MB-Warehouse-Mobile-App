@@ -20,10 +20,10 @@ import {
   syncOutline
 } from 'ionicons/icons';
 
-import { ContainerType, ContainerTypeService } from '../../services/inventory-tracking/container-type.service';
-import { ContainerFilterService } from '../../services/container-tracking/container-filter.service';
-import { ContainerTrackingService } from '../../services/container-tracking/container-tracking.service';
-import { DropdownSelectComponent, DropdownOption } from '../dropdown-select/dropdown-select.component';
+import { ContainerType, ContainerTypeService } from '../../../../services/inventory-tracking/container-type.service';
+import { ContainerFilterService } from '../../../../services/container-tracking/container-filter.service';
+import { ContainerTrackingService } from '../../../../services/container-tracking/container-tracking.service';
+import { DropdownSelectComponent, DropdownOption } from '../../../../components/dropdown-select/dropdown-select.component';
 
 @Component({
   selector: 'app-container-filter',
@@ -43,22 +43,23 @@ import { DropdownSelectComponent, DropdownOption } from '../dropdown-select/drop
   ]
 })
 export class ContainerFilterComponent {
+  // Injections
   private readonly containerTypeService = inject(ContainerTypeService);
   private readonly containerTrackingService = inject(ContainerTrackingService);
   private readonly containerFilterService = inject(ContainerFilterService);
-
-  readonly isLoading = computed(() => this.containerTypeService.status() === 'fetching');
-  readonly isPreviewLoading = computed(() => this.containerFilterService.isPreviewLoading());
-  readonly selectedContainerTypes = this.containerFilterService.selectedContainerTypes;
-  readonly previewFilteredCount = this.containerFilterService.previewFilteredCount;
-  readonly selectedDateRange = this.containerFilterService.selectedDateRange;
-  readonly isStartDateOpen = signal(false);
-  readonly isEndDateOpen = signal(false);
 
   readonly applyFilters = output<void>();
   readonly resetFilters = output<void>();
   readonly refreshData = output<void>();
 
+  readonly selectedContainerTypes = this.containerFilterService.selectedContainerTypes;
+  readonly previewFilteredCount = this.containerFilterService.previewFilteredCount;
+  readonly selectedDateRange = this.containerFilterService.selectedDateRange;
+  readonly isStartDateOpen = signal<boolean>(false);
+  readonly isEndDateOpen = signal<boolean>(false);
+
+  readonly isLoading = computed(() => this.containerTypeService.status() === 'fetching');
+  readonly isPreviewLoading = computed(() => this.containerFilterService.isPreviewLoading());
   readonly containerTypesText = computed(() => this.containerFilterService.formatContainerTypeSelection());
   readonly dateRangeText = computed(() => this.containerFilterService.formatDateRange());
   readonly hasActiveFilters = computed(() => this.containerFilterService.hasActiveFilters());
@@ -94,49 +95,49 @@ export class ContainerFilterComponent {
     });
   }
 
-  onContainerTypeSelectionChange(selection: ContainerType | ContainerType[] | null) {
+  onContainerTypeSelectionChange(selection: ContainerType | ContainerType[] | null): void {
     this.containerFilterService.setContainerTypes(
       Array.isArray(selection) ? selection : (selection ? [selection] : [])
     );
   }
 
-  onStartDateChange(event: any) {
+  onStartDateChange(event: any): void {
     const date = event.detail.value;
     const currentRange = this.selectedDateRange();
     this.containerFilterService.setDateRange(date, currentRange.endDate);
     this.isStartDateOpen.set(false);
   }
 
-  onEndDateChange(event: any) {
+  onEndDateChange(event: any): void {
     const date = event.detail.value;
     const currentRange = this.selectedDateRange();
     this.containerFilterService.setDateRange(currentRange.startDate, date);
     this.isEndDateOpen.set(false);
   }
 
-  clearContainerTypes() {
+  clearContainerTypes(): void {
     this.containerFilterService.clearContainerTypes();
   }
 
-  clearDateRange() {
+  clearDateRange(): void {
     this.containerFilterService.clearDateRange();
   }
 
-  onResetFilters() {
+  onResetFilters(): void {
     this.containerFilterService.resetAllFilters();
     this.resetFilters.emit();
   }
 
-  onApplyFilters() {
+  onApplyFilters(): void {
     this.containerFilterService.previewFilteredCount.set(null);
     this.applyFilters.emit();
   }
 
-  onRefreshData() {
+  onRefreshData(): void {
     this.refreshData.emit();
   }
 
-  updateFilterPreview() {
+  private updateFilterPreview(): void {
     const containerTypes = this.selectedContainerTypes();
     const dateRange = this.selectedDateRange();
     const hasActiveFilters = containerTypes.length > 0 || dateRange.startDate || dateRange.endDate;

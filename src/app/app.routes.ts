@@ -45,10 +45,13 @@ export const routes: Routes = [
           {
             path: 'ledger',
             loadComponent: () => import('./pages/container-tracking/container-ledger/container-ledger.page').then(page => page.ContainerLedgerPage)
-          },
-          {
+          }, {
             path: 'customer-ledger',
             loadComponent: () => import('./pages/container-tracking/customer-container-ledger/customer-container-ledger.page').then(page => page.CustomerContainerLedgerPage)
+          },
+          {
+            path: 'receipts',
+            loadComponent: () => import('./pages/container-tracking/receipts/receipts.page').then(page => page.ReceiptsPage)
           },
           {
             path: 'ledger-summary',

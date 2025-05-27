@@ -1,15 +1,9 @@
 <div class="form-container">
   <div class="form-content">
-    <!-- Container Type -->
-    <app-dropdown-select
-      label="Container Type *"
-      placeholder="Select a container type"
-      [options]="containerTypeOptions()"
-      [allowNullOption]="false"
+    <app-container-type-select
+      label="Container Types *"
       [multiple]="false"
-      [(selectedValue)]="selectedContainerType"
-      (selectionChange)="validateForm()"
-      [enableSearch]="true"
+      [(selectedContainerTypes)]="selectedContainerType"
     />
 
     <!-- Quantity -->
@@ -46,7 +40,6 @@
         ></ion-datetime>
       </ng-template>
     </ion-modal>
-
     <!-- From/To Type Selection -->
     <div class="type-selector">
       <app-dropdown-select
@@ -56,7 +49,6 @@
         [allowNullOption]="false"
         [multiple]="false"
         [(selectedValue)]="fromType"
-        (selectionChange)="onFromTypeChange()"
         [enableSearch]="true"
       />
 
@@ -67,22 +59,19 @@
         [allowNullOption]="false"
         [multiple]="false"
         [(selectedValue)]="toType"
-        (selectionChange)="onToTypeChange()"
         [enableSearch]="true"
       />
     </div>
 
     <!-- Customer Selection (only shown if either from or to type is Customer) -->
     @if (fromType() === 'Customer' || toType() === 'Customer') {
-    <app-dropdown-select
+    <app-customer-select
       label="Customer *"
       placeholder="Select a customer"
-      [options]="customerOptions()"
-      [allowNullOption]="false"
       [multiple]="false"
-      [(selectedValue)]="selectedCustomer"
-      (selectionChange)="validateForm()"
       [enableSearch]="true"
+      [(selectedCustomers)]="selectedCustomer"
+      (selectedCustomersChange)="validateForm()"
     />
 
     <!-- Customer Invoice Number (optional) -->
@@ -121,18 +110,15 @@
   </div>
 
   <!-- Form Actions -->
-  <div class="form-actions">
-    <ion-button fill="outline" color="primary" (click)="resetForm()">
-      Reset
-    </ion-button>
-    <ion-button
-      color="secondary"
-      [disabled]="!formValid() || isLoading()"
-      (click)="submitForm()"
-    >
-      @if (isLoading()) {
-      <ion-spinner name="dots" color="light"></ion-spinner>
-      } @else { Submit }
-    </ion-button>
-  </div>
+  <app-form-action-buttons
+    [config]="{
+      isLoading: isLoading(),
+      isFormValid: formValid(),
+      isEditMode: false,
+      resetLabel: 'Reset',
+      submitLabel: 'Submit'
+    }"
+    (resetClicked)="resetForm()"
+    (submitClicked)="submitForm()"
+  ></app-form-action-buttons>
 </div>

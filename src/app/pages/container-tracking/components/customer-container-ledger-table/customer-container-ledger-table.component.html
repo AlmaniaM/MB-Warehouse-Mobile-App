@@ -1,14 +1,16 @@
 <app-list-view
   [title]="'Customer Container Ledger'"
-  [totals]="containerTypeTotals()"
   [items]="filteredEntries()"
+  [totals]="totals()"
   [isLoading]="isLoading()"
   [disableSummary]="disableSummary()"
+  [disableFilters]="disableFilters()"
   [emptyStateMessage]="'No customer container ledger entries found'"
   [trackByFn]="trackByEntryId.bind(this)"
 >
   <!-- Filter Template -->
   <ng-template #filterTemplate>
+    @if (!disableFilters()) {
     <div class="filters-content">
       <!-- Year Filter -->
       <app-dropdown-select
@@ -78,43 +80,14 @@
         </div>
       </div>
     </div>
+    }
   </ng-template>
-
   <!-- Total Quantity Template -->
   <ng-template #summaryTemplate>
-    <ion-card class="total-quantity-card">
-      <ion-card-content>
-        <div class="total-display">
-          <div class="total-label">Total Quantity</div>
-          <div
-            class="total-value"
-            [ngClass]="{
-              positive: containerTypeTotals() > 0,
-              negative: containerTypeTotals() < 0,
-              neutral: containerTypeTotals() === 0
-            }"
-          >
-            <ion-icon
-              [name]="
-                containerTypeTotals() > 0
-                  ? 'arrow-up'
-                  : containerTypeTotals() < 0
-                  ? 'arrow-down'
-                  : 'remove'
-              "
-              [color]="
-                containerTypeTotals() > 0
-                  ? 'success'
-                  : containerTypeTotals() < 0
-                  ? 'danger'
-                  : 'medium'
-              "
-            ></ion-icon>
-            <span>{{ containerTypeTotals() }}</span>
-          </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
+    <app-container-totals-summary
+      [entries]="filteredEntries()"
+      title="Total Quantity"
+    ></app-container-totals-summary>
   </ng-template>
 
   <!-- Item Template -->
@@ -134,14 +107,14 @@
         <!-- Middle Section: Customer Info -->
         <div class="entry-details">
           @if (entry.customerName) {
-          <div class="customer-info">
+          <div class="entry-info customer-info">
             {{ entry.customerName }}
             @if (entry.customerRanch) {
             <span class="customer-ranch">{{ entry.customerRanch }}</span>
             }
           </div>
           } @if (entry.customerInvoiceNumber) {
-          <div class="invoice-info">
+          <div class="entry-info invoice-info">
             Invoice: {{ entry.customerInvoiceNumber }}
           </div>
           }

@@ -44,3 +44,28 @@ ion-select {
   --ion-safe-area-top: env(safe-area-inset-top);
   --ion-safe-area-bottom: env(safe-area-inset-bottom);
 }
+
+/* Custom action sheet styling with maximum specificity to override Ionic */
+.custom-action-sheet .action-sheet-button .action-sheet-button-inner {
+  justify-content: center !important;
+  text-align: center !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+}
+
+.custom-action-sheet .action-sheet-button .action-sheet-button-inner .action-sheet-title {
+  text-align: center !important;
+  flex: 1 !important;
+}
+
+.custom-action-sheet .action-sheet-button .action-sheet-button-inner .action-sheet-icon {
+  margin-right: 12px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Hide icon for Cancel button to keep it centered */
+.custom-action-sheet .action-sheet-button.cancel-button .action-sheet-button-inner .action-sheet-icon {
+  display: none !important;
+}

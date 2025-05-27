@@ -1,0 +1,76 @@
+ion-content {
+  --background: #ffffff;
+  --padding-bottom: 72px;
+  padding: 4px;
+}
+
+:host ::ng-deep app-return-receipt-form-fab ion-fab {
+  margin-right: .4rem;
+}
+
+// Custom action sheet styling for perfect text centering
+:host ::ng-deep .custom-action-sheet {
+  // Use Ionic CSS custom properties for cleaner control
+  --width: 100%;
+  --max-width: 100%;
+  --border-radius: 0;
+
+  // Target all action sheet buttons for full width and centered text
+  .action-sheet-button {
+    width: 100% !important;
+
+    // Target with maximum specificity to override Ionic's scoped CSS
+    &.action-sheet-button .action-sheet-button-inner.sc-ion-action-sheet-md {
+      justify-content: center !important;
+      text-align: center !important;
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+
+      .action-sheet-icon {
+        margin-right: 12px !important;
+        flex-shrink: 0 !important;
+      }
+
+      .action-sheet-title {
+        text-align: center !important;
+        flex: 1 !important;
+      }
+    }
+
+    // Even more specific targeting for stubborn Ionic styles
+    .action-sheet-button-inner {
+      justify-content: center !important;
+      text-align: center !important;
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+
+      .action-sheet-icon {
+        margin-right: 12px !important;
+        flex-shrink: 0 !important;
+      }
+
+      .action-sheet-title {
+        text-align: center !important;
+        flex: 1 !important;
+      }
+    }
+
+    // Hide icon for Cancel button
+    &.cancel-button .action-sheet-button-inner .action-sheet-icon {
+      display: none !important;
+    }
+  }
+
+  .action-sheet-button.action-sheet-button .action-sheet-button-inner {
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+}

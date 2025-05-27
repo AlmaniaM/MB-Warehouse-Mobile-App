@@ -6,8 +6,6 @@ import {
   IonRow,
   IonCol,
   IonButton,
-  IonCard,
-  IonCardContent,
   IonSpinner,
   IonGrid
 } from '@ionic/angular/standalone';
@@ -15,16 +13,17 @@ import { CustomerContainerLedgerEntry, ContainerTrackingService } from '../../..
 import { ContainerType } from '../../../../services/inventory-tracking/container-type.service';
 import { Customer } from '../../../../services/source-lists/customer.service';
 import { addIcons } from 'ionicons';
-import { arrowUp, arrowDown, chevronDown, remove, starOutline, refresh, closeCircleOutline, filterOutline } from 'ionicons/icons';
+import { chevronDown, refresh, closeCircleOutline, filterOutline } from 'ionicons/icons';
 import { DropdownSelectComponent, DropdownOption } from '../../../../components/dropdown-select/dropdown-select.component';
 import { ListViewComponent } from '../../../../components/list-view/list-view.component';
+import { ContainerTotalsSummaryComponent } from '../container-totals-summary/container-totals-summary.component';
+import { TotalsCalculatorService } from '../../services/totals-calculator.service';
 
 @Component({
   selector: 'app-customer-container-ledger-table',
   templateUrl: './customer-container-ledger-table.component.html',
   styleUrls: ['./customer-container-ledger-table.component.scss'],
-  standalone: true,
-  imports: [
+  standalone: true, imports: [
     CommonModule,
     DatePipe,
     IonItem,
@@ -33,19 +32,21 @@ import { ListViewComponent } from '../../../../components/list-view/list-view.co
     IonRow,
     IonCol,
     IonButton,
-    IonCard,
-    IonCardContent,
     IonSpinner,
     DropdownSelectComponent,
-    ListViewComponent
+    ListViewComponent,
+    ContainerTotalsSummaryComponent
   ]
 })
 export class CustomerContainerLedgerTableComponent {
+  private readonly totalsCalculatorService = inject(TotalsCalculatorService);
+
   readonly containerTypes = input<ContainerType[]>([]);
   readonly customers = input<Customer[]>([]);
   readonly ledgerEntries = input<CustomerContainerLedgerEntry[]>([]);
   readonly isLoading = input<boolean>(false);
   readonly disableSummary = input<boolean>(false);
+  readonly disableFilters = input<boolean>(false);
 
   readonly listView = viewChild<ListViewComponent<CustomerContainerLedgerEntry>>(ListViewComponent);
 
@@ -53,30 +54,18 @@ export class CustomerContainerLedgerTableComponent {
   readonly selectedYear = signal<number | null>((new Date()).getFullYear());
   readonly selectedContainerTypes = signal<ContainerType[]>([]);
   readonly selectedCustomers = signal<Customer[]>([]);
-
   readonly yearOptions = computed<DropdownOption<number>[]>(() => this.getAvailableYears());
   readonly containerTypeOptions = computed<DropdownOption<ContainerType>[]>(() =>
     this.containerTypes().map(type => ({
       label: type.name,
       value: type
     }))
-  );
-  readonly customerOptions = computed<DropdownOption<Customer>[]>(() =>
+  ); readonly customerOptions = computed<DropdownOption<Customer>[]>(() =>
     this.customers().map(customer => ({
       label: customer.name,
       value: customer
     }))
   );
-
-  readonly containerTypeTotals = computed(() => {
-    const entries = this.filteredEntries();
-    if (!entries || entries.length === 0) return 0;
-
-    return entries.reduce((total, entry) => {
-      return total + (entry.quantity || 0);
-    }, 0);
-  });
-
   readonly filteredEntries = computed(() => {
     const entries = this.ledgerEntries();
     const selectedTypes = this.selectedContainerTypes();
@@ -110,7 +99,6 @@ export class CustomerContainerLedgerTableComponent {
 
     return filtered;
   });
-
   readonly hasActiveFilters = computed(() => {
     const selectedTypes = this.selectedContainerTypes();
     const selectedCustomers = this.selectedCustomers();
@@ -122,13 +110,11 @@ export class CustomerContainerLedgerTableComponent {
       year !== null
     );
   });
+  readonly totals = computed(() => this.totalsCalculatorService.calculateTotals(this.filteredEntries()));
 
   constructor() {
     addIcons({
-      'arrow-up': arrowUp,
-      'arrow-down': arrowDown,
       'chevron-down': chevronDown,
-      'remove': remove,
       'close-circle-outline': closeCircleOutline,
       'refresh-outline': refresh,
     });

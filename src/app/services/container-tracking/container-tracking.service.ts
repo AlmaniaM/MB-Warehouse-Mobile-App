@@ -54,6 +54,16 @@ export interface ContainerTypeQuantityTotal {
   totalQuantity: number;
 }
 
+export interface ContainerReturnReceiptEntry {
+  id?: number;
+  containerReceiptReference?: string | null;
+  date?: string | null;
+  customerId?: number | null;
+  customerName?: string | null;
+  autoTimestampInsertUTC?: string | null;
+  autoTimestampUpdateUTC?: string | null;
+}
+
 // Type aliases for common parameter combinations
 type FilterOptions = {
   containerTypeIds?: number[];
@@ -67,17 +77,20 @@ type FilterOptions = {
   providedIn: 'root',
 })
 export class ContainerTrackingService {
+  private readonly httpClient = inject(HttpClient);
+  private readonly customerService = inject(CustomerService);
+
   readonly containerLedgerEntries = signal<ContainerLedgerEntry[]>([]);
   readonly customerContainerLedgerEntries = signal<CustomerContainerLedgerEntry[]>([]);
+  readonly receiptCustomerContainerLedgerEntries = signal<CustomerContainerLedgerEntry[]>([]);
   readonly containerTypeQuantityTotals = signal<ContainerTypeQuantityTotal[]>([]);
 
   readonly isFetchingContainerLedgerEntries = signal<boolean>(false);
   readonly isFetchingCustomerContainerLedgers = signal<boolean>(false);
+  readonly isFetchingReceiptCustomerContainerLedgers = signal<boolean>(false);
   readonly isFetchingContainerTypeQuantityTotals = signal<boolean>(false);
 
   private readonly baseUrl = `${environment.azureInventoryTrackingApiBaseUrl}mbn/containertracking`;
-  private readonly httpClient = inject(HttpClient);
-  private readonly customerService = inject(CustomerService);
 
   createContainerLedgerTransaction(transaction: ContainerLedgerTransaction): Observable<ContainerLedgerTransaction> {
     return this.httpClient.post<ContainerLedgerTransaction>(`${this.baseUrl}/ledger`, transaction);
@@ -151,6 +164,25 @@ export class ContainerTrackingService {
         next: entries => {
           this.customerContainerLedgerEntries.set(entries);
           this.isFetchingCustomerContainerLedgers.set(false);
+        },
+        error: () => { }
+      });
+  }
+
+  getCustomerContainerLedgerEntriesByReturnReceiptId(returnReceiptId: string): void {
+    this.isFetchingReceiptCustomerContainerLedgers.set(true);
+    this.httpClient.get<CustomerContainerLedgerEntry[]>(`${this.baseUrl}/customerledger/${returnReceiptId}`)
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching customer container ledger entries for receipt:', error);
+          this.isFetchingReceiptCustomerContainerLedgers.set(false);
+          throw error;
+        })
+      )
+      .subscribe({
+        next: entries => {
+          this.receiptCustomerContainerLedgerEntries.set(entries);
+          this.isFetchingReceiptCustomerContainerLedgers.set(false);
         },
         error: () => { }
       });

@@ -1,0 +1,25 @@
+<!-- Form Actions - Fixed Bottom Buttons -->
+<div class="form-actions">
+  @if (shouldShowReset) {
+  <ion-button
+    fill="outline"
+    color="primary"
+    (click)="onResetClick()"
+    [disabled]="isLoading"
+  >
+    {{ resetLabel }}
+  </ion-button>
+  }
+
+  <ion-button
+    color="secondary"
+    [disabled]="!isFormValid || isLoading"
+    (click)="onSubmitClick()"
+  >
+    @if (isLoading) {
+    <ion-spinner name="dots" color="light"></ion-spinner>
+    } @else {
+    {{ buttonText }}
+    }
+  </ion-button>
+</div>

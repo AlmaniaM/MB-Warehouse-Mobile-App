@@ -1,4 +1,4 @@
-import { Component, computed, inject, model, output } from '@angular/core';
+import { Component, computed, inject, input, model, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Customer, CustomerService } from '../../services/source-lists/customer.service';
 import { DropdownOption, DropdownSelectComponent } from '../dropdown-select/dropdown-select.component';
@@ -15,6 +15,12 @@ import { DropdownOption, DropdownSelectComponent } from '../dropdown-select/drop
 })
 export class CustomerSelectComponent {
   private readonly customerService = inject(CustomerService);
+
+  readonly label = input<string>('Container Type');
+  readonly placeholder = input<string>('Select Container Type');
+  readonly multiple = input<boolean>(false);
+  readonly allowNullOption = input<boolean>(false);
+  readonly enableSearch = input<boolean>(true);
 
   readonly selectedCustomers = model<Customer[]>([]);
 

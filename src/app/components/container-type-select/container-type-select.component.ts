@@ -1,4 +1,4 @@
-import { Component, computed, inject, model, output } from '@angular/core';
+import { Component, computed, inject, input, model, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ContainerType, ContainerTypeService } from '../../services/inventory-tracking/container-type.service';
 import { DropdownOption, DropdownSelectComponent } from '../dropdown-select/dropdown-select.component';
@@ -15,6 +15,11 @@ import { DropdownOption, DropdownSelectComponent } from '../dropdown-select/drop
 })
 export class ContainerTypeSelectComponent {
   private readonly containerTypeService = inject(ContainerTypeService);
+
+  readonly label = input<string>('Container Type');
+  readonly placeholder = input<string>('Select Container Type');
+  readonly multiple = input<boolean>(false);
+  readonly allowNullOption = input<boolean>(false);
 
   readonly selectedContainerTypes = model<ContainerType[]>([]);
 

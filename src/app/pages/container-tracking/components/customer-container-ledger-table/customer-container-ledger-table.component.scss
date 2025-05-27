@@ -1,4 +1,5 @@
 $label-background: rgba(0, 0, 0, 0.03);
+$label-active-background: rgba(0, 0, 0, 0.02);
 
 .ledger-table-container {
   width: 100%;
@@ -129,12 +130,19 @@ ion-list.ledger-list {
   border-bottom: 1px solid $label-background;
 }
 
+.entry-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 28px;
+}
+
 .customer-info {
   font-size: 15px;
   font-weight: 500;
   padding: 3px 8px;
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.02);
+  background-color: $label-background;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -153,8 +161,11 @@ ion-list.ledger-list {
 
 .invoice-info {
   font-size: 13px;
+  text-align: center;
   color: var(--ion-color-medium);
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   background-color: $label-background;
   padding: 3px 8px;
   border-radius: 4px;

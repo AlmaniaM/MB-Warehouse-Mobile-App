@@ -1,9 +1,10 @@
 <app-dropdown-select
-  label="Customer"
-  placeholder="Select Customers"
+  [label]="label()"
+  [placeholder]="placeholder()"
   [options]="customerOptions()"
-  [allowNullOption]="false"
-  [multiple]="true"
+  [allowNullOption]="allowNullOption()"
+  [multiple]="multiple()"
+  [enableSearch]="enableSearch()"
   [(selectedValue)]="selectedCustomers"
   (selectionChange)="onSelectionChange($event)"
-></app-dropdown-select>
+/>

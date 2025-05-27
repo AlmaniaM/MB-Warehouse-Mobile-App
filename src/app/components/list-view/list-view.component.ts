@@ -12,6 +12,8 @@ import {
   IonLabel,
   IonIcon
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { arrowDown, arrowUp, remove } from 'ionicons/icons';
 
 @Component({
   selector: 'app-list-view',
@@ -37,9 +39,11 @@ export class ListViewComponent<T> {
   readonly title = input<string>('List View');
   readonly emptyStateMessage = input<string>('No items found');
   readonly disableSummary = input<boolean>(false);
+  readonly disableFilters = input<boolean>(false);
+  readonly disableTotals = input<boolean>(false);
   readonly pageSize = input<number>(15);
   readonly trackByFn = input<(index: number, item: T) => any>((_, item: any) => item?.id || Math.random());
-  readonly totals = input<number>(0);
+  readonly totals = input<number | null | undefined>(0);
 
   readonly loadMore = output<any>();
 
@@ -55,6 +59,12 @@ export class ListViewComponent<T> {
   readonly defaultExpandedAccordions = new Set(['filters', 'summary']);
 
   constructor() {
+    addIcons({
+      'arrow-up': arrowUp,
+      'arrow-down': arrowDown,
+      'remove': remove
+    });
+
     effect(() => {
       const items = this.getNextDisplayedItems();
 
@@ -65,11 +75,11 @@ export class ListViewComponent<T> {
       this.displayedItems.set(items);
     });
   }
-
   get totalsClass(): string {
-    if (this.totals() === null || this.totals() === undefined) return 'neutral';
-    if (this.totals() > 0) return 'positive';
-    if (this.totals() < 0) return 'negative';
+    const totalsValue = this.totals();
+    if (totalsValue === null || totalsValue === undefined) return 'neutral';
+    if (totalsValue > 0) return 'positive';
+    if (totalsValue < 0) return 'negative';
     return 'neutral';
   }
 

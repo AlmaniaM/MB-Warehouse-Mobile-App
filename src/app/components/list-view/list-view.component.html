@@ -15,7 +15,7 @@
     }
 
     <!-- Filter Section -->
-    @if (filterTemplateRef()) {
+    @if (filterTemplateRef() && !disableFilters()) {
     <ion-accordion-group [multiple]="true" [value]="defaultExpandedAccordions">
       <ion-accordion value="filters">
         <ion-item slot="header">
@@ -78,20 +78,28 @@
   </div>
 
   <!-- Bottom Totals Panel -->
-  @if (totals() !== undefined && totals() !== null) {
+  @if (totals() !== undefined && totals() !== null && !disableTotals()) {
   <div class="totals-bottom-panel">
     <div class="totals-content">
       <span class="totals-label">Total</span>
       <div class="totals-value" [ngClass]="totalsClass">
         <ion-icon
           [attr.name]="
-            totals() > 0 ? 'arrow-up' : totals() < 0 ? 'arrow-down' : 'remove'
+            (totals() ?? 0) > 0
+              ? 'arrow-up'
+              : (totals() ?? 0) < 0
+              ? 'arrow-down'
+              : 'remove'
           "
           [attr.color]="
-            totals() > 0 ? 'success' : totals() < 0 ? 'danger' : 'medium'
+            (totals() ?? 0) > 0
+              ? 'success'
+              : (totals() ?? 0) < 0
+              ? 'danger'
+              : 'medium'
           "
         ></ion-icon>
-        <span>{{ totals() }}</span>
+        <span>{{ totals() ?? 0 }}</span>
       </div>
     </div>
   </div>

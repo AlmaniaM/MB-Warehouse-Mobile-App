@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title> Container Entries </ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="closeModal()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (receipt) {
+  <div class="modal-header">
+    <h3>{{ receipt.containerReceiptReference || "No Reference" }}</h3>
+    <p>{{ receipt.date | date : "MMM d, y" }}</p>
+    @if (receipt.customerName) {
+    <p class="customer-name">Customer: {{ receipt.customerName }}</p>
+    }
+  </div>
+
+  <app-customer-container-ledger-table
+    [ledgerEntries]="ledgerEntries()"
+    [isLoading]="isLoading()"
+    [disableSummary]="false"
+    [disableFilters]="true"
+  ></app-customer-container-ledger-table>
+  } @else {
+  <div class="loading-container">
+    <ion-spinner name="circular"></ion-spinner>
+    <ion-text>Loading receipt data...</ion-text>
+  </div>
+  }
+</ion-content>

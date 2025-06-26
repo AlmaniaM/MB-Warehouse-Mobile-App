@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, forkJoin } from 'rxjs';
+import { Observable, catchError, forkJoin } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ToastService } from '../../services/utils/toast.service';
 
@@ -34,6 +34,8 @@ export interface Customer {
   appUser: string | null;
   outsideSalesCommissionRate: number | null;
 }
+
+export const MBN_NAME = `mike and brian's nursery`;
 
 @Injectable({
   providedIn: 'root'

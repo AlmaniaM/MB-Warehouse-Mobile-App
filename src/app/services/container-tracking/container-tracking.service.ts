@@ -11,7 +11,6 @@ export interface ContainerLedgerEntry {
   date: string | null;
   note: string | null;
   quantity: number | null;
-  balance?: number;
   customerName?: string | null;
   autoTimestampInsertUTC: string | null;
   autoTimestampUpdateUTC: string | null;
@@ -55,6 +54,16 @@ export interface ContainerTypeQuantityTotal {
   totalQuantity: number;
 }
 
+export interface ContainerReturnReceiptEntry {
+  id?: number;
+  containerReceiptReference?: string | null;
+  date?: string | null;
+  customerId?: number | null;
+  customerName?: string | null;
+  autoTimestampInsertUTC?: string | null;
+  autoTimestampUpdateUTC?: string | null;
+}
+
 // Type aliases for common parameter combinations
 type FilterOptions = {
   containerTypeIds?: number[];
@@ -64,25 +73,26 @@ type FilterOptions = {
   force?: boolean;
 }
 
-type ApiResponse<T> = Observable<T>;
-
 @Injectable({
   providedIn: 'root',
 })
 export class ContainerTrackingService {
+  private readonly httpClient = inject(HttpClient);
+  private readonly customerService = inject(CustomerService);
+
   readonly containerLedgerEntries = signal<ContainerLedgerEntry[]>([]);
   readonly customerContainerLedgerEntries = signal<CustomerContainerLedgerEntry[]>([]);
+  readonly receiptCustomerContainerLedgerEntries = signal<CustomerContainerLedgerEntry[]>([]);
   readonly containerTypeQuantityTotals = signal<ContainerTypeQuantityTotal[]>([]);
 
   readonly isFetchingContainerLedgerEntries = signal<boolean>(false);
   readonly isFetchingCustomerContainerLedgers = signal<boolean>(false);
+  readonly isFetchingReceiptCustomerContainerLedgers = signal<boolean>(false);
   readonly isFetchingContainerTypeQuantityTotals = signal<boolean>(false);
 
   private readonly baseUrl = `${environment.azureInventoryTrackingApiBaseUrl}mbn/containertracking`;
-  private readonly httpClient = inject(HttpClient);
-  private readonly customerService = inject(CustomerService);
 
-  createContainerLedgerTransaction(transaction: ContainerLedgerTransaction): ApiResponse<ContainerLedgerTransaction> {
+  createContainerLedgerTransaction(transaction: ContainerLedgerTransaction): Observable<ContainerLedgerTransaction> {
     return this.httpClient.post<ContainerLedgerTransaction>(`${this.baseUrl}/ledger`, transaction);
   }
 
@@ -94,7 +104,6 @@ export class ContainerTrackingService {
     this.isFetchingContainerLedgerEntries.set(true);
     this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`)
       .pipe(
-        map(entries => this.calculateBalance(entries)),
         catchError(error => {
           console.error('Error fetching container ledger entries:', error);
           this.isFetchingContainerLedgerEntries.set(false);
@@ -122,7 +131,6 @@ export class ContainerTrackingService {
     this.isFetchingContainerLedgerEntries.set(true);
     this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger/type/${containerTypeId}`)
       .pipe(
-        map(entries => this.calculateBalance(entries)),
         catchError(error => {
           console.error(`Error fetching container ledger entries for type ${containerTypeId}:`, error);
           this.isFetchingContainerLedgerEntries.set(false);
@@ -156,6 +164,25 @@ export class ContainerTrackingService {
         next: entries => {
           this.customerContainerLedgerEntries.set(entries);
           this.isFetchingCustomerContainerLedgers.set(false);
+        },
+        error: () => { }
+      });
+  }
+
+  getCustomerContainerLedgerEntriesByReturnReceiptId(returnReceiptId: string): void {
+    this.isFetchingReceiptCustomerContainerLedgers.set(true);
+    this.httpClient.get<CustomerContainerLedgerEntry[]>(`${this.baseUrl}/customerledger/${returnReceiptId}`)
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching customer container ledger entries for receipt:', error);
+          this.isFetchingReceiptCustomerContainerLedgers.set(false);
+          throw error;
+        })
+      )
+      .subscribe({
+        next: entries => {
+          this.receiptCustomerContainerLedgerEntries.set(entries);
+          this.isFetchingReceiptCustomerContainerLedgers.set(false);
         },
         error: () => { }
       });
@@ -198,7 +225,6 @@ export class ContainerTrackingService {
 
     this.fetchCustomerLedgerEntries(customerId)
       .pipe(
-        map(convertedEntries => this.calculateBalance(convertedEntries)),
         catchError(error => {
           console.error(`Error fetching container ledger entries for customer ${customerId}:`, error);
           this.isFetchingContainerLedgerEntries.set(false);
@@ -206,34 +232,110 @@ export class ContainerTrackingService {
         })
       )
       .subscribe({
-        next: entriesWithBalance => {
-          this.containerLedgerEntries.set(entriesWithBalance);
+        next: entries => {
+          this.containerLedgerEntries.set(entries);
           this.isFetchingContainerLedgerEntries.set(false);
         },
         error: () => { }
       });
   }
 
-  private calculateBalance(entries: ContainerLedgerEntry[]): ContainerLedgerEntry[] {
-    const sortedEntries = [...entries].sort((a, b) => {
-      if (!a.date) return -1;
-      if (!b.date) return 1;
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    });
+  getContainerLedgerEntriesWithDateRange(
+    containerTypeIds: number[] = [],
+    startDate: string | null = null,
+    endDate: string | null = null,
+    force: boolean = false
+  ): void {
+    if (containerTypeIds.length === 0 && !startDate && !endDate) {
+      this.getAllContainerLedgerEntries(force);
+      return;
+    }
 
-    const balanceMap = new Map<number, number>();
-    return sortedEntries.map(entry => {
-      const containerTypeId = entry.containerTypeId || 0;
-      const currentBalance = balanceMap.get(containerTypeId) || 0;
-      const quantity = entry.quantity || 0;
-      const newBalance = currentBalance + quantity;
+    this.isFetchingContainerLedgerEntries.set(true);
+    this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`)
+      .pipe(
+        map(entries => {
+          const filteredEntries = this.filterEntries(entries, {
+            containerTypeIds,
+            startDate,
+            endDate
+          });
+          return filteredEntries;
+        }),
+        catchError(error => {
+          console.error('Error fetching and filtering container ledger entries:', error);
+          this.isFetchingContainerLedgerEntries.set(false);
+          throw error;
+        })
+      )
+      .subscribe({
+        next: entries => {
+          this.containerLedgerEntries.set(entries);
+          this.isFetchingContainerLedgerEntries.set(false);
+        },
+        error: () => { }
+      });
+  }
 
-      balanceMap.set(containerTypeId, newBalance);
-      return {
-        ...entry,
-        balance: newBalance
-      };
-    });
+  previewFilteredEntriesCount(containerTypeIds: number[] = [], customerIds: number[] = []): Observable<number> {
+    if (containerTypeIds.length === 0 && customerIds.length === 0) {
+      return this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`).pipe(
+        map(entries => entries.length),
+        catchError(error => {
+          console.error('Error previewing filter count:', error);
+          throw error;
+        })
+      );
+    }
+
+    if (customerIds.length === 0) {
+      return this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`).pipe(
+        map(entries => this.filterEntries(entries, { containerTypeIds }).length),
+        catchError(error => {
+          console.error('Error previewing container type filter count:', error);
+          throw error;
+        })
+      );
+    }
+
+    const customerObservables = customerIds.map(id => this.fetchCustomerLedgerEntries(id));
+
+    return forkJoin(customerObservables).pipe(
+      map(customerEntriesArrays => {
+        let allCustomerEntries = customerEntriesArrays.flat();
+        if (containerTypeIds.length > 0) {
+          allCustomerEntries = this.filterEntries(allCustomerEntries, { containerTypeIds });
+        }
+
+        return allCustomerEntries.length;
+      }),
+      catchError(error => {
+        console.error('Error previewing customer filter count:', error);
+        throw error;
+      })
+    );
+  }
+
+  previewFilteredEntriesWithDateRange(
+    containerTypeIds: number[] = [],
+    startDate: string | null = null,
+    endDate: string | null = null
+  ): Observable<number> {
+    return this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`).pipe(
+      map(entries => {
+        const filteredEntries = this.filterEntries(entries, {
+          containerTypeIds,
+          startDate,
+          endDate
+        });
+
+        return filteredEntries.length;
+      }),
+      catchError(error => {
+        console.error('Error previewing filter count:', error);
+        throw error;
+      })
+    );
   }
 
   private convertToContainerLedgerEntry(entry: CustomerContainerLedgerEntry): ContainerLedgerEntry {
@@ -303,42 +405,6 @@ export class ContainerTrackingService {
     return filteredEntries;
   }
 
-  public getContainerLedgerEntriesWithDateRange(
-    containerTypeIds: number[] = [],
-    startDate: string | null = null,
-    endDate: string | null = null,
-    force: boolean = false
-  ): void {
-    if (containerTypeIds.length === 0 && !startDate && !endDate) {
-      this.getAllContainerLedgerEntries(force);
-      return;
-    }
-
-    this.isFetchingContainerLedgerEntries.set(true); this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`)
-      .pipe(
-        map(entries => {
-          const filteredEntries = this.filterEntries(entries, {
-            containerTypeIds,
-            startDate,
-            endDate
-          });
-          return this.calculateBalance(filteredEntries);
-        }),
-        catchError(error => {
-          console.error('Error fetching and filtering container ledger entries:', error);
-          this.isFetchingContainerLedgerEntries.set(false);
-          throw error;
-        })
-      )
-      .subscribe({
-        next: entriesWithBalance => {
-          this.containerLedgerEntries.set(entriesWithBalance);
-          this.isFetchingContainerLedgerEntries.set(false);
-        },
-        error: () => { }
-      });
-  }
-
   private fetchCustomerLedgerEntries(customerId: number): Observable<ContainerLedgerEntry[]> {
     return this.httpClient.get<CustomerContainerLedgerEntry[]>(`${this.baseUrl}/customerledger/customer/${customerId}`)
       .pipe(
@@ -347,66 +413,5 @@ export class ContainerTrackingService {
           console.error(`Error fetching customer ledger entries for customer ${customerId}:`, error);
           return of([]);
         }));
-  }
-
-  public previewFilteredEntriesCount(containerTypeIds: number[] = [], customerIds: number[] = []): Observable<number> {
-    if (containerTypeIds.length === 0 && customerIds.length === 0) {
-      return this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`).pipe(
-        map(entries => entries.length),
-        catchError(error => {
-          console.error('Error previewing filter count:', error);
-          throw error;
-        })
-      );
-    }
-
-    if (customerIds.length === 0) {
-      return this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`).pipe(
-        map(entries => this.filterEntries(entries, { containerTypeIds }).length),
-        catchError(error => {
-          console.error('Error previewing container type filter count:', error);
-          throw error;
-        })
-      );
-    }
-
-    const customerObservables = customerIds.map(id => this.fetchCustomerLedgerEntries(id));
-
-    return forkJoin(customerObservables).pipe(
-      map(customerEntriesArrays => {
-        let allCustomerEntries = customerEntriesArrays.flat();
-        if (containerTypeIds.length > 0) {
-          allCustomerEntries = this.filterEntries(allCustomerEntries, { containerTypeIds });
-        }
-
-        return allCustomerEntries.length;
-      }),
-      catchError(error => {
-        console.error('Error previewing customer filter count:', error);
-        throw error;
-      })
-    );
-  }
-
-  public previewFilteredEntriesWithDateRange(
-    containerTypeIds: number[] = [],
-    startDate: string | null = null,
-    endDate: string | null = null
-  ): Observable<number> {
-    return this.httpClient.get<ContainerLedgerEntry[]>(`${this.baseUrl}/ledger`).pipe(
-      map(entries => {
-        const filteredEntries = this.filterEntries(entries, {
-          containerTypeIds,
-          startDate,
-          endDate
-        });
-
-        return filteredEntries.length;
-      }),
-      catchError(error => {
-        console.error('Error previewing filter count:', error);
-        throw error;
-      })
-    );
   }
 }

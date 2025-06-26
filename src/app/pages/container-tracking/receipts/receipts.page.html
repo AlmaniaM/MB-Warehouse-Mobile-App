@@ -1,0 +1,15 @@
+<ion-content>
+  <app-return-receipt-table
+    [returnReceipts]="returnReceipts()"
+    [isLoading]="isLoading()"
+    (receiptSelected)="onReceiptSelected($event)"
+  />
+
+  <app-return-receipt-form-fab
+    bottomMargin="16px"
+    [editReceipt]="selectedReceipt()"
+    (receiptCreated)="onReturnReceiptCreated($event)"
+    (receiptUpdated)="onReturnReceiptUpdated($event)"
+    (receiptDeleted)="onReturnReceiptDeleted($event)"
+  ></app-return-receipt-form-fab>
+</ion-content>

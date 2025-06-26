@@ -1,0 +1,87 @@
+<ion-content class="return-receipt-form">
+  <!-- Loading spinner -->
+  @if (isLoading()) {
+  <div class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+  }
+
+  <div class="form-container">
+    <div class="form-content">
+      <!-- Form Title -->
+      <h2 class="form-title">
+        {{ isEditMode() ? "Edit Return Receipt" : "New Return Receipt" }}
+      </h2>
+
+      <!-- Container Receipt Reference -->
+      <ion-item>
+        <ion-label position="stacked" color="primary"
+          >Container Receipt Reference *</ion-label
+        >
+        <ion-input
+          [(ngModel)]="containerReceiptReference"
+          placeholder="Enter receipt reference"
+          [disabled]="isLoading()"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <!-- Customer Selection -->
+      <div class="dropdown-container">
+        <ion-label class="dropdown-label" color="primary">Customer *</ion-label>
+        <app-dropdown-select
+          [label]="'Customer'"
+          [placeholder]="'Select a customer'"
+          [options]="customerOptions()"
+          [disabled]="isLoading()"
+          [allowNullOption]="false"
+          [selectedValue]="selectedCustomer()"
+          (selectionChange)="onCustomerChange($event)"
+        ></app-dropdown-select>
+      </div>
+
+      <!-- Date Selection -->
+      <ion-item button="true" (click)="openDatePicker()">
+        <ion-label position="stacked" color="primary">Date *</ion-label>
+        <ion-input
+          [value]="selectedDate() | date : 'mediumDate'"
+          placeholder="Select date"
+          readonly
+          [disabled]="isLoading()"
+        />
+        <ion-icon slot="end" name="calendar-outline" />
+      </ion-item>
+
+      <!-- Date Picker Modal -->
+      <ion-modal
+        [isOpen]="isDatePickerOpen()"
+        (didDismiss)="closeDatePicker()"
+        class="date-picker-modal"
+      >
+        <ng-template>
+          <ion-datetime
+            [value]="selectedDate()"
+            (ionChange)="onDateChange($event)"
+            presentation="date"
+            [max]="currentDate()"
+            [showDefaultButtons]="true"
+          />
+        </ng-template>
+      </ion-modal>
+    </div>
+  </div>
+
+  <!-- Form Actions - Fixed Bottom Buttons -->
+  <app-form-action-buttons
+    [config]="{
+      isLoading: isLoading(),
+      isFormValid: !!isFormValid(),
+      isEditMode: isEditMode(),
+      resetLabel: 'Reset',
+      submitLabel: 'Submit',
+      updateLabel: 'Update'
+    }"
+    (resetClicked)="resetForm()"
+    (submitClicked)="isEditMode() ? updateReceipt() : createReceipt()"
+  />
+</ion-content>

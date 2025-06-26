@@ -1,0 +1,9 @@
+<app-dropdown-select
+  [label]="label()"
+  [placeholder]="placeholder()"
+  [options]="containerTypeOptions()"
+  [allowNullOption]="allowNullOption()"
+  [multiple]="multiple()"
+  [(selectedValue)]="selectedContainerTypes"
+  (selectionChange)="onSelectionChange($event)"
+/>

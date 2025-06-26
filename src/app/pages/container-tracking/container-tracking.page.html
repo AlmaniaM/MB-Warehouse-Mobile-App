@@ -8,11 +8,19 @@
     <ion-tab-bar slot="bottom" [color]="'primary'">
       <ion-tab-button tab="ledger">
         <ion-icon [ios]="'grid-outline'" [md]="'grid-sharp'"></ion-icon>
-        <ion-label>Simplified</ion-label>
+        <ion-label>Ledger</ion-label>
+      </ion-tab-button>
+      <ion-tab-button tab="customer-ledger">
+        <ion-icon [ios]="'people-outline'" [md]="'people-sharp'"></ion-icon>
+        <ion-label>Customer</ion-label>
+      </ion-tab-button>
+      <ion-tab-button tab="receipts">
+        <ion-icon [ios]="'receipt-outline'" [md]="'receipt-sharp'"></ion-icon>
+        <ion-label>Receipts</ion-label>
       </ion-tab-button>
       <ion-tab-button tab="ledger-summary">
         <ion-icon [ios]="'book-outline'" [md]="'book-sharp'"></ion-icon>
-        <ion-label>Full Ledger</ion-label>
+        <ion-label>Summary</ion-label>
       </ion-tab-button>
     </ion-tab-bar>
     <ion-router-outlet></ion-router-outlet>

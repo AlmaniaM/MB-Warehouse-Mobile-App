@@ -6,11 +6,7 @@ import {
   IonLabel,
   IonInput,
   IonIcon,
-  IonModal,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
+  IonPopover,
   IonButton,
   IonContent,
   IonList,
@@ -34,18 +30,15 @@ export interface DropdownOption<T> {
   selector: 'app-dropdown-select',
   templateUrl: './dropdown-select.component.html',
   styleUrls: ['./dropdown-select.component.scss'],
-  standalone: true, imports: [
+  standalone: true,
+  imports: [
     CommonModule,
     FormsModule,
     IonItem,
     IonLabel,
     IonInput,
     IonIcon,
-    IonModal,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
+    IonPopover,
     IonButton,
     IonContent,
     IonList,
@@ -67,6 +60,8 @@ export class DropdownSelectComponent<T> {
 
   readonly selectionChange = output<T | T[] | null>();
 
+  readonly triggerId: string;
+
   readonly isDropdownOpen = signal<boolean>(false);
   readonly searchQuery = signal<string>('');
   readonly tempSelection = signal<T | T[] | null>(null);
@@ -83,6 +78,8 @@ export class DropdownSelectComponent<T> {
   });
 
   constructor() {
+    this.triggerId = `dropdown-${Math.random().toString(36).substring(2, 9)}`;
+
     addIcons({
       'checkmark-outline': checkmarkOutline,
       'close-outline': closeOutline,
@@ -91,7 +88,7 @@ export class DropdownSelectComponent<T> {
     });
   }
 
-  openDropdown(): void {
+  openDropdown(event?: Event): void {
     if (this.disabled()) {
       return;
     }
@@ -105,6 +102,8 @@ export class DropdownSelectComponent<T> {
     this.searchQuery.set('');
 
     if (!this.multiple()) {
+      this.confirmSelection();
+    } else {
       this.confirmSelection();
     }
   }
@@ -136,23 +135,14 @@ export class DropdownSelectComponent<T> {
       }
     } else {
       this.tempSelection.set(value);
-
-      if (!this.multiple()) {
-        this.confirmSelection();
-        this.closeDropdown();
-      }
+      this.confirmSelection();
+      this.closeDropdown();
     }
   }
 
   confirmMultiSelection(): void {
     this.confirmSelection();
     this.closeDropdown();
-  }
-
-  private confirmSelection(): void {
-    const newValue = this.tempSelection();
-    this.selectedValue.set(newValue);
-    this.selectionChange.emit(newValue);
   }
 
   isSelected(value: T | null): boolean {
@@ -187,8 +177,13 @@ export class DropdownSelectComponent<T> {
       return `${value.length} items selected`;
     }
 
-    const selectedOption = this.findOptionByValue(value as T);
-    return selectedOption ? selectedOption.label : '';
+    const selectedOption = this.findOptionByValue(value as T); return selectedOption ? selectedOption.label : '';
+  }
+
+  private confirmSelection(): void {
+    const newValue = this.tempSelection();
+    this.selectedValue.set(newValue);
+    this.selectionChange.emit(newValue);
   }
 
   private findOptionByValue(value: T): DropdownOption<T> | undefined {

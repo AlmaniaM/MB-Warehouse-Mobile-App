@@ -1,0 +1,22 @@
+<ion-content class="ion-padding">
+  <app-dropdown-select
+    label="Container Type"
+    [placeholder]="'Select Container Types'"
+    [options]="containerTypeOptions()"
+    [allowNullOption]="false"
+    [multiple]="true"
+    [(selectedValue)]="selectedContainerTypes"
+    (selectionChange)="onContainerTypeSelect($event)"
+  />
+
+  <app-container-ledger-table
+    [containerTypes]="selectedContainerTypes()"
+    [ledgerEntries]="ledgerEntries()"
+    [isLoading]="isLoading()"
+    [disableSummary]="true"
+  />
+
+  <app-ledger-entry-fab
+    (entryCreated)="onLedgerEntryCreated($event)"
+  ></app-ledger-entry-fab>
+</ion-content>

@@ -31,7 +31,7 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            redirectTo: 'ledger',
+            redirectTo: 'send',
             pathMatch: 'full'
           },
           {
@@ -44,15 +44,11 @@ export const routes: Routes = [
           },
           {
             path: 'ledger',
-            loadComponent: () => import('./pages/container-tracking/container-ledger/container-ledger.page').then(page => page.ContainerLedgerPage)
-          },
-          {
-            path: 'customer-ledger',
-            loadComponent: () => import('./pages/container-tracking/customer-container-ledger/customer-container-ledger.page').then(page => page.CustomerContainerLedgerPage)
+            loadComponent: () => import('./pages/container-ledger/container-ledger.page').then(page => page.ContainerLedgerPage)
           },
           {
             path: 'ledger-summary',
-            loadComponent: () => import('./pages/container-tracking/ledger-summary/ledger-summary.page').then(page => page.LedgerSummaryPage)
+            loadComponent: () => import('./pages/ledger-summary/ledger-summary.page').then(page => page.LedgerSummaryPage)
           }
         ]
       }

@@ -16,10 +16,9 @@
 
       <!-- Container Ledger Table Component -->
       <app-container-ledger-table
+        [containerTypes]="containerFilterService.selectedContainerTypes()"
         [ledgerEntries]="ledgerEntries()"
         [isLoading]="isLoading()"
-        [disableSummary]="true"
-        [disableFilters]="true"
       ></app-container-ledger-table>
     </div>
   </div>

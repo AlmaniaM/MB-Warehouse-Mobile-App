@@ -37,9 +37,9 @@ import { LedgerEntryFormComponent } from '../ledger-entry-form/ledger-entry-form
   ]
 })
 export class LedgerEntryFabComponent {
-  readonly entryCreated = output<boolean>();
-
   readonly isCreateLedgerFormOpen = signal<boolean>(false);
+
+  readonly entryCreated = output<boolean>();
 
   constructor() {
     addIcons({

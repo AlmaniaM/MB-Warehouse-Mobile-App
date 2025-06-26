@@ -15,16 +15,15 @@ import {
 import { addIcons } from 'ionicons';
 import { calendarOutline } from 'ionicons/icons';
 
-import { ContainerType, ContainerTypeService } from '../../../../services/inventory-tracking/container-type.service';
-import { ContainerLedgerTransaction, ContainerTrackingService } from '../../../../services/container-tracking/container-tracking.service';
+import { ContainerType, ContainerTypeService } from '../../services/inventory-tracking/container-type.service';
+import { ContainerLedgerTransaction, ContainerTrackingService } from '../../services/container-tracking/container-tracking.service';
 import { CustomerService } from 'src/app/services/source-lists/customer.service';
-import { DropdownOption, DropdownSelectComponent } from '../../../../components/dropdown-select/dropdown-select.component';
+import { DropdownOption, DropdownSelectComponent } from '../../components/dropdown-select/dropdown-select.component';
 
 @Component({
   selector: 'app-ledger-entry-form',
   templateUrl: './ledger-entry-form.component.html',
-  styleUrls: ['./ledger-entry-form.component.scss'],
-  standalone: true,
+  styleUrls: ['./ledger-entry-form.component.scss'], standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -48,30 +47,16 @@ export class LedgerEntryFormComponent implements OnInit {
   readonly formSubmitted = output<boolean>();
 
   readonly containerTypes = this.containerTypeService.containerTypes;
-  readonly customers = this.customerService.customers;
-
   readonly selectedContainerType = signal<ContainerType | null>(null);
   readonly quantity = signal<number>(0);
   readonly date = signal<string>(new Date().toISOString());
   readonly note = signal<string>('');
   readonly fromType = signal<'MBN' | 'Customer'>('MBN');
   readonly toType = signal<'MBN' | 'Customer'>('Customer');
+  readonly customers = this.customerService.customers;
   readonly selectedCustomer = signal<any | null>(null);
   readonly customerInvoiceNumber = signal<string>('');
   readonly customerRanch = signal<string>('');
-  readonly isLoading = signal<boolean>(false);
-  readonly isDatePickerOpen = signal<boolean>(false);
-  readonly formValid = signal<boolean>(false);
-
-  readonly fromTypeOptions = signal<DropdownOption<'MBN' | 'Customer'>[]>([
-    { label: 'MBN', value: 'MBN' },
-    { label: 'Customer', value: 'Customer' }
-  ]);
-
-  readonly toTypeOptions = signal<DropdownOption<'MBN' | 'Customer'>[]>([
-    { label: 'MBN', value: 'MBN' },
-    { label: 'Customer', value: 'Customer' }
-  ]);
 
   readonly containerTypeOptions = computed<DropdownOption<ContainerType>[]>(() => {
     return (this.containerTypes() || []).map(type => ({
@@ -87,6 +72,20 @@ export class LedgerEntryFormComponent implements OnInit {
     }));
   });
 
+  readonly fromTypeOptions = signal<DropdownOption<'MBN' | 'Customer'>[]>([
+    { label: 'MBN', value: 'MBN' },
+    { label: 'Customer', value: 'Customer' }
+  ]);
+
+  readonly toTypeOptions = signal<DropdownOption<'MBN' | 'Customer'>[]>([
+    { label: 'MBN', value: 'MBN' },
+    { label: 'Customer', value: 'Customer' }
+  ]);
+
+  readonly isLoading = signal<boolean>(false);
+  readonly isDatePickerOpen = signal<boolean>(false);
+  readonly formValid = signal<boolean>(false);
+
   constructor() {
     addIcons({
       'calendar-outline': calendarOutline
@@ -95,13 +94,14 @@ export class LedgerEntryFormComponent implements OnInit {
     effect(() => this.validateForm());
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.containerTypeService.getContainerTypes();
     this.customerService.getCustomers();
     this.resetForm();
   }
 
-  onFromTypeChange(): void {
+  onFromTypeChange() {
+    // If from type is MBN, to type should be Customer (and vice versa)
     if (this.fromType() === 'MBN') {
       this.toType.set('Customer');
     } else {
@@ -110,7 +110,8 @@ export class LedgerEntryFormComponent implements OnInit {
     this.validateForm();
   }
 
-  onToTypeChange(): void {
+  onToTypeChange() {
+    // If to type is MBN, from type should be Customer (and vice versa)
     if (this.toType() === 'MBN') {
       this.fromType.set('Customer');
     } else {
@@ -119,19 +120,29 @@ export class LedgerEntryFormComponent implements OnInit {
     this.validateForm();
   }
 
-  onDateSelected(event: any): void {
+  onDateSelected(event: any) {
     this.date.set(event.detail.value);
     this.isDatePickerOpen.set(false);
     this.validateForm();
   }
 
-  submitForm(): void {
+  validateForm() {
+    const isValid =
+      !!this.selectedContainerType() &&
+      this.quantity() !== 0 &&
+      !!this.date() &&
+      ((this.fromType() === 'Customer' || this.toType() === 'Customer') ? !!this.selectedCustomer() : true);
+
+    this.formValid.set(isValid);
+  }
+
+  submitForm() {
     if (!this.formValid()) return;
 
     this.isLoading.set(true);
 
     const transaction: ContainerLedgerTransaction = {
-      id: 0,
+      id: 0, // API will assign ID
       containerTypeId: this.selectedContainerType()?.id || null,
       quantity: this.quantity(),
       date: this.date(),
@@ -159,7 +170,7 @@ export class LedgerEntryFormComponent implements OnInit {
       });
   }
 
-  resetForm(): void {
+  resetForm() {
     this.selectedContainerType.set(null);
     this.quantity.set(0);
     this.date.set(new Date().toISOString());
@@ -172,7 +183,7 @@ export class LedgerEntryFormComponent implements OnInit {
     this.validateForm();
   }
 
-  setQuantity(quantity: any): void {
+  setQuantity(quantity: any) {
     const parsedQuantity = parseFloat(quantity);
     if (!isNaN(parsedQuantity)) {
       this.quantity.set(parsedQuantity);
@@ -181,17 +192,7 @@ export class LedgerEntryFormComponent implements OnInit {
     }
   }
 
-  setCustomerInvoiceNumber(invoiceNumber: any): void {
+  setCustomerInvoiceNumber(invoiceNumber: any) {
     this.customerInvoiceNumber.set(invoiceNumber);
-  }
-
-  validateForm(): void {
-    const isValid =
-      !!this.selectedContainerType() &&
-      this.quantity() !== 0 &&
-      !!this.date() &&
-      ((this.fromType() === 'Customer' || this.toType() === 'Customer') ? !!this.selectedCustomer() : true);
-
-    this.formValid.set(isValid);
   }
 }

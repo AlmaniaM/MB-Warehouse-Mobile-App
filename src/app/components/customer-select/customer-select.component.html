@@ -1,0 +1,9 @@
+<app-dropdown-select
+  label="Customer"
+  placeholder="Select Customers"
+  [options]="customerOptions()"
+  [allowNullOption]="false"
+  [multiple]="true"
+  [(selectedValue)]="selectedCustomers"
+  (selectionChange)="onSelectionChange($event)"
+></app-dropdown-select>

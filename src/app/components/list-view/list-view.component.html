@@ -1,0 +1,99 @@
+<div class="list-view-container">
+  <div class="list-view-header">
+    <div class="list-view-title-row">
+      <span class="list-view-title">{{ title() }}</span>
+    </div>
+  </div>
+
+  <div class="list-view-content">
+    <!-- Loading State -->
+    @if (isLoading()) {
+    <div class="loading-container">
+      <ion-spinner name="circular"></ion-spinner>
+      <ion-text>Loading items...</ion-text>
+    </div>
+    }
+
+    <!-- Filter Section -->
+    @if (filterTemplateRef()) {
+    <ion-accordion-group [multiple]="true" [value]="defaultExpandedAccordions">
+      <ion-accordion value="filters">
+        <ion-item slot="header">
+          <ion-label>Filters</ion-label>
+        </ion-item>
+        <div slot="content" class="filters-content">
+          <ng-container *ngTemplateOutlet="filterTemplateRef()"></ng-container>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    }
+
+    <!-- Summary Section -->
+    @if (hasItems() && !disableSummary() && summaryTemplateRef()) {
+    <ion-accordion-group [multiple]="true" [value]="defaultExpandedAccordions">
+      <ion-accordion value="summary">
+        <ion-item slot="header">
+          <ion-label>Summary</ion-label>
+        </ion-item>
+        <div slot="content">
+          <ng-container *ngTemplateOutlet="summaryTemplateRef()"></ng-container>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    }
+
+    <!-- Items List -->
+    <ion-list class="list-items">
+      @for (item of displayedItems(); track trackByFn()(i, item); let i =
+      $index) {
+      <ng-container
+        [ngTemplateOutlet]="itemTemplateRef()"
+        [ngTemplateOutletContext]="{ $implicit: item, index: i }"
+      >
+      </ng-container>
+      }
+    </ion-list>
+
+    <!-- Empty State -->
+    @if (isEmpty()) {
+    <div class="empty-state">
+      <ion-text color="medium">
+        <p>{{ emptyStateMessage() }}</p>
+      </ion-text>
+    </div>
+    }
+
+    <!-- Infinite Scroll -->
+    <ion-infinite-scroll
+      threshold="100px"
+      (ionInfinite)="loadMoreItems($event)"
+      [disabled]="!hasMoreItems()"
+    >
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more items..."
+      >
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+
+  <!-- Bottom Totals Panel -->
+  @if (totals() !== undefined && totals() !== null) {
+  <div class="totals-bottom-panel">
+    <div class="totals-content">
+      <span class="totals-label">Total</span>
+      <div class="totals-value" [ngClass]="totalsClass">
+        <ion-icon
+          [attr.name]="
+            totals() > 0 ? 'arrow-up' : totals() < 0 ? 'arrow-down' : 'remove'
+          "
+          [attr.color]="
+            totals() > 0 ? 'success' : totals() < 0 ? 'danger' : 'medium'
+          "
+        ></ion-icon>
+        <span>{{ totals() }}</span>
+      </div>
+    </div>
+  </div>
+  }
+</div>

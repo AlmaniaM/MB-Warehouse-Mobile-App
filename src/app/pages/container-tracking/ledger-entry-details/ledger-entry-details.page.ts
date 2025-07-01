@@ -8,15 +8,15 @@ import { ContentTopbarComponent } from 'src/app/components/content-topbar/conten
 import { PageTopbarComponent } from 'src/app/components/page-topbar/page-topbar.component';
 
 @Component({
-  selector: 'app-customer-container-ledger',
-  templateUrl: './customer-container-ledger.page.html',
-  styleUrls: ['./customer-container-ledger.page.scss'],
+  selector: 'app-ledger-entry-details',
+  templateUrl: './ledger-entry-details.page.html',
+  styleUrls: ['./ledger-entry-details.page.scss'],
   imports: [
     IonContent,
     ContentTopbarComponent,
     PageTopbarComponent
   ]
 })
-export class CustomerContainerLedgerPage {
+export class LedgerEntryDetailsPage {
 
 }

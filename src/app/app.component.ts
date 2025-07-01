@@ -17,7 +17,13 @@ import {
   menuSharp,
   menuOutline,
   bookSharp,
-  bookOutline
+  bookOutline,
+  gridSharp,
+  gridOutline,
+  peopleSharp,
+  peopleOutline,
+  receiptSharp,
+  receiptOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -48,7 +54,13 @@ export class AppComponent {
       menuSharp,
       menuOutline,
       bookSharp,
-      bookOutline
+      bookOutline,
+      gridSharp,
+      gridOutline,
+      peopleSharp,
+      peopleOutline,
+      receiptSharp,
+      receiptOutline,
     });
   }
 }

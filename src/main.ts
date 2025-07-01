@@ -15,33 +15,27 @@ import { environment } from './environments/environment';
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 
-export const appConfig: ApplicationConfig = {
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-  provideIonicAngular({
-    animated: true,
-    mode: 'md',
-    scrollAssist: true,
-    swipeBackEnabled: true,
-    rippleEffect: true,
-    inputShims: true
-  }),
-  provideZoneChangeDetection({ eventCoalescing: true }),
-  provideRouter(routes, withComponentInputBinding(), withPreloading(PreloadAllModules)),
-  importProvidersFrom(BrowserAnimationsModule),
-  provideAnimationsAsync(),
-  provideHttpClient(withInterceptorsFromDi()),
-  { provide: HTTP_INTERCEPTORS, useClass: MsalInterceptor, multi: true },
-  { provide: MSAL_INSTANCE, useFactory: MSALInstanceFactory },
-  { provide: MSAL_GUARD_CONFIG, useFactory: MSALGuardConfigFactory },
-  { provide: MSAL_INTERCEPTOR_CONFIG, useFactory: MSALInterceptorConfigFactory },
+export const appConfig: ApplicationConfig = { 
+	providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    provideIonicAngular(),
+		provideZoneChangeDetection({ eventCoalescing: true }),
+		provideRouter(routes, withComponentInputBinding(), withPreloading(PreloadAllModules)),
+		importProvidersFrom(BrowserAnimationsModule),
+		provideAnimationsAsync(),
+    provideHttpClient(withInterceptorsFromDi()),
+    { provide: HTTP_INTERCEPTORS, useClass: MsalInterceptor, multi: true },
+    { provide: MSAL_INSTANCE, useFactory: MSALInstanceFactory },
+    { provide: MSAL_GUARD_CONFIG, useFactory: MSALGuardConfigFactory },
+    { provide: MSAL_INTERCEPTOR_CONFIG, useFactory: MSALInterceptorConfigFactory },
     MsalService,
     MsalGuard,
     MsalBroadcastService
-  ]
+	]
 };
 
 if (environment.production) {
-  enableProdMode();
+	enableProdMode();
 }
 
 bootstrapApplication(AppComponent, appConfig).catch(err => console.error(err));

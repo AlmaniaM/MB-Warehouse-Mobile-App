@@ -1,14 +1,6 @@
+<app-page-topbar title="Customer Ledger"></app-page-topbar>
 <ion-content>
-  <app-customer-container-ledger-table
-    #ledgerTable
-    [containerTypes]="containerTypes()"
-    [customers]="customers()"
-    [ledgerEntries]="ledgerEntries()"
-    [isLoading]="isLoading()"
-    [disableSummary]="true"
-  ></app-customer-container-ledger-table>
-
-  <app-ledger-entry-fab
-    (entryCreated)="onLedgerEntryCreated($event)"
-  ></app-ledger-entry-fab>
+  <app-content-topbar title="Customer Ledger" [showRefresher]="false"></app-content-topbar>
+  <div id="content">    
+  </div>
 </ion-content>

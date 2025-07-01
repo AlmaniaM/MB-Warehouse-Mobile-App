@@ -14,11 +14,11 @@ export const routes: Routes = [
   {
     path: 'app',
     canActivate: [MsalGuard],
-    loadComponent: () => import('./components/layout/layout.component').then(page => page.LayoutComponent),
+    loadComponent: () => import('./components/app-layout/app-layout.component').then(page => page.AppLayoutComponent),
     children: [
       {
         path: '',
-        redirectTo: 'containers',
+        redirectTo: 'container-tracking',
         pathMatch: 'full'
       },
       {
@@ -26,21 +26,13 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/home/home.page').then(page => page.HomePage)
       },
       {
-        path: 'containers',
-        loadComponent: () => import('./pages/container-tracking/container-tracking.page').then(page => page.ContainerTrackingPage),
+        path: 'container-tracking',
+        loadComponent: () => import('./components/container-tracking/container-tracking-layout/container-tracking-layout.component').then(page => page.ContainerTrackingLayoutComponent),
         children: [
           {
             path: '',
             redirectTo: 'ledger',
             pathMatch: 'full'
-          },
-          {
-            path: 'send',
-            loadComponent: () => import('./pages/send-containers/send-containers.page').then(page => page.SendContainersPage)
-          },
-          {
-            path: 'receive',
-            loadComponent: () => import('./pages/receive-containers/receive-containers.page').then(page => page.ReceiveContainersPage)
           },
           {
             path: 'ledger',
@@ -51,12 +43,16 @@ export const routes: Routes = [
             loadComponent: () => import('./pages/container-tracking/customer-container-ledger/customer-container-ledger.page').then(page => page.CustomerContainerLedgerPage)
           },
           {
-            path: 'receipts',
-            loadComponent: () => import('./pages/container-tracking/receipts/receipts.page').then(page => page.ReceiptsPage)
+            path: 'ledger-entry-details',
+            loadComponent: () => import('./pages/container-tracking/ledger-entry-details/ledger-entry-details.page').then(page => page.LedgerEntryDetailsPage)
           },
           {
-            path: 'ledger-summary',
-            loadComponent: () => import('./pages/container-tracking/ledger-summary/ledger-summary.page').then(page => page.LedgerSummaryPage)
+            path: 'return-receipts',
+            loadComponent: () => import('./pages/container-tracking/return-receipts/return-receipts.page').then(page => page.ReturnReceiptsPage)
+          },
+          {
+            path: 'return-receipt-details',
+            loadComponent: () => import('./pages/container-tracking/return-receipt-details/return-receipt-details.page').then(page => page.ReturnReceiptDetailsPage)
           }
         ]
       }
@@ -71,4 +67,14 @@ export const routes: Routes = [
     redirectTo: 'not-found',
     pathMatch: 'full'
   },
+  {
+    path: 'return-receipts',
+    loadComponent: () => import('./pages/container-tracking/return-receipts/return-receipts.page').then( m => m.ReturnReceiptsPage)
+  },
+  {
+    path: 'return-receipt-details',
+    loadComponent: () => import('./pages/container-tracking/return-receipt-details/return-receipt-details.page').then( m => m.ReturnReceiptDetailsPage)
+  },
+
+
 ];

@@ -1,13 +1,6 @@
+<app-page-topbar title="Ledger"></app-page-topbar>
 <ion-content>
-  <app-container-ledger-table
-    [ledgerEntries]="ledgerEntries()"
-    [isLoading]="isLoading()"
-    [disableSummary]="true"
-    (containerTypeChange)="onContainerTypeSelect($event)"
-  />
-
-  <app-ledger-entry-fab
-    bottomMargin="16px"
-    (entryCreated)="onLedgerEntryCreated($event)"
-  ></app-ledger-entry-fab>
+  <app-content-topbar title="Ledger" [showRefresher]="false"></app-content-topbar>
+  <div id="content">    
+  </div>
 </ion-content>

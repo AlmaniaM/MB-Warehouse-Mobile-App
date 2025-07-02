@@ -31,19 +31,19 @@ import {
   IonPopover, 
   IonDatetime 
 } from '@ionic/angular/standalone';
-import { Utils } from 'src/app/classes/utils';
 
 import { 
   ContainerLedgerEntryService, 
   ContainerLedgerEntry, 
   ContainerLedgerTransaction, 
+  CustomerContainerLedgerEntry,
   defaultContainerLedgerEntry, 
   defaultContainerLedgerTransaction, 
-  CustomerContainerLedgerEntry
 } from 'src/app/services/inventory-tracking/container-tracking/container-ledger.service';
 import { ContainerReturnReceipt, ContainerReturnReceiptService } from 'src/app/services/inventory-tracking/container-tracking/container-return-receipt.service';
 import { ContainerType, ContainerTypeService } from 'src/app/services/inventory-tracking/sourcelists/container-type.service';
-import { Customer, CustomerService, defaultCustomer } from 'src/app/services/inventory-tracking/sourcelists/customer.service';
+import { Customer, CustomerService } from 'src/app/services/inventory-tracking/sourcelists/customer.service';
+import { Utils } from 'src/app/classes/utils';
 
 @Component({
   selector: 'app-container-ledger-entry-form',
@@ -83,9 +83,9 @@ export class ContainerLedgerEntryFormComponent  {
   customerServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.customerService.status, { initialValue: 'stable' });
   isFetchingData: Signal<boolean> = computed(() => {
     return ['fetching', 'creating'].includes(this.containerLedgerEntryServiceStatus()) || 
-      ['fetching', 'creating'].includes(this.containerTypeServiceStatus()) ||
+      ['fetching'].includes(this.containerTypeServiceStatus()) ||
       ['fetching', 'creating', 'updating', 'deleting'].includes(this.containerReturnReceiptServiceStatus()) ||
-      ['fetching', 'creating'].includes(this.customerServiceStatus());
+      ['fetching',].includes(this.customerServiceStatus());
   });
 
   containerReturnReceipts: Signal<ContainerReturnReceipt[]> = toSignal(this.containerReturnReceiptService.containerReturnReceipts, { initialValue: [] });

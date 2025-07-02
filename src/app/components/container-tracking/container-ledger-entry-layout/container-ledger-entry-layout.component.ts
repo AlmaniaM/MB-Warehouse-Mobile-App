@@ -14,7 +14,7 @@ import {
 } from "@ionic/angular/standalone";
 
 import { SelectedContainerLedgerEntryService } from 'src/app/services/cache/selected-container-ledger-entry.service';
-import { ContainerLedgerEntryService, ContainerLedgerEntry, CustomerContainerLedgerEntry } from 'src/app/services/inventory-tracking/container-tracking/container-ledger.service';
+import { ContainerLedgerEntry, CustomerContainerLedgerEntry } from 'src/app/services/inventory-tracking/container-tracking/container-ledger.service';
 
 @Component({
   selector: 'app-container-ledger-entry-layout',
@@ -30,9 +30,7 @@ import { ContainerLedgerEntryService, ContainerLedgerEntry, CustomerContainerLed
 export class ContainerLedgerEntryLayoutComponent  {
   
   router: Router = inject(Router);
-
   selectedContainerLedgerEntryService: SelectedContainerLedgerEntryService = inject(SelectedContainerLedgerEntryService);
-  containerLedgerEntryService: ContainerLedgerEntryService = inject(ContainerLedgerEntryService);
 
   selectedContainerLedgerEntry: Signal<ContainerLedgerEntry | CustomerContainerLedgerEntry | null> = toSignal(this.selectedContainerLedgerEntryService.selectedContainerLedgerEntry, { initialValue: null });
   selectedContainerLedgerEntryType: Signal<'Customer' | 'Internal' | null> = toSignal(this.selectedContainerLedgerEntryService.selectedContainerLedgerEntryType, { initialValue: null });

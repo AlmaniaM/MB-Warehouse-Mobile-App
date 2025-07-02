@@ -106,8 +106,18 @@
     </cdk-virtual-scroll-viewport>
   }
 </div>
+<ion-footer>
+  <ion-toolbar>
+    <ion-title size="small">
+      <strong>{{ ledgerType() === 'MBN' ? 'MBN' : 'Customer' }} Ledger Total:</strong>
+      <ion-chip [color]="containerLedgerTotal() > 0 ? 'success' : 'danger'">
+        {{ containerLedgerTotal() > 0 ? '+' + containerLedgerTotal().toLocaleString() : containerLedgerTotal().toLocaleString() }}
+      </ion-chip>
+    </ion-title>
+  </ion-toolbar>
+</ion-footer>
 <ion-fab slot="fixed" horizontal="end" vertical="bottom">
-  <ion-fab-button fill="outline" (click)="isCreatingLedgerEntry.set(true)">
+  <ion-fab-button color="success" (click)="isCreatingLedgerEntry.set(true)">
     <ion-icon ios="add-outline" md="add-sharp"></ion-icon>
   </ion-fab-button>
 </ion-fab>

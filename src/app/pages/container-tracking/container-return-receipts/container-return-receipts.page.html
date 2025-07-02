@@ -1,6 +1,110 @@
 <app-page-topbar title="Return Receipts"></app-page-topbar>
 <ion-content>
-  <app-content-topbar title="Return Receipts" [showRefresher]="false"></app-content-topbar>
-  <div id="content">    
+  <app-content-topbar title="Return Receipts" [showRefresher]="true"></app-content-topbar>
+  <div id="content">  
+    <ion-header>
+      <ion-accordion-group>
+        <ion-accordion value="first">
+          <ion-item slot="header" color="light">
+            <ion-label>Filters</ion-label>
+          </ion-item>
+          <div slot="content">
+            <ion-toolbar>
+              <ion-searchbar [(ngModel)]="globalSearchFilter"></ion-searchbar>
+            </ion-toolbar>
+            <ion-list lines="full">
+              <ion-item>
+                <ion-select aria-modal label="Year" labelPlacement="stacked" interface="popover" 
+                  [(ngModel)]="yearFilter">
+                  @for (year of containerReturnReceiptsYears(); track year) {
+                    <ion-select-option [value]="year">
+                      {{ year }}
+                    </ion-select-option>
+                  }
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-select aria-modal label="Customer" labelPlacement="stacked" interface="popover" 
+                  [(ngModel)]="customerFilter">
+                  <ion-select-option [value]="null">All</ion-select-option>
+                  @for (customer of sortedCustomers(); track customer.id) {
+                    <ion-select-option [value]="customer">
+                      {{ customer.name }}
+                    </ion-select-option>
+                  }
+                </ion-select>
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+    </ion-header>
+      @if (filteredcontainerReturnReceiptListRecords().length === 0) {
+        @if (isFetchingData()) {
+          <ion-progress-bar type="indeterminate"></ion-progress-bar>
+          <ion-list>
+            <ion-item>
+              <ion-label>
+                Loading Container Ledger... 
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        } @else {
+          <ion-list>
+            <ion-item>
+              <ion-label>
+                No Container Ledger Entries Found... 
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        }
+      } @else {
+        <cdk-virtual-scroll-viewport class="ion-content-scroll-host" [itemSize]="78" [minBufferPx]="960" [maxBufferPx]="1440">
+          <ion-list id="ledger-entries-list">
+            <ion-item *cdkVirtualFor="let containerReturnReceipt of filteredcontainerReturnReceiptListRecords(); trackBy: trackByContainerReturnReceipt" 
+              button [detail]="true" 
+              (click)="setSelectedContainerReturnReceipt(containerReturnReceipt)"> 
+              <ion-label>
+                <strong>{{ containerReturnReceipt.containerReturnReceipt.containerReceiptReference }}</strong><br />
+                <ion-text>{{ containerReturnReceipt.customer.name }}</ion-text><br />
+                <ion-note>{{ containerReturnReceipt.containerReturnReceipt.date | date: 'MM/dd/yyyy' }}</ion-note>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </cdk-virtual-scroll-viewport>
+      }
   </div>
 </ion-content>
+<ion-fab slot="fixed" horizontal="end" vertical="bottom">
+  <ion-fab-button color="success" (click)="isCreatingReturnReceipt.set(true)">
+    <ion-icon ios="add-outline" md="add-sharp"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+<ion-modal aria-modal [isOpen]="isCreatingReturnReceipt()" (didDismiss)="isCreatingReturnReceipt.set(false)">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title size="small">New Container Return Receipt</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="isCreatingReturnReceipt.set(false)">
+            <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content id="new-return-receipt-container">
+      @if (isCreatingReturnReceipt()) {
+        <app-container-return-receipt-form
+          [formType]="'new'"
+          [initialContainerReturnReceipt]="null">
+        </app-container-return-receipt-form>
+      } @else {
+        <ion-list>
+          <ion-item>
+            <ion-label>Creating Return Receipt...</ion-label>
+          </ion-item>
+        </ion-list>
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>

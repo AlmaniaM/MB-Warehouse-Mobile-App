@@ -1,0 +1,58 @@
+
+
+<app-page-topbar title="Receipt Ledger Entries"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Receipt Ledger Entries" [showRefresher]="false"></app-content-topbar>
+  <div id="content">
+    <ion-header>
+      <ion-list lines="full">
+        <ion-item>
+          {{ selectedContainerReturnReceiptCustomer().name }}
+        </ion-item>
+        <ion-item>
+          {{ selectedContainerReturnReceipt()!.date  | date: 'MM/dd/yyy'}}
+        </ion-item>
+        @if (selectedContainerReturnReceipt()!.containerReceiptReference) {
+          <ion-item>
+            Receipt Reference: {{ selectedContainerReturnReceipt()!.containerReceiptReference }}
+          </ion-item>
+        }
+      </ion-list>
+    </ion-header>
+    @if (isFetchingData()) {
+      <ion-progress-bar type="indeterminate"></ion-progress-bar>
+    }
+    @if (customerContainerLedgerEntryListRecords().length > 0) {
+      <ion-list lines="full">
+        @for (customerContainerLedgerEntry of customerContainerLedgerEntryListRecords(); track customerContainerLedgerEntry.containerLedgerEntry.id) {
+          <ion-item>
+            <ion-label>
+              <strong>{{ customerContainerLedgerEntry.containerType.name }}</strong><br />
+              <ion-text>{{ customerContainerLedgerEntry.containerLedgerEntry.date | date: 'MM/dd/yyyy' }}</ion-text><br />
+              <ion-note>{{ customerContainerLedgerEntry.containerLedgerEntry.note }}</ion-note>
+            </ion-label>
+            <ion-label class="metadata-end-wrapper" slot="end">
+              <ion-note class="ion-text-wrap">
+                <ion-chip [color]="customerContainerLedgerEntry.containerLedgerEntry.quantity > 0 ? 'success' : 'danger'">
+                  {{ 
+                    customerContainerLedgerEntry.containerLedgerEntry.quantity > 0 ? 
+                    '+' + customerContainerLedgerEntry.containerLedgerEntry.quantity :
+                    customerContainerLedgerEntry.containerLedgerEntry.quantity 
+                  }}
+                </ion-chip>
+              </ion-note>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    }  @else {
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            No Container Ledger Entries Found... 
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    }
+  </div>
+</ion-content>

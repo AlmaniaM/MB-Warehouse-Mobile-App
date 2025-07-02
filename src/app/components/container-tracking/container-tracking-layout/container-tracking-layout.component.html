@@ -1,8 +1,8 @@
 <ion-tabs>
-  @if (!isInEntryPage()) {
+  @if (!isInEntryPage() && !isInReturnReceiptPage()) {
     <ion-tab-bar slot="bottom" [color]="'primary'">
       <ion-tab-button tab="mbn-ledger">
-        <ion-icon ios="grid-outline" md="grid-sharp"></ion-icon>
+        <ion-icon ios="list-outline" md="list-sharp"></ion-icon>
         MBN Ledger
       </ion-tab-button>
       <ion-tab-button tab="customer-ledger">

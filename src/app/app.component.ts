@@ -34,6 +34,10 @@ import {
   closeOutline,
   checkmarkSharp,
   checkmarkOutline,
+  listSharp,
+  listOutline,
+  trashSharp,
+  trashOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -81,6 +85,10 @@ export class AppComponent {
       arrowBackOutline,
       pencilSharp,
       pencilOutline,
+      listSharp,
+      listOutline,
+      trashSharp,
+      trashOutline
     });
   }
 }

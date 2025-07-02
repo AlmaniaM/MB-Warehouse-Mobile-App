@@ -1,9 +1,7 @@
 import { Component, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 
-import { 
-  IonContent 
-} from "@ionic/angular/standalone";
+import { IonContent } from "@ionic/angular/standalone";
 
 import { SelectedContainerLedgerEntryService } from 'src/app/services/cache/selected-container-ledger-entry.service';
 import { ContainerLedgerEntry, CustomerContainerLedgerEntry } from 'src/app/services/inventory-tracking/container-tracking/container-ledger.service';

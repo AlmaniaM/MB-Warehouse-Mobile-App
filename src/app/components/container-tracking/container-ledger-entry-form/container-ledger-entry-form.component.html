@@ -13,7 +13,7 @@
 @if (isFetchingData()) {
   <ion-progress-bar type="indeterminate"></ion-progress-bar>
 }
-<ion-list>
+<ion-list lines="full">
   @if (formType() === 'new') {
     <ion-item>
       <ion-select aria-modal label="Ledger Action" labelPlacement="stacked" interface="popover"

@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule, DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
@@ -33,7 +34,11 @@ import {
   IonButton, 
   IonButtons, 
   IonTitle, 
-  IonChip, IonAccordionGroup, IonAccordion } from '@ionic/angular/standalone';
+  IonChip, 
+  IonAccordionGroup, 
+  IonAccordion, 
+  IonFooter 
+} from '@ionic/angular/standalone';
 
 import { ContainerLedgerEntryService, ContainerLedgerEntry, CustomerContainerLedgerEntry } from 'src/app/services/inventory-tracking/container-tracking/container-ledger.service';
 import { ContainerTypeService, ContainerType } from 'src/app/services/inventory-tracking/sourcelists/container-type.service';
@@ -47,15 +52,19 @@ export interface ContainerLedgerEntryListRecord {
   containerType: ContainerType;
   customer: Customer | null;
 }
+
 @Component({
   selector: 'app-container-ledger-entry-list',
   templateUrl: './container-ledger-entry-list.component.html',
   styleUrls: ['./container-ledger-entry-list.component.scss'],
-  imports: [IonAccordion, IonAccordionGroup, 
+  imports: [
     CommonModule,
     FormsModule,
     ScrollingModule,
     DatePipe,
+    IonFooter, 
+    IonAccordion, 
+    IonAccordionGroup, 
     IonContent,
     IonChip, 
     IonButtons, 
@@ -81,15 +90,16 @@ export interface ContainerLedgerEntryListRecord {
 })
 export class ContainerLedgerEntryListComponent {
 
+  router: Router = inject(Router);
   selectedContainerLedgerEntryService: SelectedContainerLedgerEntryService = inject(SelectedContainerLedgerEntryService);
   containerLedgerEntryService: ContainerLedgerEntryService = inject(ContainerLedgerEntryService);
   containerTypeService: ContainerTypeService = inject(ContainerTypeService);
   customerService: CustomerService = inject(CustomerService);
 
   containerLedgerEntryServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.containerLedgerEntryService.status, { initialValue: 'stable' });
-  containerTypeServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.containerLedgerEntryService.status, { initialValue: 'stable' });
+  containerTypeServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.containerTypeService.status, { initialValue: 'stable' });
   isFetchingData: Signal<boolean> = computed(() => {
-    return ['fetching', 'creating'].includes(this.containerLedgerEntryServiceStatus()) || ['fetching', 'creating'].includes(this.containerTypeServiceStatus());
+    return ['fetching', 'creating'].includes(this.containerLedgerEntryServiceStatus()) || ['fetching'].includes(this.containerTypeServiceStatus());
   });
 
   ledgerType: InputSignal<'MBN' | 'Customer'> = input.required<'MBN' | 'Customer'>();
@@ -153,7 +163,7 @@ export class ContainerLedgerEntryListComponent {
       })
       .filter((ledgerEntry) => { 
         if (this.globalSearchFilter() === '') { return true; } 
-        return JSON.stringify(ledgerEntry).trim().toLowerCase().includes(this.globalSearchFilter().trim().toLowerCase());  
+        return JSON.stringify(Object.values(ledgerEntry)).trim().toLowerCase().includes(this.globalSearchFilter().trim().toLowerCase());  
       })
       .filter((ledgerEntry) => { 
         if (!this.entryTypeFilter()) { return true; }
@@ -172,11 +182,18 @@ export class ContainerLedgerEntryListComponent {
       });
   });
 
+  containerLedgerTotal: Signal<number> = computed(() => {
+    return this.filteredContainerLedgerEntryListRecords().reduce((total, ledgerEntry) => {
+      return total + ledgerEntry.containerLedgerEntry.quantity;
+    }, 0);
+  });
+
   trackByContainerLedgerEntry(index: number, ledgerEntry: ContainerLedgerEntryListRecord) { 
     return ledgerEntry.containerLedgerEntry.id;
   }
 
-  setSelectedContainerLedgerEntry(ledgerEntry: ContainerLedgerEntryListRecord) { 
+  setSelectedContainerLedgerEntry(ledgerEntry: ContainerLedgerEntryListRecord) {
     this.selectedContainerLedgerEntryService.setContainerLedgerEntry(ledgerEntry.containerLedgerEntry);
+    this.router.navigate(['/app/container-tracking/ledger-entry']);
   }
 }

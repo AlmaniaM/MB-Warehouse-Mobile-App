@@ -12,9 +12,10 @@ import {
 
 import { SelectedContainerLedgerEntryService } from 'src/app/services/cache/selected-container-ledger-entry.service';
 import { ContainerLedgerEntry, ContainerLedgerEntryService, CustomerContainerLedgerEntry } from 'src/app/services/inventory-tracking/container-tracking/container-ledger.service';
-import { ContainerReturnReceiptService } from 'src/app/services/inventory-tracking/container-tracking/container-return-receipt.service';
+import { ContainerReturnReceipt, ContainerReturnReceiptService } from 'src/app/services/inventory-tracking/container-tracking/container-return-receipt.service';
 import { ContainerTypeService } from 'src/app/services/inventory-tracking/sourcelists/container-type.service';
 import { CustomerService } from 'src/app/services/inventory-tracking/sourcelists/customer.service';
+import { SelectedContainerReturnReceiptService } from 'src/app/services/cache/selected-container-return-receipt.service';
 
 @Component({
   selector: 'app-container-tracking-layout',
@@ -37,25 +38,39 @@ export class ContainerTrackingLayoutComponent {
     const url = (this.routerNavigationEvent() as NavigationEnd).urlAfterRedirects;
     return url.includes('/ledger-entry');
   });
+
+  isInReturnReceiptPage: Signal<boolean> = computed<boolean>(() => { 
+    if (this.routerNavigationEvent() === null) { return false; }
+    const url = (this.routerNavigationEvent() as NavigationEnd).urlAfterRedirects;
+    return url.includes('/return-receipt/');
+  });
   
   containerLedgerEntryService: ContainerLedgerEntryService = inject(ContainerLedgerEntryService);
   containerReturnReceiptService: ContainerReturnReceiptService = inject(ContainerReturnReceiptService);
   containerTypeService: ContainerTypeService = inject(ContainerTypeService);
   customerService: CustomerService = inject(CustomerService);
+  
   selectedContainerLedgerEntryService: SelectedContainerLedgerEntryService = inject(SelectedContainerLedgerEntryService);
-
   selectedContainerLedgerEntry: Signal<ContainerLedgerEntry | CustomerContainerLedgerEntry | null> = toSignal(this.selectedContainerLedgerEntryService.selectedContainerLedgerEntry, { initialValue: null });
-  selectedContainerLedgerEntryEffect = effect(() => { 
-    if (!this.selectedContainerLedgerEntry()) { return; }
-    this.router.navigate(['/app/container-tracking/ledger-entry']);
-  });
+
+  selectedContainerReturnReceiptService: SelectedContainerReturnReceiptService = inject(SelectedContainerReturnReceiptService);
+  selectedContainerReturnReceipt: Signal<ContainerReturnReceipt | null> = toSignal(this.selectedContainerReturnReceiptService.selectedContainerReturnReceipt, { initialValue: null });
 
   constructor() {
+
     this.containerLedgerEntryService.getContainerLedgerEntries();
     this.containerLedgerEntryService.getCustomerContainerLedgerEntries();
     this.containerLedgerEntryService.getContainerTypeQuantityTotals();
     this.containerReturnReceiptService.getContainerReturnReceipts();
     this.containerTypeService.getContainerTypes();
     this.customerService.getCustomers();
+
+    if (this.selectedContainerLedgerEntry()) { 
+      this.router.navigate(['/app/container-tracking/ledger-entry']);
+    }
+
+    if (this.selectedContainerReturnReceipt()) { 
+      this.router.navigate(['/app/container-tracking/return-receipt']); 
+    }
   }
 }

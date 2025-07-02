@@ -1,6 +1,12 @@
 <app-page-topbar title="Receipt Details"></app-page-topbar>
 <ion-content>
   <app-content-topbar title="Receipt Details" [showRefresher]="false"></app-content-topbar>
-  <div id="content">    
+  <div id="content">
+    @if (selectedContainerReturnReceipt()) {
+      <app-container-return-receipt-form
+        [formType]="'update'"
+        [initialContainerReturnReceipt]="selectedContainerReturnReceipt()!">
+      </app-container-return-receipt-form>
+    }
   </div>
 </ion-content>

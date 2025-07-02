@@ -62,9 +62,24 @@ export const routes: Routes = [
             loadComponent: () => import('./pages/container-tracking/container-return-receipts/container-return-receipts.page').then(page => page.ContainerReturnReceiptsPage)
           },
           {
-            path: 'return-receipt-details',
-            loadComponent: () => import('./pages/container-tracking/container-return-receipt-details/container-return-receipt-details.page').then(page => page.ContainerReturnReceiptDetailsPage)
-          }
+            path: 'return-receipt',
+            loadComponent: () => import('./components/container-tracking/container-return-receipt-layout/container-return-receipt-layout.component').then(page => page.ContainerReturnReceiptLayoutComponent),
+            children: [
+              {
+                path: '',
+                redirectTo: 'details',
+                pathMatch: 'full'
+              },
+              {
+                path: 'details',
+                loadComponent: () => import('./pages/container-tracking/container-return-receipt-details/container-return-receipt-details.page').then(page => page.ContainerReturnReceiptDetailsPage)
+              },
+              {
+                path: 'ledger-entries',
+                loadComponent: () => import('./pages/container-tracking/container-return-receipt-ledger-entries/container-return-receipt-ledger-entries.page').then(page => page.ContainerReturnReceiptLedgerEntriesPage)
+              }
+            ]
+          },
         ]
       }
     ]

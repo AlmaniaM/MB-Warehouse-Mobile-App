@@ -14,17 +14,19 @@
   <ion-progress-bar type="indeterminate"></ion-progress-bar>
 }
 <ion-list>
-  <ion-item>
-    <ion-select aria-modal label="Ledger Action" labelPlacement="stacked" interface="popover"
-      [disabled]="!isEditing() || isFetchingData()"
-      [(ngModel)]="ledgerAction">
-      <ion-select-option [value]="'AddContainer'">Add New Container</ion-select-option>
-      <ion-select-option [value]="'RemoveContainer'">Remove Container</ion-select-option>
-      <ion-select-option [value]="'SendToCustomer'">Send To Customer</ion-select-option>
-      <ion-select-option [value]="'RecieveFromCustomer'">Recieve From Customer</ion-select-option>
-    </ion-select>
-  </ion-item>
-  @if (ledgerAction() === 'SendToCustomer' || ledgerAction() === 'RecieveFromCustomer') {
+  @if (formType() === 'new') {
+    <ion-item>
+      <ion-select aria-modal label="Ledger Action" labelPlacement="stacked" interface="popover"
+        [disabled]="!isEditing() || isFetchingData()"
+        [(ngModel)]="ledgerAction">
+        <ion-select-option [value]="'AddContainer'">Add New Container</ion-select-option>
+        <ion-select-option [value]="'RemoveContainer'">Remove Container</ion-select-option>
+        <ion-select-option [value]="'SendToCustomer'">Send To Customer</ion-select-option>
+        <ion-select-option [value]="'RecieveFromCustomer'">Recieve From Customer</ion-select-option>
+      </ion-select>
+    </ion-item>
+  }
+  @if (ledgerAction() === 'SendToCustomer' || ledgerAction() === 'RecieveFromCustomer' || initalContainerLedgerEntryType() === 'Customer') {
     <ion-item>
       @if (!isEditing()) {
         @if (customer()) {
@@ -87,13 +89,13 @@
     </ion-input>
   </ion-item>
   <ion-item>
-    <ion-textarea label="Description" labelPlacement="stacked" 
+    <ion-textarea label="Note" labelPlacement="stacked" 
       [disabled]="isFetchingData()"
       [readonly]="!isEditing()"
       [(ngModel)]="note">
     </ion-textarea>
   </ion-item>
-  @if (ledgerAction() === 'SendToCustomer' || ledgerAction() === 'RecieveFromCustomer') {
+  @if (ledgerAction() === 'SendToCustomer' || ledgerAction() === 'RecieveFromCustomer' || initalContainerLedgerEntryType() === 'Customer') {
     <ion-item>
       <ion-input label="Invoice Number" labelPlacement="stacked" 
         [disabled]="isFetchingData()"

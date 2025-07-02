@@ -31,11 +31,11 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            redirectTo: 'ledger',
+            redirectTo: 'mbn-ledger',
             pathMatch: 'full'
           },
           {
-            path: 'ledger',
+            path: 'mbn-ledger',
             loadComponent: () => import('./pages/container-tracking/container-ledger-entries/container-ledger-entries.page').then(page => page.ContainerLedgerEntriesPage)
           },
           {
@@ -43,8 +43,19 @@ export const routes: Routes = [
             loadComponent: () => import('./pages/container-tracking/customer-container-ledger-entries/customer-container-ledger-entries.page').then(page => page.CustomerContainerLedgerEntriesPage)
           },
           {
-            path: 'ledger-entry-details',
-            loadComponent: () => import('./pages/container-tracking/container-ledger-entry-details/container-ledger-entry-details.page').then(page => page.ContainerLedgerEntryDetailsPage)
+            path: 'ledger-entry',
+            loadComponent: () => import('./components/container-tracking/container-ledger-entry-layout/container-ledger-entry-layout.component').then(page => page.ContainerLedgerEntryLayoutComponent),
+            children: [
+              {
+                path: '',
+                redirectTo: 'details',
+                pathMatch: 'full'
+              },
+              {
+                path: 'details',
+                loadComponent: () => import('./pages/container-tracking/container-ledger-entry-details/container-ledger-entry-details.page').then(page => page.ContainerLedgerEntryDetailsPage)
+              }
+            ]
           },
           {
             path: 'return-receipts',

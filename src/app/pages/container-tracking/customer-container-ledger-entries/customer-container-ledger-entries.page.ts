@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
+import { IonContent } from '@ionic/angular/standalone';
 
-import { 
-  IonContent 
-} from "@ionic/angular/standalone";
-
-import { ContentTopbarComponent } from 'src/app/components/content-topbar/content-topbar.component';
 import { PageTopbarComponent } from 'src/app/components/page-topbar/page-topbar.component';
+import { ContentTopbarComponent } from 'src/app/components/content-topbar/content-topbar.component';
+import { ContainerLedgerEntryListComponent } from 'src/app/components/container-tracking/container-ledger-entry-list/container-ledger-entry-list.component';
 
 @Component({
   selector: 'app-customer-container-ledger-entries',
@@ -13,10 +11,9 @@ import { PageTopbarComponent } from 'src/app/components/page-topbar/page-topbar.
   styleUrls: ['./customer-container-ledger-entries.page.scss'],
   imports: [
     IonContent,
+    PageTopbarComponent,
     ContentTopbarComponent,
-    PageTopbarComponent
+    ContainerLedgerEntryListComponent
   ]
 })
-export class CustomerContainerLedgerEntriesPage {
-
-}
+export class CustomerContainerLedgerEntriesPage { }

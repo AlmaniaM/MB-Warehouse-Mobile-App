@@ -21,17 +21,16 @@ import {
   IonTextarea,
   IonTitle, 
   IonToolbar, 
-  IonButton, 
   IonIcon, 
-  IonButtons, 
   IonHeader, 
-  IonModal, 
-  IonContent, 
-  IonFooter, 
-  IonText, 
   IonFab, 
   IonFabButton,
-  IonProgressBar, IonLabel, IonDatetimeButton, IonPopover, IonDatetime } from '@ionic/angular/standalone';
+  IonProgressBar, 
+  IonLabel, 
+  IonDatetimeButton, 
+  IonPopover, 
+  IonDatetime 
+} from '@ionic/angular/standalone';
 import { Utils } from 'src/app/classes/utils';
 
 import { 
@@ -50,17 +49,16 @@ import { Customer, CustomerService, defaultCustomer } from 'src/app/services/inv
   selector: 'app-container-ledger-entry-form',
   templateUrl: './container-ledger-entry-form.component.html',
   styleUrls: ['./container-ledger-entry-form.component.scss'],
-  imports: [IonDatetime, IonPopover, IonDatetimeButton, IonLabel, 
+  imports: [
     FormsModule,
-    IonFooter, 
+    IonDatetime, 
+    IonPopover, 
+    IonDatetimeButton, 
+    IonLabel, 
     IonFab, 
     IonFabButton, 
-    IonContent, 
-    IonModal, 
     IonHeader, 
-    IonButtons, 
-    IonIcon, 
-    IonButton,  
+    IonIcon,  
     IonToolbar, 
     IonTitle, 
     IonList,
@@ -69,7 +67,6 @@ import { Customer, CustomerService, defaultCustomer } from 'src/app/services/inv
     IonSelectOption,
     IonInput,
     IonTextarea,
-    IonText, 
     IonProgressBar, 
   ]
 })
@@ -111,7 +108,7 @@ export class ContainerLedgerEntryFormComponent  {
     });
   });
 
-  inititalLedgerAction: InputSignal<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer'> = input.required<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer'>();
+  inititalLedgerAction: InputSignal<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null> = input.required<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null>();
   formType: InputSignal<'new' | 'view'> = input.required<'new' | 'view'>();
   initialContainerLedgerEntry: InputSignal<ContainerLedgerEntry | CustomerContainerLedgerEntry | null> = input.required<ContainerLedgerEntry | CustomerContainerLedgerEntry | null>();
   
@@ -140,7 +137,7 @@ export class ContainerLedgerEntryFormComponent  {
     this.date.set(new Date(this.initialContainerLedgerEntry()!.date));
     this.note.set(this.initialContainerLedgerEntry()!.note);
 
-    if (this.initalContainerLedgerEntryType() === 'Customer') { return; }
+    if (this.initalContainerLedgerEntryType() === 'Internal') { return; }
 
     this.customer.set(this.customers().find(customer => customer.id === (this.initialContainerLedgerEntry()! as CustomerContainerLedgerEntry).customerId)!);
     this.customerInvoiceNumber.set((this.initialContainerLedgerEntry()! as CustomerContainerLedgerEntry).customerInvoiceNumber);
@@ -150,7 +147,7 @@ export class ContainerLedgerEntryFormComponent  {
     this.shipmentYear.set((this.initialContainerLedgerEntry()! as CustomerContainerLedgerEntry).shipmentYear);
   });
 
-  ledgerAction: WritableSignal<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer'> = signal<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer'>('SendToCustomer');
+  ledgerAction: WritableSignal<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null> = signal<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null>(null);
   ledgerActionEffect = effect(() => { 
     if (this.formType() === 'view') { return; }
 

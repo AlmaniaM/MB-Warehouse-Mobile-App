@@ -14,6 +14,10 @@ import {
   arrowDownOutline,
   arrowUndoSharp,
   arrowUndoOutline,
+  arrowBackSharp,
+  arrowBackOutline,
+  pencilSharp,
+  pencilOutline,
   menuSharp,
   menuOutline,
   bookSharp,
@@ -73,6 +77,10 @@ export class AppComponent {
       closeOutline,
       checkmarkSharp,
       checkmarkOutline,
+      arrowBackSharp,
+      arrowBackOutline,
+      pencilSharp,
+      pencilOutline,
     });
   }
 }

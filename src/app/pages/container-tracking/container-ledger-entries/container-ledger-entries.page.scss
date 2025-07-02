@@ -1,0 +1,18 @@
+#content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+ion-searchbar {
+  padding-top: 15px;
+}
+cdk-virtual-scroll-viewport {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+}
+#ledger-entries-list {
+  height: 100%;
+  width: 100%;
+}

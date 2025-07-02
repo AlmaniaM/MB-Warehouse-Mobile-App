@@ -24,6 +24,12 @@ import {
   peopleOutline,
   receiptSharp,
   receiptOutline,
+  addSharp,
+  addOutline,
+  closeSharp,
+  closeOutline,
+  checkmarkSharp,
+  checkmarkOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -61,6 +67,12 @@ export class AppComponent {
       peopleOutline,
       receiptSharp,
       receiptOutline,
+      addSharp,
+      addOutline,
+      closeSharp,
+      closeOutline,
+      checkmarkSharp,
+      checkmarkOutline,
     });
   }
 }

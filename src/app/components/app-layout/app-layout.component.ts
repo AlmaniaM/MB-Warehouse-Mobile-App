@@ -23,7 +23,7 @@ import { AppPage } from 'src/app/types/app-types';
 
 import { AccountInfo } from '@azure/msal-browser';
 import { AzureAuthenticationService } from 'src/app/auth/azure-auth.service';
-import { ContainerTypeService } from 'src/app/services/inventory-tracking/container-type.service';
+import { ContainerTypeService } from 'src/app/services/inventory-tracking/sourcelists/container-type.service';
 
 @Component({
   selector: 'app-layout',

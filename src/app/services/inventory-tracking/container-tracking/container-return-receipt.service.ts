@@ -2,11 +2,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, forkJoin } from 'rxjs';
 
-import { ToastService } from '../utils/toast.service';
-import { environment } from '../../../environments/environment';
+import { ToastService } from '../../utils/toast.service';
+import { environment } from '../../../../environments/environment';
 import { Utils } from 'src/app/classes/utils';
 
-export const defaultReturnReceipt: ReturnReceipt = {
+export const defaultContainerReturnReceipt: ContainerReturnReceipt = {
   id: -1,
   containerReceiptReference: null,
   date: new Date(),
@@ -15,7 +15,7 @@ export const defaultReturnReceipt: ReturnReceipt = {
   autoTimestampUpdateUTC: null
 }
 
-export interface ReturnReceipt {
+export interface ContainerReturnReceipt {
   [key: string]: any;
   id: number;
   containerReceiptReference: string | null;
@@ -28,29 +28,29 @@ export interface ReturnReceipt {
 @Injectable({
   providedIn: 'root'
 })
-export class ReturnReceiptService {
+export class ContainerReturnReceiptService {
   
   private httpClient: HttpClient = inject(HttpClient);
   private toastService: ToastService = inject(ToastService);
 
-  private returnReceiptsSubject: BehaviorSubject<ReturnReceipt[]> = new BehaviorSubject<ReturnReceipt[]>(<ReturnReceipt[]> []);
-  private justCreatedReturnReceiptsSubject: BehaviorSubject<ReturnReceipt[]> = new BehaviorSubject<ReturnReceipt[]>(<ReturnReceipt[]> []);
+  private containerReturnReceiptsSubject: BehaviorSubject<ContainerReturnReceipt[]> = new BehaviorSubject<ContainerReturnReceipt[]>(<ContainerReturnReceipt[]> []);
+  private justCreatedContainerReturnReceiptsSubject: BehaviorSubject<ContainerReturnReceipt[]> = new BehaviorSubject<ContainerReturnReceipt[]>(<ContainerReturnReceipt[]> []);
   public statusSubject: BehaviorSubject<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = new BehaviorSubject<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'>('stable');
   public previousDataOperationSubject: BehaviorSubject<'created' | 'updated' | 'deleted' | null> = new BehaviorSubject<'created' | 'updated' | 'deleted' | null>(null);
   public requestErrorSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  public readonly returnReceipts: Observable<ReturnReceipt[]> = this.returnReceiptsSubject.asObservable();
-  public readonly justCreatedReturnReceipts: Observable<ReturnReceipt[]> = this.justCreatedReturnReceiptsSubject.asObservable();
+  public readonly containerReturnReceipts: Observable<ContainerReturnReceipt[]> = this.containerReturnReceiptsSubject.asObservable();
+  public readonly justCreatedContainerReturnReceipts: Observable<ContainerReturnReceipt[]> = this.justCreatedContainerReturnReceiptsSubject.asObservable();
   public readonly status: Observable<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = this.statusSubject.asObservable();
   public readonly previousDataOperation: Observable<'created' | 'updated' | 'deleted' | null> = this.previousDataOperationSubject.asObservable();
   public readonly requestError: Observable<any> = this.requestErrorSubject.asObservable();
 
-  getReturnReceipts() {
+  getContainerReturnReceipts() {
     const previousStatus = this.statusSubject.value;
     this.statusSubject.next('fetching');
     const url = environment.azureInventoryTrackingApiBaseUrl + 'mbn/containertracking/returnreceipts';
     this.httpClient
-      .get<ReturnReceipt[]>(url)
+      .get<ContainerReturnReceipt[]>(url)
       .pipe(
         catchError(error => {
           throw error;
@@ -58,7 +58,7 @@ export class ReturnReceiptService {
       )
       .subscribe({
         next: records => {
-          this.returnReceiptsSubject.next(records);
+          this.containerReturnReceiptsSubject.next(records);
           if (previousStatus === 'creating') {
             this.previousDataOperationSubject.next('created');
           } else if (previousStatus === 'updating') {
@@ -69,7 +69,7 @@ export class ReturnReceiptService {
             this.previousDataOperationSubject.next(null);
           }
           
-          this.justCreatedReturnReceiptsSubject.next(<ReturnReceipt[]> []);
+          this.justCreatedContainerReturnReceiptsSubject.next(<ContainerReturnReceipt[]> []);
           this.statusSubject.next('stable');
         },
         error: (error: HttpErrorResponse) => {
@@ -79,14 +79,14 @@ export class ReturnReceiptService {
       });
   }
 
-  createReturnReceipts(records: ReturnReceipt[]) {
+  createReturnReceipts(records: ContainerReturnReceipt[]) {
     this.statusSubject.next('creating');
     this.previousDataOperationSubject.next(null);
     let requests = new Array<Observable<any>>();
 
     records.forEach(record => {
       const url = environment.azureInventoryTrackingApiBaseUrl + 'mbn/containertracking/returnreceipt';
-      requests.push(this.httpClient.post<ReturnReceipt>(url, record));
+      requests.push(this.httpClient.post<ContainerReturnReceipt>(url, record));
     });
 
     forkJoin(requests)
@@ -96,9 +96,9 @@ export class ReturnReceiptService {
         })
       )
       .subscribe({
-        next: (justCreatedReturnReceipts) => {
-          this.justCreatedReturnReceiptsSubject.next(justCreatedReturnReceipts);
-          this.getReturnReceipts();
+        next: (justCreatedContainerReturnReceipts) => {
+          this.justCreatedContainerReturnReceiptsSubject.next(justCreatedContainerReturnReceipts);
+          this.getContainerReturnReceipts();
           this.toastService.openToast(records.length > 1 ? 'All Records created.' : 'Record created.');
         },
         error: (error: HttpErrorResponse) => {
@@ -108,7 +108,7 @@ export class ReturnReceiptService {
       });
   }
 
-  updateReturnReceipts(records: ReturnReceipt[]) {
+  updateReturnReceipts(records: ContainerReturnReceipt[]) {
     this.statusSubject.next('updating');
     this.previousDataOperationSubject.next(null);
     let requests = new Array<Observable<any>>();
@@ -126,7 +126,7 @@ export class ReturnReceiptService {
       )
       .subscribe({
         next: () => {
-          this.getReturnReceipts();
+          this.getContainerReturnReceipts();
           this.toastService.openToast(records.length > 1 ? 'All Records updated.' : 'Record updated.');
         },
         error: (error: HttpErrorResponse) => {
@@ -136,7 +136,7 @@ export class ReturnReceiptService {
       });
   }
 
-  deleteReturnReceipts(records: ReturnReceipt[]) {
+  deleteReturnReceipts(records: ContainerReturnReceipt[]) {
     this.statusSubject.next('deleting');
     this.previousDataOperationSubject.next(null);
     let requests = new Array<Observable<any>>();
@@ -154,7 +154,7 @@ export class ReturnReceiptService {
       )
       .subscribe({
         next: () => {
-          this.getReturnReceipts();
+          this.getContainerReturnReceipts();
           this.toastService.openToast(records.length > 1 ? 'All Records deleted.' : 'Record deleted.');
         },
         error: (error: HttpErrorResponse) => {

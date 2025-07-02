@@ -36,23 +36,23 @@ export const routes: Routes = [
           },
           {
             path: 'ledger',
-            loadComponent: () => import('./pages/container-tracking/container-ledger/container-ledger.page').then(page => page.ContainerLedgerPage)
+            loadComponent: () => import('./pages/container-tracking/container-ledger-entries/container-ledger-entries.page').then(page => page.ContainerLedgerEntriesPage)
           },
           {
             path: 'customer-ledger',
-            loadComponent: () => import('./pages/container-tracking/customer-container-ledger/customer-container-ledger.page').then(page => page.CustomerContainerLedgerPage)
+            loadComponent: () => import('./pages/container-tracking/customer-container-ledger-entries/customer-container-ledger-entries.page').then(page => page.CustomerContainerLedgerEntriesPage)
           },
           {
             path: 'ledger-entry-details',
-            loadComponent: () => import('./pages/container-tracking/ledger-entry-details/ledger-entry-details.page').then(page => page.LedgerEntryDetailsPage)
+            loadComponent: () => import('./pages/container-tracking/container-ledger-entry-details/container-ledger-entry-details.page').then(page => page.ContainerLedgerEntryDetailsPage)
           },
           {
             path: 'return-receipts',
-            loadComponent: () => import('./pages/container-tracking/return-receipts/return-receipts.page').then(page => page.ReturnReceiptsPage)
+            loadComponent: () => import('./pages/container-tracking/container-return-receipts/container-return-receipts.page').then(page => page.ContainerReturnReceiptsPage)
           },
           {
             path: 'return-receipt-details',
-            loadComponent: () => import('./pages/container-tracking/return-receipt-details/return-receipt-details.page').then(page => page.ReturnReceiptDetailsPage)
+            loadComponent: () => import('./pages/container-tracking/container-return-receipt-details/container-return-receipt-details.page').then(page => page.ContainerReturnReceiptDetailsPage)
           }
         ]
       }
@@ -67,14 +67,4 @@ export const routes: Routes = [
     redirectTo: 'not-found',
     pathMatch: 'full'
   },
-  {
-    path: 'return-receipts',
-    loadComponent: () => import('./pages/container-tracking/return-receipts/return-receipts.page').then( m => m.ReturnReceiptsPage)
-  },
-  {
-    path: 'return-receipt-details',
-    loadComponent: () => import('./pages/container-tracking/return-receipt-details/return-receipt-details.page').then( m => m.ReturnReceiptDetailsPage)
-  },
-
-
 ];

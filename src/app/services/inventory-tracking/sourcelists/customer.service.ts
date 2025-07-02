@@ -1,9 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, forkJoin } from 'rxjs';
+import { BehaviorSubject, Observable, catchError } from 'rxjs';
 
-import { ToastService } from '../utils/toast.service';
-import { environment } from '../../../environments/environment';
+import { ToastService } from '../../utils/toast.service';
+import { environment } from '../../../../environments/environment';
 import { Utils } from 'src/app/classes/utils';
 
 export const defaultCustomer: Customer = {

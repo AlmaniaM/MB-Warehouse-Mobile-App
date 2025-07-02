@@ -1,9 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, forkJoin } from 'rxjs';
+import { BehaviorSubject, Observable, catchError } from 'rxjs';
 
-import { ToastService } from '../utils/toast.service';
-import { environment } from '../../../environments/environment';
+import { ToastService } from '../../utils/toast.service';
+import { environment } from '../../../../environments/environment';
 import { Utils } from 'src/app/classes/utils';
 
 export const defaultContainerType: ContainerType = {
@@ -31,18 +31,16 @@ export class ContainerTypeService {
   private toastService: ToastService = inject(ToastService);
 
   private containerTypesSubject: BehaviorSubject<ContainerType[]> = new BehaviorSubject<ContainerType[]>(<ContainerType[]> []);
-  private justCreatedContainerTypesSubject: BehaviorSubject<ContainerType[]> = new BehaviorSubject<ContainerType[]>(<ContainerType[]> []);
   public statusSubject: BehaviorSubject<'fetching' | 'error' | 'stable'> = new BehaviorSubject<'fetching' | 'error' | 'stable'>('stable');
   public requestErrorSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   public readonly containerTypes: Observable<ContainerType[]> = this.containerTypesSubject.asObservable();
-  public readonly justCreatedContainerTypes: Observable<ContainerType[]> = this.justCreatedContainerTypesSubject.asObservable();
   public readonly status: Observable<'fetching' | 'error' | 'stable'> = this.statusSubject.asObservable();
   public readonly requestError: Observable<any> = this.requestErrorSubject.asObservable();
 
   getContainerTypes() {
     this.statusSubject.next('fetching');
-    const url = environment.azureInventoryTrackingApiBaseUrl + 'mbn/containertracking/containertypes';
+    const url = environment.azureInventoryTrackingApiBaseUrl + 'mbn/sourcelists/containertypes';
     this.httpClient
       .get<ContainerType[]>(url)
       .pipe(
@@ -53,7 +51,6 @@ export class ContainerTypeService {
       .subscribe({
         next: records => {
           this.containerTypesSubject.next(records);
-          this.justCreatedContainerTypesSubject.next(<ContainerType[]> []);
           this.statusSubject.next('stable');
         },
         error: (error: HttpErrorResponse) => {

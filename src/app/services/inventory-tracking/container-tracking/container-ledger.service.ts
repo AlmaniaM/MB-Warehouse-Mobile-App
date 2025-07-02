@@ -1,9 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, forkJoin } from 'rxjs';
+import { BehaviorSubject, Observable, catchError } from 'rxjs';
 
-import { ToastService } from '../utils/toast.service';
-import { environment } from '../../../environments/environment';
+import { ToastService } from '../../utils/toast.service';
+import { environment } from '../../../../environments/environment';
 import { Utils } from 'src/app/classes/utils';
 
 export const defaultContainerLedgerEntry: ContainerLedgerEntry = {
@@ -60,18 +60,34 @@ export interface CustomerContainerLedgerEntry {
   autoTimestampUpdateUTC: Date | null;
 }
 
+export const defaultContainerLedgerTransaction: ContainerLedgerTransaction = {
+  id: -1,
+  containerTypeId: -1,
+  quantity: 0,
+  date: new Date(),
+  fromType: 'MBN',
+  from: 0,
+  toType: null,
+  to: null,
+  note: null,
+  customerInvoiceNumber: null,
+  customerRanch: null
+}
+
 export interface ContainerLedgerTransaction {
-  Id: number;
-  ContainerTypeId: number;
-  Quantity: number;
-  Date: Date;
-  FromType: string;
-  From: number;
-  ToType: string | null;
-  To: number | null;
-  Note: string | null;
-  CustomerInvoiceNumber: string | null;
-  CustomerRanch: string | null;
+  id: number;
+  containerTypeId: number;
+  quantity: number;
+  date: Date;
+  fromType: 'MBN' | 'Customer';
+  //MBN=0, Customer=CustomerId
+  from: number;
+  toType: 'MBN' | 'Customer' | null;
+  //MBN=0, Customer=CustomerId
+  to: number | null;
+  note: string | null;
+  customerInvoiceNumber: string | null;
+  customerRanch: string | null;
 }
 
 export interface ContainerTypeQuantityTotal {
@@ -168,27 +184,27 @@ export class ContainerLedgerEntryService {
       });
   }
 
-    getContainerTypeQuantityTotals() {
-      this.statusSubject.next('fetching');
-      const url = environment.azureInventoryTrackingApiBaseUrl + 'mbn/containertracking/containertypetotals';
-      this.httpClient
-        .get<ContainerTypeQuantityTotal[]>(url)
-        .pipe(
-          catchError(error => {
-            throw error;
-          })
-        )
-        .subscribe({
-          next: records => {
-            this.containerTypeQuantityTotalsSubject.next(records);
-            this.statusSubject.next('stable');
-          },
-          error: (error: HttpErrorResponse) => {
-            this.registerRequestError(error, 'get');
-            this.statusSubject.next('error');
-          }
-        });
-    }
+  getContainerTypeQuantityTotals() {
+    this.statusSubject.next('fetching');
+    const url = environment.azureInventoryTrackingApiBaseUrl + 'mbn/containertracking/containertypetotals';
+    this.httpClient
+      .get<ContainerTypeQuantityTotal[]>(url)
+      .pipe(
+        catchError(error => {
+          throw error;
+        })
+      )
+      .subscribe({
+        next: records => {
+          this.containerTypeQuantityTotalsSubject.next(records);
+          this.statusSubject.next('stable');
+        },
+        error: (error: HttpErrorResponse) => {
+          this.registerRequestError(error, 'get');
+          this.statusSubject.next('error');
+        }
+      });
+  }
 
   commitContainerLedgerTransaction(transaction: ContainerLedgerTransaction) {
     this.statusSubject.next('creating');
@@ -204,6 +220,7 @@ export class ContainerLedgerEntryService {
       .subscribe({
         next: () => {
           this.getContainerLedgerEntries();
+          this.getCustomerContainerLedgerEntries();
           this.toastService.openToast('Ledger Transaction Successful!');
         },
         error: (error: HttpErrorResponse) => {

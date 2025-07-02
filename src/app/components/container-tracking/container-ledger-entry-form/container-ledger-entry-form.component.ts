@@ -201,7 +201,7 @@ export class ContainerLedgerEntryFormComponent  {
     return {
       ...defaultContainerLedgerTransaction,
       containerTypeId: this.containerType() ? this.containerType()!.id : defaultContainerLedgerTransaction.containerTypeId,
-      quantity: this.quantity(),
+      quantity: this.ledgerAction() === 'AddContainer' ? -this.quantity() : this.quantity(),
       date: this.date(),
       fromType: this.fromType(),
       from: this.customer() ? this.customer()!.id : defaultContainerLedgerTransaction.from,

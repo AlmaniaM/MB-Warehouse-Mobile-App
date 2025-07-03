@@ -2,10 +2,10 @@
   <ion-toolbar>
     <ion-title size="small">
       @if (formType() === 'view') {
-        Ledger Entry Details
+        Container Entry Details
       }
       @if (formType() === 'new') {
-        New Ledger Entry
+        New Container Entry
       }
     </ion-title>
   </ion-toolbar>
@@ -14,21 +14,21 @@
   <ion-progress-bar type="indeterminate"></ion-progress-bar>
 }
 <ion-list lines="full">
-  @if (formType() === 'new') {
+  @if (formType() === 'new' && !initialReturnReceipt()) {
     <ion-item>
-      <ion-select aria-modal label="Ledger Action" labelPlacement="stacked" interface="popover"
+      <ion-select aria-modal label="Action" labelPlacement="stacked" interface="popover"
         [disabled]="!isEditing() || isFetchingData()"
         [(ngModel)]="ledgerAction">
-        <ion-select-option [value]="'AddContainer'">Add New Container</ion-select-option>
-        <ion-select-option [value]="'RemoveContainer'">Remove Container</ion-select-option>
-        <ion-select-option [value]="'SendToCustomer'">Send To Customer</ion-select-option>
-        <ion-select-option [value]="'RecieveFromCustomer'">Recieve From Customer</ion-select-option>
+        <ion-select-option [value]="'AddContainer'">Add Containers</ion-select-option>
+        <ion-select-option [value]="'RemoveContainer'">Remove Containers</ion-select-option>
+        <ion-select-option [value]="'SendToCustomer'">Send Container To Customer</ion-select-option>
+        <ion-select-option [value]="'RecieveFromCustomer'">Recieve Container From Customer</ion-select-option>
       </ion-select>
     </ion-item>
   }
   @if (ledgerAction() === 'SendToCustomer' || ledgerAction() === 'RecieveFromCustomer' || initalContainerLedgerEntryType() === 'Customer') {
     <ion-item>
-      @if (!isEditing()) {
+      @if (!isEditing() || initialReturnReceipt()) {
         @if (customer()) {
           <ion-input label="Customer" labelPlacement="stacked"
             [disabled]="isFetchingData()"

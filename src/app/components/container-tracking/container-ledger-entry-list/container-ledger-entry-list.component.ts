@@ -96,8 +96,8 @@ export class ContainerLedgerEntryListComponent {
   containerTypeService: ContainerTypeService = inject(ContainerTypeService);
   customerService: CustomerService = inject(CustomerService);
 
-  containerLedgerEntryServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.containerLedgerEntryService.status, { initialValue: 'stable' });
-  containerTypeServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.containerTypeService.status, { initialValue: 'stable' });
+  containerLedgerEntryServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.containerLedgerEntryService.statusSubject, { requireSync: true });
+  containerTypeServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.containerTypeService.statusSubject, { requireSync: true });
   isFetchingData: Signal<boolean> = computed(() => {
     return ['fetching', 'creating'].includes(this.containerLedgerEntryServiceStatus()) || ['fetching'].includes(this.containerTypeServiceStatus());
   });
@@ -194,6 +194,6 @@ export class ContainerLedgerEntryListComponent {
 
   setSelectedContainerLedgerEntry(ledgerEntry: ContainerLedgerEntryListRecord) {
     this.selectedContainerLedgerEntryService.setContainerLedgerEntry(ledgerEntry.containerLedgerEntry);
-    this.router.navigate(['/app/container-tracking/ledger-entry']);
+    this.router.navigate(['/app/container-tracking/entry']);
   }
 }

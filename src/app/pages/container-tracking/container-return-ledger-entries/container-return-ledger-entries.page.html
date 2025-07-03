@@ -1,8 +1,6 @@
-
-
-<app-page-topbar title="Receipt Ledger Entries"></app-page-topbar>
+<app-page-topbar title="Return Entries"></app-page-topbar>
 <ion-content>
-  <app-content-topbar title="Receipt Ledger Entries" [showRefresher]="false"></app-content-topbar>
+  <app-content-topbar title="Return Entries" [showRefresher]="false"></app-content-topbar>
   <div id="content">
     <ion-header>
       <ion-list lines="full">
@@ -49,10 +47,49 @@
       <ion-list>
         <ion-item>
           <ion-label>
-            No Container Ledger Entries Found... 
+            No Container Entries Foud... 
           </ion-label>
         </ion-item>
       </ion-list>
     }
   </div>
 </ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-title size="small">
+      <strong>Total Returned:</strong>
+      <ion-chip [color]="containerLedgerTotal() > 0 ? 'success' : 'danger'">
+        {{ containerLedgerTotal() > 0 ? '+' + containerLedgerTotal().toLocaleString() : containerLedgerTotal().toLocaleString() }}
+      </ion-chip>
+    </ion-title>
+  </ion-toolbar>
+</ion-footer>
+<ion-fab slot="fixed" horizontal="end" vertical="bottom">
+  <ion-fab-button color="success" (click)="isCreatingLedgerEntry.set(true)">
+    <ion-icon ios="add-outline" md="add-sharp"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+<ion-modal aria-modal [isOpen]="isCreatingLedgerEntry()" (didDismiss)="isCreatingLedgerEntry.set(false)">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title size="small">New Container Ledger Entry</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="isCreatingLedgerEntry.set(false)">
+            <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content id="new-leger-entry-container">
+      @if (isCreatingLedgerEntry() && selectedContainerReturnReceipt()) {
+        <app-container-ledger-entry-form
+          [formType]="'new'"
+					[inititalLedgerAction]="'RecieveFromCustomer'"
+          [initialContainerLedgerEntry]="null"
+          [initialReturnReceipt]="selectedContainerReturnReceipt()!">
+        </app-container-ledger-entry-form>
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>

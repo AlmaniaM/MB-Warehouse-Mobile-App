@@ -1,17 +1,17 @@
 <ion-tabs>
   @if (!isInEntryPage() && !isInReturnPage()) {
     <ion-tab-bar slot="bottom" [color]="'primary'">
-      <ion-tab-button tab="mbn-ledger">
-        <ion-icon ios="list-outline" md="list-sharp"></ion-icon>
-        MBN Ledger
-      </ion-tab-button>
-      <ion-tab-button tab="customer-ledger">
-        <ion-icon ios="people-outline" md="people-sharp"></ion-icon>
-        Customer Ledger
-      </ion-tab-button>
       <ion-tab-button tab="returns">
         <ion-icon ios="receipt-outline" md="receipt-sharp"></ion-icon>
         Returns
+      </ion-tab-button>
+      <ion-tab-button tab="customer-containers">
+        <ion-icon ios="people-outline" md="people-sharp"></ion-icon>
+        Customer
+      </ion-tab-button>
+      <ion-tab-button tab="mbn-containers">
+        <ion-icon ios="list-outline" md="list-sharp"></ion-icon>
+        MBN
       </ion-tab-button>
     </ion-tab-bar>
   }

@@ -77,10 +77,10 @@ export class ContainerLedgerEntryFormComponent  {
   containerTypeService: ContainerTypeService = inject(ContainerTypeService);
   customerService: CustomerService = inject(CustomerService);
 
-  containerLedgerEntryServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.containerLedgerEntryService.status, { initialValue: 'stable' });
-  containerReturnReceiptServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = toSignal(this.containerReturnReceiptService.status, { initialValue: 'stable' });
-  containerTypeServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.containerLedgerEntryService.status, { initialValue: 'stable' });
-  customerServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.customerService.status, { initialValue: 'stable' });
+  containerLedgerEntryServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.containerLedgerEntryService.statusSubject, { requireSync: true });
+  containerReturnReceiptServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = toSignal(this.containerReturnReceiptService.statusSubject, { requireSync: true });
+  containerTypeServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.containerLedgerEntryService.statusSubject, { requireSync: true });
+  customerServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.customerService.statusSubject, { requireSync: true });
   isFetchingData: Signal<boolean> = computed(() => {
     return ['fetching', 'creating'].includes(this.containerLedgerEntryServiceStatus()) || 
       ['fetching'].includes(this.containerTypeServiceStatus()) ||
@@ -108,9 +108,10 @@ export class ContainerLedgerEntryFormComponent  {
     });
   });
 
-  inititalLedgerAction: InputSignal<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null> = input.required<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null>();
   formType: InputSignal<'new' | 'view'> = input.required<'new' | 'view'>();
+  inititalLedgerAction: InputSignal<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null> = input.required<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null>();
   initialContainerLedgerEntry: InputSignal<ContainerLedgerEntry | CustomerContainerLedgerEntry | null> = input.required<ContainerLedgerEntry | CustomerContainerLedgerEntry | null>();
+  initialReturnReceipt: InputSignal<ContainerReturnReceipt | null> = input.required<ContainerReturnReceipt | null>();
   
   initalContainerLedgerEntryType: Signal<'Internal' | 'Customer' | 'None'> = computed(() => {
     if (!this.initialContainerLedgerEntry()) { return 'None'; }

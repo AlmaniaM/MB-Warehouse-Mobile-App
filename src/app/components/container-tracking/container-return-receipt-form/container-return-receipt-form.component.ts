@@ -79,9 +79,9 @@ export class ContainerReturnReceiptFormComponent {
   containerReturnReceiptService: ContainerReturnReceiptService = inject(ContainerReturnReceiptService);
   customerService: CustomerService = inject(CustomerService);
 
-  containerReturnReceiptServicePreviousDataOperation: Signal<'created' | 'updated' | 'deleted' | null> = toSignal(this.containerReturnReceiptService.previousDataOperation, { initialValue: null });
-  containerReturnReceiptServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = toSignal(this.containerReturnReceiptService.status, { initialValue: 'stable' });
-  customerServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.customerService.status, { initialValue: 'stable' });
+  containerReturnReceiptServicePreviousDataOperation: Signal<'created' | 'updated' | 'deleted' | null> = toSignal(this.containerReturnReceiptService.previousDataOperationSubject, { requireSync: true });
+  containerReturnReceiptServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = toSignal(this.containerReturnReceiptService.statusSubject, { requireSync: true });
+  customerServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.customerService.statusSubject, { requireSync: true });
   isFetchingData: Signal<boolean> = computed(() => { 
     return ['fetching', 'creating', 'updating', 'deleting'].includes(this.containerReturnReceiptServiceStatus()) || ['fetching'].includes(this.customerServiceStatus())
   });

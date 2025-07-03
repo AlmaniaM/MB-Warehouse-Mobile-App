@@ -14,7 +14,7 @@ export const routes: Routes = [
   {
     path: 'app',
     canActivate: [MsalGuard],
-    loadComponent: () => import('./components/app-layout/app-layout.component').then(page => page.AppLayoutComponent),
+    loadComponent: () => import('./components/app-layout/app-layout.component').then(component => component.AppLayoutComponent),
     children: [
       {
         path: '',
@@ -27,24 +27,47 @@ export const routes: Routes = [
       },
       {
         path: 'container-tracking',
-        loadComponent: () => import('./components/container-tracking/container-tracking-layout/container-tracking-layout.component').then(page => page.ContainerTrackingLayoutComponent),
+        loadComponent: () => import('./components/container-tracking/container-tracking-layout/container-tracking-layout.component').then(component => component.ContainerTrackingLayoutComponent),
         children: [
           {
             path: '',
-            redirectTo: 'mbn-ledger',
+            redirectTo: 'returns',
             pathMatch: 'full'
           },
           {
-            path: 'mbn-ledger',
-            loadComponent: () => import('./pages/container-tracking/container-ledger-entries/container-ledger-entries.page').then(page => page.ContainerLedgerEntriesPage)
+            path: 'returns',
+            loadComponent: () => import('./pages/container-tracking/container-returns/container-returns.page').then(page => page.ContainerReturnsPage)
           },
           {
-            path: 'customer-ledger',
+            path: 'return',
+            loadComponent: () => import('./components/container-tracking/container-return-layout/container-return-layout.component').then(component => component.ContainerReturnLayoutComponent),
+            children: [
+              {
+                path: '',
+                redirectTo: 'entries',
+                pathMatch: 'full'
+              },
+              {
+                path: 'entries',
+                loadComponent: () => import('./pages/container-tracking/container-return-ledger-entries/container-return-ledger-entries.page').then(page => page.ContainerReturnLedgerEntriesPage)
+              },
+              {
+                path: 'details',
+                loadComponent: () => import('./pages/container-tracking/container-return-details/container-return-details.page').then(page => page.ContainerReturnDetailsPage)
+              }
+            ]
+          },
+          {
+            path: 'customer-containers',
             loadComponent: () => import('./pages/container-tracking/customer-container-ledger-entries/customer-container-ledger-entries.page').then(page => page.CustomerContainerLedgerEntriesPage)
           },
           {
-            path: 'ledger-entry',
-            loadComponent: () => import('./components/container-tracking/container-ledger-entry-layout/container-ledger-entry-layout.component').then(page => page.ContainerLedgerEntryLayoutComponent),
+            path: 'mbn-containers',
+            loadComponent: () => import('./pages/container-tracking/container-ledger-entries/container-ledger-entries.page').then(page => page.ContainerLedgerEntriesPage)
+          },
+          {
+            path: 'entry',
+            loadComponent: () => import('./components/container-tracking/container-ledger-entry-layout/container-ledger-entry-layout.component').then(component => component.ContainerLedgerEntryLayoutComponent),
             children: [
               {
                 path: '',
@@ -54,30 +77,11 @@ export const routes: Routes = [
               {
                 path: 'details',
                 loadComponent: () => import('./pages/container-tracking/container-ledger-entry-details/container-ledger-entry-details.page').then(page => page.ContainerLedgerEntryDetailsPage)
-              }
-            ]
-          },
-          {
-            path: 'returns',
-            loadComponent: () => import('./pages/container-tracking/container-returns/container-returns.page').then(page => page.ContainerReturnsPage)
-          },
-          {
-            path: 'return',
-            loadComponent: () => import('./components/container-tracking/container-return-layout/container-return-layout.component').then(page => page.ContainerReturnLayoutComponent),
-            children: [
-              {
-                path: '',
-                redirectTo: 'details',
-                pathMatch: 'full'
               },
               {
-                path: 'details',
-                loadComponent: () => import('./pages/container-tracking/container-return-details/container-return-details.page').then(page => page.ContainerReturnDetailsPage)
+                path: 'return',
+                loadComponent: () => import('./pages/container-tracking/container-ledger-entry-return/container-ledger-entry-return.page').then(page => page.ContainerLedgerEntryReturnPage)
               },
-              {
-                path: 'ledger-entries',
-                loadComponent: () => import('./pages/container-tracking/container-return-ledger-entries/container-return-ledger-entries.page').then(page => page.ContainerReturnLedgerEntriesPage)
-              }
             ]
           },
         ]

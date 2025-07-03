@@ -36,7 +36,7 @@ export class ContainerTrackingLayoutComponent {
   isInEntryPage: Signal<boolean> = computed<boolean>(() => { 
     if (this.routerNavigationEvent() === null) { return false; }
     const url = (this.routerNavigationEvent() as NavigationEnd).urlAfterRedirects;
-    return url.includes('/ledger-entry');
+    return url.includes('/entry');
   });
 
   isInReturnPage: Signal<boolean> = computed<boolean>(() => { 
@@ -66,7 +66,7 @@ export class ContainerTrackingLayoutComponent {
     this.customerService.getCustomers();
 
     if (this.selectedContainerLedgerEntry()) { 
-      this.router.navigate(['/app/container-tracking/ledger-entry']);
+      this.router.navigate(['/app/container-tracking/entry']);
     }
 
     if (this.selectedContainerReturnReceipt()) { 

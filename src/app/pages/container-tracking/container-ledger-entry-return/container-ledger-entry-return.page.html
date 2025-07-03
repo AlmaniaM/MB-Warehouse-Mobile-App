@@ -1,0 +1,30 @@
+<app-page-topbar title="Return Entries"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Return Entries" [showRefresher]="false"></app-content-topbar>
+  <div id="content">
+    <ion-header>
+      <ion-list lines="full">
+        @if (containerReturnReceipt()) {
+          <ion-item>
+            {{ containerReturnReceiptCustomer()!.name }}
+          </ion-item>
+          <ion-item>
+            {{ containerReturnReceipt()!.date  | date: 'MM/dd/yyy'}}
+          </ion-item>
+          @if (containerReturnReceipt()!.containerReceiptReference) {
+            <ion-item>
+              Receipt Reference: {{ containerReturnReceipt()!.containerReceiptReference }}
+            </ion-item>
+          }
+        } @else {
+          <ion-item>
+            No Return Attached to this Entry...
+          </ion-item>
+        }
+      </ion-list>
+    </ion-header>
+    @if (isFetchingData()) {
+      <ion-progress-bar type="indeterminate"></ion-progress-bar>
+    }
+  </div>
+</ion-content>

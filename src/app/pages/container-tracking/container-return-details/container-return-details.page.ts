@@ -1,9 +1,11 @@
-import { Component, inject, Signal } from '@angular/core';
+import { Component, effect, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
+
 import { IonContent } from "@ionic/angular/standalone";
 
 import { SelectedContainerReturnReceiptService } from 'src/app/services/cache/selected-container-return-receipt.service';
-import { ContainerReturnReceipt } from 'src/app/services/inventory-tracking/container-tracking/container-return-receipt.service';
+import { ContainerReturnReceipt, ContainerReturnReceiptService } from 'src/app/services/inventory-tracking/container-tracking/container-return-receipt.service';
 
 import { ContentTopbarComponent } from 'src/app/components/content-topbar/content-topbar.component';
 import { PageTopbarComponent } from 'src/app/components/page-topbar/page-topbar.component';
@@ -22,7 +24,17 @@ import { ContainerReturnReceiptFormComponent } from 'src/app/components/containe
 })
 export class ContainerReturnDetailsPage {
 
+  router: Router = inject(Router);
   selectedContainerReturnReceiptService: SelectedContainerReturnReceiptService = inject(SelectedContainerReturnReceiptService);
+  containerReturnReceiptService: ContainerReturnReceiptService = inject(ContainerReturnReceiptService);
+
   selectedContainerReturnReceipt: Signal<ContainerReturnReceipt | null> = toSignal(this.selectedContainerReturnReceiptService.selectedContainerReturnReceipt, { initialValue: null });
+  containerReturnReceiptPreviousDataOperation: Signal<"created" | "updated" | "deleted" | null> = toSignal(this.containerReturnReceiptService.previousDataOperationSubject, { requireSync: true });
+  
+  containerReturnReceiptPreviousDataOperationEffect = effect(() => {
+    if (this.containerReturnReceiptPreviousDataOperation() !== 'deleted') { return; }
+    this.selectedContainerReturnReceiptService.setContainerReturnReceipt(null);
+    this.router.navigate(['/app/container-tracking/returns']);
+  });
 
 }

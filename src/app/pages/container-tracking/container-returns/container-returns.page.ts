@@ -1,6 +1,7 @@
 import { 
   Component, 
   computed, 
+  effect, 
   inject,
   signal, 
   Signal, 
@@ -91,10 +92,19 @@ export class ContainerReturnsPage {
   containerReturnReceiptService: ContainerReturnReceiptService = inject(ContainerReturnReceiptService);
   customerService: CustomerService = inject(CustomerService);
 
-  containerReturnReceiptServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = toSignal(this.containerReturnReceiptService.status, { initialValue: 'stable' });
-  customerServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.customerService.status, { initialValue: 'stable' });
+  containerReturnReceiptServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = toSignal(this.containerReturnReceiptService.statusSubject, { requireSync: true });
+  customerServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.customerService.statusSubject, { requireSync: true });
   isFetchingData: Signal<boolean> = computed(() => {
     return ['fetching', 'creating', 'updating', 'deleting'].includes(this.containerReturnReceiptServiceStatus()) || ['fetching'].includes(this.customerServiceStatus());
+  });
+
+  justCreatedContainerReturnReceipt: Signal<ContainerReturnReceipt[]> = toSignal(this.containerReturnReceiptService.justCreatedContainerReturnReceipts, { initialValue: [] });
+  justCreatedContainerReturnReceiptEffect = effect(() => {
+    if (this.justCreatedContainerReturnReceipt().length === 0) { return; }
+
+    this.isCreatingReturn.set(false);
+    this.selectedContainerReturnReceiptService.setContainerReturnReceipt(this.justCreatedContainerReturnReceipt()[0]);
+    this.router.navigate(['/app/container-tracking/return/entries']);
   });
 
   containerReturnReceipts: Signal<ContainerReturnReceipt[]> = toSignal(this.containerReturnReceiptService.containerReturnReceipts, { initialValue: [] });  
@@ -128,7 +138,6 @@ export class ContainerReturnsPage {
     });
   });
 
-  
   globalSearchFilter: WritableSignal<string> = signal('');
   yearFilter: WritableSignal<number> = signal(new Date().getFullYear());
   customerFilter: WritableSignal<Customer | null> = signal(null);
@@ -160,5 +169,4 @@ export class ContainerReturnsPage {
     this.selectedContainerReturnReceiptService.setContainerReturnReceipt(receipt.containerReturnReceipt);
     this.router.navigate(['/app/container-tracking/return']); 
   }
-
 }

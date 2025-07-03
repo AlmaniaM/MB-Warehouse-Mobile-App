@@ -38,10 +38,10 @@ export class ContainerLedgerEntryLayoutComponent  {
   goBack() {
     if (this.selectedContainerLedgerEntryType() === 'Customer') {
     this.selectedContainerLedgerEntryService.setContainerLedgerEntry(null);
-      this.router.navigate(['/app/container-tracking/customer-ledger']);
+      this.router.navigate(['/app/container-tracking/customer-containers']);
       return;
     }
     this.selectedContainerLedgerEntryService.setContainerLedgerEntry(null);
-    this.router.navigate(['/app/container-tracking/mbn-ledger']);
+    this.router.navigate(['/app/container-tracking/mbn-containers']);
   }
 }

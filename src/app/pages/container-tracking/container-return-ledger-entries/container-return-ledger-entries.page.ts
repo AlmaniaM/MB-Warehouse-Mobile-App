@@ -3,7 +3,9 @@ import {
   Component, 
   computed, 
   inject, 
-  Signal 
+  signal, 
+  Signal, 
+  WritableSignal
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -16,7 +18,16 @@ import {
   IonLabel, 
   IonText, 
   IonNote, 
-  IonChip 
+  IonChip, 
+  IonFabButton, 
+  IonIcon, 
+  IonButton, 
+  IonButtons, 
+  IonToolbar, 
+  IonModal, 
+  IonFab, 
+  IonTitle, 
+  IonFooter 
 } from "@ionic/angular/standalone";
 
 import { SelectedContainerReturnReceiptService } from 'src/app/services/cache/selected-container-return-receipt.service';
@@ -24,10 +35,11 @@ import { ContainerLedgerEntryService, CustomerContainerLedgerEntry } from 'src/a
 import { ContainerReturnReceipt, ContainerReturnReceiptService } from 'src/app/services/inventory-tracking/container-tracking/container-return-receipt.service';
 import { ContainerType, ContainerTypeService } from 'src/app/services/inventory-tracking/sourcelists/container-type.service';
 import { Customer, CustomerService } from 'src/app/services/inventory-tracking/sourcelists/customer.service';
+import { ContainerLedgerEntryListRecord } from 'src/app/components/container-tracking/container-ledger-entry-list/container-ledger-entry-list.component';
 
 import { PageTopbarComponent } from 'src/app/components/page-topbar/page-topbar.component';
 import { ContentTopbarComponent } from 'src/app/components/content-topbar/content-topbar.component';
-import { ContainerLedgerEntryListRecord } from 'src/app/components/container-tracking/container-ledger-entry-list/container-ledger-entry-list.component';
+import { ContainerLedgerEntryFormComponent } from 'src/app/components/container-tracking/container-ledger-entry-form/container-ledger-entry-form.component';
 
 @Component({
   selector: 'app-container-return-ledger-entries',
@@ -35,6 +47,15 @@ import { ContainerLedgerEntryListRecord } from 'src/app/components/container-tra
   styleUrls: ['./container-return-ledger-entries.page.scss'],
   imports: [
     DatePipe,
+    IonFooter, 
+    IonTitle, 
+    IonFab, 
+    IonModal, 
+    IonToolbar, 
+    IonButtons, 
+    IonButton, 
+    IonIcon, 
+    IonFabButton, 
     IonChip, 
     IonNote, 
     IonText, 
@@ -45,7 +66,8 @@ import { ContainerLedgerEntryListRecord } from 'src/app/components/container-tra
     IonHeader, 
     IonProgressBar,
     PageTopbarComponent,
-    ContentTopbarComponent
+    ContentTopbarComponent,
+    ContainerLedgerEntryFormComponent
   ]
 })
 export class ContainerReturnLedgerEntriesPage {
@@ -56,8 +78,8 @@ export class ContainerReturnLedgerEntriesPage {
   constainerTypeService: ContainerTypeService = inject(ContainerTypeService);
   customerService: CustomerService = inject(CustomerService);
   
-  containerReturnReceiptServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = toSignal(this.containerReturnReceiptService.status, { initialValue: 'stable' });
-  customerServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.customerService.status, { initialValue: 'stable' });
+  containerReturnReceiptServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = toSignal(this.containerReturnReceiptService.statusSubject, { requireSync: true });
+  customerServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.customerService.statusSubject, { requireSync: true });
   isFetchingData: Signal<boolean> = computed(() => { 
     return ['fetching', 'creating', 'updating', 'deleting'].includes(this.containerReturnReceiptServiceStatus()) || ['fetching'].includes(this.customerServiceStatus())
   });
@@ -66,7 +88,6 @@ export class ContainerReturnLedgerEntriesPage {
   customerContainerLedgerEntries: Signal<CustomerContainerLedgerEntry[]> = toSignal(this.containerLedgerEntryService.customerContainerLedgerEntries, { initialValue: [] });
   containerTypes: Signal<ContainerType[]> = toSignal(this.constainerTypeService.containerTypes, { initialValue: [] });
   customers: Signal<Customer[]> = toSignal(this.customerService.customers, { initialValue: [] });
-
 
   selectedContainerReturnReceiptCustomer: Signal<Customer> = computed(() => {
     return this.customers().find(customer => customer.id === this.selectedContainerReturnReceipt()!.customerId)!;
@@ -90,4 +111,13 @@ export class ContainerReturnLedgerEntriesPage {
         };
       });
   });
+
+  containerLedgerTotal: Signal<number> = computed(() => {
+    return this.customerContainerLedgerEntryListRecords().reduce((total, record) => {
+      return total + (record.containerLedgerEntry.quantity || 0);
+    }, 0);
+  });
+
+  isCreatingLedgerEntry: WritableSignal<boolean> = signal(false);
+
 }

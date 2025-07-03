@@ -71,7 +71,7 @@
       <ion-list>
         <ion-item>
           <ion-label>
-            No Container Ledger Entries Found... 
+            No Container Entries Found... 
           </ion-label>
         </ion-item>
       </ion-list>
@@ -125,7 +125,7 @@
   <ng-template>
     <ion-header>
       <ion-toolbar color="primary">
-        <ion-title size="small">New Container Ledger Entry</ion-title>
+        <ion-title size="small">New Container Entry</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="isCreatingLedgerEntry.set(false)">
             <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
@@ -136,9 +136,10 @@
     <ion-content id="new-leger-entry-container">
       @if (isCreatingLedgerEntry()) {
         <app-container-ledger-entry-form
-					[inititalLedgerAction]="'RecieveFromCustomer'"
           [formType]="'new'"
-          [initialContainerLedgerEntry]="null">
+					[inititalLedgerAction]="'RecieveFromCustomer'"
+          [initialContainerLedgerEntry]="null"
+          [initialReturnReceipt]="null">
         </app-container-ledger-entry-form>
       }
     </ion-content>

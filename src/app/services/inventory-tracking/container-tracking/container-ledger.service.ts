@@ -36,7 +36,7 @@ export const defaultCustomerContainerLedgerEntry: CustomerContainerLedgerEntry =
   customerInvoiceNumber: null,
   note: null,
   quantity: 0,
-  containerReceiptId: null,
+  returnReceiptId: null,
   shipmentNum: null,
   shipmentYear: null,
   autoTimestampInsertUTC: null,
@@ -53,7 +53,7 @@ export interface CustomerContainerLedgerEntry {
   customerInvoiceNumber: string | null;
   note: string | null;
   quantity: number;
-  containerReceiptId: number | null;
+  returnReceiptId: number | null;
   shipmentNum: string | null;
   shipmentYear: number | null;
   autoTimestampInsertUTC: Date | null;
@@ -71,7 +71,10 @@ export const defaultContainerLedgerTransaction: ContainerLedgerTransaction = {
   to: null,
   note: null,
   customerInvoiceNumber: null,
-  customerRanch: null
+  customerRanch: null,
+  returnReceiptId: null,
+  shipmentNum: null,
+  shipmentYear: null
 }
 
 export interface ContainerLedgerTransaction {
@@ -88,6 +91,9 @@ export interface ContainerLedgerTransaction {
   note: string | null;
   customerInvoiceNumber: string | null;
   customerRanch: string | null;
+  returnReceiptId: number | null;
+  shipmentNum: string | null;
+  shipmentYear: number | null;
 }
 
 export interface ContainerTypeQuantityTotal {

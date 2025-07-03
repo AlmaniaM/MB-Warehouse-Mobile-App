@@ -98,7 +98,7 @@ export class ContainerReturnLedgerEntriesPage {
     
     return this.customerContainerLedgerEntries()
       .filter(entry => {
-        return entry.containerReceiptId === this.selectedContainerReturnReceipt()!.id;
+        return entry.returnReceiptId === this.selectedContainerReturnReceipt()!.id;
       })
       .map(entry => {
         const containerType = this.containerTypes().find(type => type.id === entry.containerTypeId)!;

@@ -153,7 +153,7 @@ export class ContainerLedgerEntryFormComponent  {
     this.customer.set(this.customers().find(customer => customer.id === (this.initialContainerLedgerEntry()! as CustomerContainerLedgerEntry).customerId)!);
     this.customerInvoiceNumber.set((this.initialContainerLedgerEntry()! as CustomerContainerLedgerEntry).customerInvoiceNumber);
     this.customerRanch.set((this.initialContainerLedgerEntry()! as CustomerContainerLedgerEntry).customerRanch);
-    this.containerReturnReceipt.set(this.containerReturnReceipts().find(receipt => receipt.id === (this.initialContainerLedgerEntry()! as CustomerContainerLedgerEntry).containerReceiptId) || null);
+    this.containerReturnReceipt.set(this.containerReturnReceipts().find(receipt => receipt.id === (this.initialContainerLedgerEntry()! as CustomerContainerLedgerEntry).returnReceiptId) || null);
     this.shipmentNumber.set((this.initialContainerLedgerEntry()! as CustomerContainerLedgerEntry).shipmentNum);
     this.shipmentYear.set((this.initialContainerLedgerEntry()! as CustomerContainerLedgerEntry).shipmentYear);
   });
@@ -217,7 +217,6 @@ export class ContainerLedgerEntryFormComponent  {
     return {
       ...defaultContainerLedgerTransaction,
       containerTypeId: this.containerType() ? this.containerType()!.id : defaultContainerLedgerTransaction.containerTypeId,
-      //returnReceiptId: this.containerReturnReceipt() ? this.containerReturnReceipt()!.id : defaultContainerLedgerTransaction.returnReceiptId,
       quantity: this.ledgerAction() === 'AddContainer' ? -this.quantity() : this.quantity(),
       date: this.date(),
       fromType: this.fromType(),
@@ -227,6 +226,9 @@ export class ContainerLedgerEntryFormComponent  {
       note: this.note(),
       customerInvoiceNumber: this.customerInvoiceNumber(),
       customerRanch: this.customerRanch(),
+      returnReceiptId: this.containerReturnReceipt() ? this.containerReturnReceipt()!.id : defaultContainerLedgerTransaction.returnReceiptId,
+      shipmentNum: this.shipmentNumber(),
+      shipmentYear: this.shipmentYear() ? this.shipmentYear()! : defaultContainerLedgerTransaction.shipmentYear
     };
   });  
 

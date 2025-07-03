@@ -60,7 +60,7 @@ export class ContainerLedgerEntryReturnPage {
     if (!this.selectedCustomerContainerLedgerEntry()) { return null; }
     if (this.containerReturnReceipts().length === 0) { return null; }
 
-    return this.containerReturnReceipts().find(receipt => receipt.id === (this.selectedCustomerContainerLedgerEntry()! as CustomerContainerLedgerEntry).containerReceiptId)!;
+    return this.containerReturnReceipts().find(receipt => receipt.id === (this.selectedCustomerContainerLedgerEntry()! as CustomerContainerLedgerEntry).returnReceiptId)!;
   });
 
   containerReturnReceiptCustomer: Signal<Customer | null> = computed(() => {

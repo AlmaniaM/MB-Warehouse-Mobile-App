@@ -12,7 +12,12 @@ import {
   IonContent,
   IonHeader, 
   IonProgressBar, 
-  IonItem, IonLabel, IonText, IonNote, IonChip } from "@ionic/angular/standalone";
+  IonItem, 
+  IonLabel, 
+  IonText, 
+  IonNote, 
+  IonChip 
+} from "@ionic/angular/standalone";
 
 import { SelectedContainerReturnReceiptService } from 'src/app/services/cache/selected-container-return-receipt.service';
 import { ContainerLedgerEntryService, CustomerContainerLedgerEntry } from 'src/app/services/inventory-tracking/container-tracking/container-ledger.service';
@@ -25,11 +30,15 @@ import { ContentTopbarComponent } from 'src/app/components/content-topbar/conten
 import { ContainerLedgerEntryListRecord } from 'src/app/components/container-tracking/container-ledger-entry-list/container-ledger-entry-list.component';
 
 @Component({
-  selector: 'app-container-return-receipt-ledger-entries',
-  templateUrl: './container-return-receipt-ledger-entries.page.html',
-  styleUrls: ['./container-return-receipt-ledger-entries.page.scss'],
-  imports: [IonChip, IonNote, IonText, IonLabel, 
+  selector: 'app-container-return-ledger-entries',
+  templateUrl: './container-return-ledger-entries.page.html',
+  styleUrls: ['./container-return-ledger-entries.page.scss'],
+  imports: [
     DatePipe,
+    IonChip, 
+    IonNote, 
+    IonText, 
+    IonLabel, 
     IonContent,
     IonItem, 
     IonList, 
@@ -39,7 +48,7 @@ import { ContainerLedgerEntryListRecord } from 'src/app/components/container-tra
     ContentTopbarComponent
   ]
 })
-export class ContainerReturnReceiptLedgerEntriesPage {
+export class ContainerReturnLedgerEntriesPage {
 
   selectedContainerReturnReceiptService: SelectedContainerReturnReceiptService = inject(SelectedContainerReturnReceiptService);
   containerReturnReceiptService: ContainerReturnReceiptService = inject(ContainerReturnReceiptService);
@@ -81,5 +90,4 @@ export class ContainerReturnReceiptLedgerEntriesPage {
         };
       });
   });
-
 }

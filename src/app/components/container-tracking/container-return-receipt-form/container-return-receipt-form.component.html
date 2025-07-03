@@ -2,13 +2,13 @@
   <ion-toolbar>
     <ion-title size="small">
       @if (formType() === 'view') {
-        Container Return Receipt Details
+        Return Details
       }
       @if (formType() === 'update') {
-        Edit Container Return Receipt Details
+        Edit Return
       }
       @if (formType() === 'new') {
-        New Container Return Receipt Details
+        New Return
       }
     </ion-title>
   </ion-toolbar>
@@ -104,7 +104,7 @@
   <ng-template>
     <ion-header>
       <ion-toolbar color="primary">
-        <ion-title size="small">Delete Return Receipt</ion-title>
+        <ion-title size="small">Delete Return</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="isDeleting.set(false)">
             <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
@@ -114,7 +114,7 @@
     </ion-header>
     <ion-content class="ion-padding">
       <ion-text>
-        <h4>You are about to delete this Return Receipt</h4>
+        <h4>You are about to delete this Return</h4>
         <p>Are you sure you want to do this?</p>
       </ion-text>
     </ion-content>
@@ -122,7 +122,7 @@
       <ion-button expand="block" fill="outline" [color]="'danger'"
         [disabled]="isFetchingData()"
         (click)="isDeleting.set(false); deleteContainerReturnReceiptProduct()">
-        Yes, Delete Return Receipt
+        Yes, Delete Return
         <ion-icon slot="end" ios="trash-outline" md="trash-sharp"></ion-icon>
       </ion-button>
       <ion-button expand="block" fill="outline" 

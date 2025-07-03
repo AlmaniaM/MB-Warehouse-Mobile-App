@@ -1,6 +1,6 @@
-<app-page-topbar title="Return Receipts"></app-page-topbar>
+<app-page-topbar title="Returns"></app-page-topbar>
 <ion-content>
-  <app-content-topbar title="Return Receipts" [showRefresher]="true"></app-content-topbar>
+  <app-content-topbar title="Returns" [showRefresher]="true"></app-content-topbar>
   <div id="content">  
     <ion-header>
       <ion-accordion-group>
@@ -84,7 +84,7 @@
   <ng-template>
     <ion-header>
       <ion-toolbar color="primary">
-        <ion-title size="small">New Container Return Receipt</ion-title>
+        <ion-title size="small">New Return</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="isCreatingReturnReceipt.set(false)">
             <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
@@ -101,7 +101,7 @@
       } @else {
         <ion-list>
           <ion-item>
-            <ion-label>Creating Return Receipt...</ion-label>
+            <ion-label>Creating Return...</ion-label>
           </ion-item>
         </ion-list>
       }

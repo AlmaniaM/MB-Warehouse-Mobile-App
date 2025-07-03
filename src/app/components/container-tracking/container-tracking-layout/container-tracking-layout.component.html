@@ -1,5 +1,5 @@
 <ion-tabs>
-  @if (!isInEntryPage() && !isInReturnReceiptPage()) {
+  @if (!isInEntryPage() && !isInReturnPage()) {
     <ion-tab-bar slot="bottom" [color]="'primary'">
       <ion-tab-button tab="mbn-ledger">
         <ion-icon ios="list-outline" md="list-sharp"></ion-icon>
@@ -9,9 +9,9 @@
         <ion-icon ios="people-outline" md="people-sharp"></ion-icon>
         Customer Ledger
       </ion-tab-button>
-      <ion-tab-button tab="return-receipts">
+      <ion-tab-button tab="returns">
         <ion-icon ios="receipt-outline" md="receipt-sharp"></ion-icon>
-        Return Receipts
+        Returns
       </ion-tab-button>
     </ion-tab-bar>
   }

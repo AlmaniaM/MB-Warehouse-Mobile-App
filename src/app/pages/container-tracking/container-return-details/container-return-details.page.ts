@@ -10,9 +10,9 @@ import { PageTopbarComponent } from 'src/app/components/page-topbar/page-topbar.
 import { ContainerReturnReceiptFormComponent } from 'src/app/components/container-tracking/container-return-receipt-form/container-return-receipt-form.component';
 
 @Component({
-  selector: 'app-container-return-receipt-details',
-  templateUrl: './container-return-receipt-details.page.html',
-  styleUrls: ['./container-return-receipt-details.page.scss'],
+  selector: 'app-container-return-details',
+  templateUrl: './container-return-details.page.html',
+  styleUrls: ['./container-return-details.page.scss'],
   imports: [ 
     IonContent,
     ContentTopbarComponent,
@@ -20,7 +20,7 @@ import { ContainerReturnReceiptFormComponent } from 'src/app/components/containe
     ContainerReturnReceiptFormComponent
   ]
 })
-export class ContainerReturnReceiptDetailsPage {
+export class ContainerReturnDetailsPage {
 
   selectedContainerReturnReceiptService: SelectedContainerReturnReceiptService = inject(SelectedContainerReturnReceiptService);
   selectedContainerReturnReceipt: Signal<ContainerReturnReceipt | null> = toSignal(this.selectedContainerReturnReceiptService.selectedContainerReturnReceipt, { initialValue: null });

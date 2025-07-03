@@ -58,12 +58,12 @@ export const routes: Routes = [
             ]
           },
           {
-            path: 'return-receipts',
-            loadComponent: () => import('./pages/container-tracking/container-return-receipts/container-return-receipts.page').then(page => page.ContainerReturnReceiptsPage)
+            path: 'returns',
+            loadComponent: () => import('./pages/container-tracking/container-returns/container-returns.page').then(page => page.ContainerReturnsPage)
           },
           {
-            path: 'return-receipt',
-            loadComponent: () => import('./components/container-tracking/container-return-receipt-layout/container-return-receipt-layout.component').then(page => page.ContainerReturnReceiptLayoutComponent),
+            path: 'return',
+            loadComponent: () => import('./components/container-tracking/container-return-layout/container-return-layout.component').then(page => page.ContainerReturnLayoutComponent),
             children: [
               {
                 path: '',
@@ -72,11 +72,11 @@ export const routes: Routes = [
               },
               {
                 path: 'details',
-                loadComponent: () => import('./pages/container-tracking/container-return-receipt-details/container-return-receipt-details.page').then(page => page.ContainerReturnReceiptDetailsPage)
+                loadComponent: () => import('./pages/container-tracking/container-return-details/container-return-details.page').then(page => page.ContainerReturnDetailsPage)
               },
               {
                 path: 'ledger-entries',
-                loadComponent: () => import('./pages/container-tracking/container-return-receipt-ledger-entries/container-return-receipt-ledger-entries.page').then(page => page.ContainerReturnReceiptLedgerEntriesPage)
+                loadComponent: () => import('./pages/container-tracking/container-return-ledger-entries/container-return-ledger-entries.page').then(page => page.ContainerReturnLedgerEntriesPage)
               }
             ]
           },

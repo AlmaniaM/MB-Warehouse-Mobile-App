@@ -50,9 +50,9 @@ export interface ContainerReturnReceiptListRecord {
 }
 
 @Component({
-  selector: 'app-container-return-receipts',
-  templateUrl: './container-return-receipts.page.html',
-  styleUrls: ['./container-return-receipts.page.scss'],
+  selector: 'app-container-returns',
+  templateUrl: './container-returns.page.html',
+  styleUrls: ['./container-returns.page.scss'],
   imports: [
     CommonModule,
     FormsModule,
@@ -84,7 +84,7 @@ export interface ContainerReturnReceiptListRecord {
     ContainerReturnReceiptFormComponent
   ]
 })
-export class ContainerReturnReceiptsPage {
+export class ContainerReturnsPage {
   
   router: Router = inject(Router);
   selectedContainerReturnReceiptService:  SelectedContainerReturnReceiptService = inject(SelectedContainerReturnReceiptService);
@@ -152,13 +152,12 @@ export class ContainerReturnReceiptsPage {
       });
   });
 
-  
   trackByContainerReturnReceipt(index: number, receipt: ContainerReturnReceiptListRecord) { 
     return receipt.containerReturnReceipt.id;
   }
 
   setSelectedContainerReturnReceipt(receipt: ContainerReturnReceiptListRecord) { 
     this.selectedContainerReturnReceiptService.setContainerReturnReceipt(receipt.containerReturnReceipt);
-    this.router.navigate(['/app/container-tracking/return-receipt']); 
+    this.router.navigate(['/app/container-tracking/return']); 
   }
 }

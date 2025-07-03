@@ -39,10 +39,10 @@ export class ContainerTrackingLayoutComponent {
     return url.includes('/ledger-entry');
   });
 
-  isInReturnReceiptPage: Signal<boolean> = computed<boolean>(() => { 
+  isInReturnPage: Signal<boolean> = computed<boolean>(() => { 
     if (this.routerNavigationEvent() === null) { return false; }
     const url = (this.routerNavigationEvent() as NavigationEnd).urlAfterRedirects;
-    return url.includes('/return-receipt/');
+    return url.includes('/return/');
   });
   
   containerLedgerEntryService: ContainerLedgerEntryService = inject(ContainerLedgerEntryService);
@@ -70,7 +70,7 @@ export class ContainerTrackingLayoutComponent {
     }
 
     if (this.selectedContainerReturnReceipt()) { 
-      this.router.navigate(['/app/container-tracking/return-receipt']); 
+      this.router.navigate(['/app/container-tracking/return']); 
     }
   }
 }

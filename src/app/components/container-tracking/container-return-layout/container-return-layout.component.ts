@@ -17,9 +17,9 @@ import { SelectedContainerReturnReceiptService } from 'src/app/services/cache/se
 import { ContainerReturnReceipt } from 'src/app/services/inventory-tracking/container-tracking/container-return-receipt.service';
 
 @Component({
-  selector: 'app-container-return-receipt-layout',
-  templateUrl: './container-return-receipt-layout.component.html',
-  styleUrls: ['./container-return-receipt-layout.component.scss'],
+  selector: 'app-container-return-layout',
+  templateUrl: './container-return-layout.component.html',
+  styleUrls: ['./container-return-layout.component.scss'],
   imports: [
     IonTabButton, 
     IonIcon, 
@@ -27,7 +27,7 @@ import { ContainerReturnReceipt } from 'src/app/services/inventory-tracking/cont
     IonTabs 
   ]
 })
-export class ContainerReturnReceiptLayoutComponent  {
+export class ContainerReturnLayoutComponent  {
   
   router: Router = inject(Router);
   selectedContainerReturnReceiptService:  SelectedContainerReturnReceiptService = inject(SelectedContainerReturnReceiptService);
@@ -35,6 +35,6 @@ export class ContainerReturnReceiptLayoutComponent  {
 
   goBack() {
     this.selectedContainerReturnReceiptService.setContainerReturnReceipt(null);
-    this.router.navigate(['/app/container-tracking/return-receipts']);
+    this.router.navigate(['/app/container-tracking/returns']);
   }
 }

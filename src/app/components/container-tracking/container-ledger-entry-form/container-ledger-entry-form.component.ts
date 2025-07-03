@@ -108,6 +108,11 @@ export class ContainerLedgerEntryFormComponent  {
     });
   });
 
+  containerReturnReceiptsForCustomer: Signal<ContainerReturnReceipt[]> = computed(() => {
+    if (!this.customer()) { return []; }
+    return this.containerReturnReceipts().filter(receipt => receipt.customerId === this.customer()!.id);
+  });
+
   formType: InputSignal<'new' | 'view'> = input.required<'new' | 'view'>();
   inititalLedgerAction: InputSignal<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null> = input.required<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null>();
   initialContainerLedgerEntry: InputSignal<ContainerLedgerEntry | CustomerContainerLedgerEntry | null> = input.required<ContainerLedgerEntry | CustomerContainerLedgerEntry | null>();
@@ -125,6 +130,11 @@ export class ContainerLedgerEntryFormComponent  {
     if (this.customers().length === 0) { return; }
 
     this.ledgerAction.set(this.inititalLedgerAction());
+
+    if (this.initialReturnReceipt()) {
+      this.customer.set(this.customers().find(customer => customer.id === this.initialReturnReceipt()!.customerId)!);
+      this.containerReturnReceipt.set(this.initialReturnReceipt());
+    }
 
     if (this.formType() === 'new') { 
       this.isEditing.set(true);      
@@ -191,9 +201,14 @@ export class ContainerLedgerEntryFormComponent  {
   customerInvoiceNumber: WritableSignal<string | null> = signal<string | null>(null);
   customerRanch: WritableSignal<string | null> = signal<string | null>(null);
   containerReturnReceipt: WritableSignal<ContainerReturnReceipt | null> = signal<ContainerReturnReceipt | null>(null);
+  containerReturnReceiptDisplayString: Signal<string> = computed(() => {
+    if (!this.containerReturnReceipt()) { return 'N/A'; }
+    return this.containerReturnReceipt()!.containerReceiptReference ||
+      `${this.customer()!.name} - ${this.containerReturnReceipt()!.date.toLocaleDateString()}`;
+  });
   shipmentNumber: WritableSignal<string | null> = signal<string | null>(null);
   shipmentYear: WritableSignal<number | null> = signal<number | null>(null);
-  
+
   dateChanged(event: CustomEvent) {
     this.date.set(new Date(event.detail.value!));
   }
@@ -202,6 +217,7 @@ export class ContainerLedgerEntryFormComponent  {
     return {
       ...defaultContainerLedgerTransaction,
       containerTypeId: this.containerType() ? this.containerType()!.id : defaultContainerLedgerTransaction.containerTypeId,
+      //returnReceiptId: this.containerReturnReceipt() ? this.containerReturnReceipt()!.id : defaultContainerLedgerTransaction.returnReceiptId,
       quantity: this.ledgerAction() === 'AddContainer' ? -this.quantity() : this.quantity(),
       date: this.date(),
       fromType: this.fromType(),
@@ -236,18 +252,17 @@ export class ContainerLedgerEntryFormComponent  {
   }
 
   resetForm() { 
+    this.ledgerAction.set(this.inititalLedgerAction());
     this.containerType.set(null);
     this.quantity.set(0);
     this.date.set(new Date());
-    this.customer.set(null);
-    this.fromType.set('MBN');
-    this.from.set(0);
-    this.toType.set(null);
-    this.to.set(null);
+    if (!this.initialReturnReceipt()) {
+      this.customer.set(null);
+      this.containerReturnReceipt.set(null);
+    }
     this.note.set(null);
     this.customerInvoiceNumber.set(null);
     this.customerRanch.set(null);
-    this.containerReturnReceipt.set(null);
     this.shipmentNumber.set(null);
     this.shipmentYear.set(null);
   }

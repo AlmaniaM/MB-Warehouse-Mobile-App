@@ -48,6 +48,30 @@
       }
     </ion-item>
   }
+  @if (ledgerAction() === 'SendToCustomer' || ledgerAction() === 'RecieveFromCustomer' || initalContainerLedgerEntryType() === 'Customer') {
+    @if (containerReturnReceiptsForCustomer().length !== 0) {
+      <ion-item>
+        @if (!isEditing() || initialReturnReceipt()) {
+          @if (initialReturnReceipt()) {
+            <ion-input label="Return Receipt" labelPlacement="stacked"
+              [disabled]="isFetchingData()"
+              readonly [ngModel]="containerReturnReceiptDisplayString()">
+            </ion-input>
+          }
+        } @else {
+          <ion-select aria-modal label="Return Receipt" labelPlacement="stacked" interface="popover"
+            [disabled]="containerReturnReceiptsForCustomer().length === 0 || isFetchingData()"
+            [(ngModel)]="containerReturnReceipt">
+            @for (containerReturnReceipt of containerReturnReceiptsForCustomer(); track containerReturnReceipt.id) {
+              <ion-select-option [value]="containerReturnReceipt">
+                {{ containerReturnReceipt.containerReceiptReference }}
+              </ion-select-option>
+            }
+          </ion-select>
+        }
+      </ion-item>
+    }
+  }
   <ion-item>
     @if (!isEditing()) {
       @if (containerType()) {

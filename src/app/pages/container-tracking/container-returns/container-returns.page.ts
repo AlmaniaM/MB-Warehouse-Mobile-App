@@ -132,7 +132,7 @@ export class ContainerReturnsPage {
   globalSearchFilter: WritableSignal<string> = signal('');
   yearFilter: WritableSignal<number> = signal(new Date().getFullYear());
   customerFilter: WritableSignal<Customer | null> = signal(null);
-  isCreatingReturnReceipt: WritableSignal<boolean> = signal(false);
+  isCreatingReturn: WritableSignal<boolean> = signal(false);
 
   filteredcontainerReturnReceiptListRecords: Signal<ContainerReturnReceiptListRecord[]> = computed(() => { 
     return this.containerReturnReceiptListRecords()
@@ -160,4 +160,5 @@ export class ContainerReturnsPage {
     this.selectedContainerReturnReceiptService.setContainerReturnReceipt(receipt.containerReturnReceipt);
     this.router.navigate(['/app/container-tracking/return']); 
   }
+
 }

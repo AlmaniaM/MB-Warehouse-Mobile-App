@@ -76,34 +76,28 @@
   </div>
 </ion-content>
 <ion-fab slot="fixed" horizontal="end" vertical="bottom">
-  <ion-fab-button color="success" (click)="isCreatingReturnReceipt.set(true)">
+  <ion-fab-button color="success" (click)="isCreatingReturn.set(true)">
     <ion-icon ios="add-outline" md="add-sharp"></ion-icon>
   </ion-fab-button>
 </ion-fab>
-<ion-modal aria-modal [isOpen]="isCreatingReturnReceipt()" (didDismiss)="isCreatingReturnReceipt.set(false)">
+<ion-modal aria-modal [isOpen]="isCreatingReturn()" (didDismiss)="isCreatingReturn.set(false)">
   <ng-template>
     <ion-header>
       <ion-toolbar color="primary">
         <ion-title size="small">New Return</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="isCreatingReturnReceipt.set(false)">
+          <ion-button (click)="isCreatingReturn.set(false)">
             <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content id="new-return-receipt-container">
-      @if (isCreatingReturnReceipt()) {
+      @if (isCreatingReturn()) {
         <app-container-return-receipt-form
           [formType]="'new'"
           [initialContainerReturnReceipt]="null">
         </app-container-return-receipt-form>
-      } @else {
-        <ion-list>
-          <ion-item>
-            <ion-label>Creating Return...</ion-label>
-          </ion-item>
-        </ion-list>
       }
     </ion-content>
   </ng-template>

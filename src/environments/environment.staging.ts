@@ -1,7 +1,7 @@
 export const environment = {
 	production: true,
 	appName: 'MBN Warehouse Mobile App',
-	appBaseUrl: '',
+	appBaseUrl: 'https://mbn-warehouse-mobile-app-dev.delightfulglacier-f4e73e43.westus3.azurecontainerapps.io/',
   azureProfileUrl: 'https://graph.microsoft.com/v1.0/me',
   azureTenantId: 'b0300ad2-8904-4c25-ad06-8596002cf330',
   azureClientId: '30e8dbb7-0e3a-45de-bc17-a0027dc5e946',

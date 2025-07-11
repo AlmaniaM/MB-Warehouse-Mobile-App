@@ -53,6 +53,7 @@ export class AppLayoutComponent {
   isMenuOpen: Signal<boolean> = toSignal(this.toggleMainMenuService.mainMenuIsOpen, { initialValue: true });
   appPages: AppPage[] = [
     { title: 'Home', tabLabel: 'Home', url: '/app/home', fragment: '', icon: 'home', isExternal: false, showInMenu: true },
+    { title: 'Budding', tabLabel: 'Budding', url: '/app/budding', fragment: '', icon: 'leaf', isExternal: false, showInMenu: true },
     { title: 'Containers', tabLabel: 'Containers', url: '/app/container-tracking', fragment: '', icon: 'cube', isExternal: false, showInMenu: true },
   ];
 

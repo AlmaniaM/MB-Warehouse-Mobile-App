@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, Signal } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
 import { NavigationEnd, Router, RouterEvent } from '@angular/router';
@@ -11,11 +11,11 @@ import {
 } from "@ionic/angular/standalone";
 
 import { SelectedContainerLedgerEntryService } from 'src/app/services/cache/selected-container-ledger-entry.service';
+import { SelectedContainerReturnReceiptService } from 'src/app/services/cache/selected-container-return-receipt.service';
 import { ContainerLedgerEntry, ContainerLedgerEntryService, CustomerContainerLedgerEntry } from 'src/app/services/inventory-tracking/container-tracking/container-ledger.service';
 import { ContainerReturnReceipt, ContainerReturnReceiptService } from 'src/app/services/inventory-tracking/container-tracking/container-return-receipt.service';
 import { ContainerTypeService } from 'src/app/services/inventory-tracking/sourcelists/container-type.service';
 import { CustomerService } from 'src/app/services/inventory-tracking/sourcelists/customer.service';
-import { SelectedContainerReturnReceiptService } from 'src/app/services/cache/selected-container-return-receipt.service';
 
 @Component({
   selector: 'app-container-tracking-layout',

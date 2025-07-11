@@ -37,7 +37,9 @@ import {
   listSharp,
   listOutline,
   trashSharp,
-  trashOutline
+  trashOutline,
+  leafSharp,
+  leafOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -88,7 +90,9 @@ export class AppComponent {
       listSharp,
       listOutline,
       trashSharp,
-      trashOutline
+      trashOutline,
+      leafSharp,
+      leafOutline
     });
   }
 }

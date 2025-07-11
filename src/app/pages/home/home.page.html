@@ -1,7 +1,17 @@
 <app-page-topbar title="Home"></app-page-topbar>
 <ion-content [fullscreen]="true">
   <app-content-topbar title="Home" [showRefresher]="false"></app-content-topbar>
-	<div class="ion-padding">
-
+	<div id="content" class="ion-padding">    
+		<ion-card>
+      <ion-card-header>
+        <ion-card-title>Welcome</ion-card-title>
+        <ion-card-subtitle>MBN Warehouse App</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+				@for (page of appPages; track page.title) {
+					<ion-button [routerLink]="page.url" expand="block">{{ page.title }}</ion-button>
+				} 
+      </ion-card-content>
+    </ion-card>
 	</div>
 </ion-content>

@@ -1,0 +1,10 @@
+<ion-tabs>
+  @if (!isInEntryPage()) {
+    <ion-tab-bar slot="bottom" [color]="'primary'">
+      <ion-tab-button tab="entries">
+        <ion-icon ios="list-outline" md="list-sharp"></ion-icon>
+        Budding Entries
+      </ion-tab-button>
+    </ion-tab-bar>
+  }
+</ion-tabs>

@@ -114,7 +114,8 @@ export class ContainerLedgerEntryFormComponent  {
   });
 
   formType: InputSignal<'new' | 'view'> = input.required<'new' | 'view'>();
-  inititalLedgerAction: InputSignal<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null> = input.required<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null>();
+  inititalLedgerAction: InputSignal<'AddContainerToMbn' | 'RemoveContainerFromMbn' | 'RemoveContainerFromCustomer' | 'SendToCustomer' | 'RecieveFromCustomer' | null> = 
+    input.required<'AddContainerToMbn' | 'RemoveContainerFromMbn' | 'RemoveContainerFromCustomer' | 'SendToCustomer' | 'RecieveFromCustomer' | null>();
   initialContainerLedgerEntry: InputSignal<ContainerLedgerEntry | CustomerContainerLedgerEntry | null> = input.required<ContainerLedgerEntry | CustomerContainerLedgerEntry | null>();
   initialReturnReceipt: InputSignal<ContainerReturnReceipt | null> = input.required<ContainerReturnReceipt | null>();
   
@@ -158,18 +159,26 @@ export class ContainerLedgerEntryFormComponent  {
     this.shipmentYear.set((this.initialContainerLedgerEntry()! as CustomerContainerLedgerEntry).shipmentYear);
   });
 
-  ledgerAction: WritableSignal<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null> = signal<'AddContainer' | 'RemoveContainer' | 'SendToCustomer' | 'RecieveFromCustomer' | null>(null);
+  ledgerAction: WritableSignal<'AddContainerToMbn' | 'RemoveContainerFromMbn' | 'RemoveContainerFromCustomer' | 'SendToCustomer' | 'RecieveFromCustomer' | null> = 
+    signal<'AddContainerToMbn' | 'RemoveContainerFromMbn' | 'RemoveContainerFromCustomer' | 'SendToCustomer' | 'RecieveFromCustomer' | null>(null);
+
   ledgerActionEffect = effect(() => { 
     if (this.formType() === 'view') { return; }
 
-    if (this.ledgerAction() === 'AddContainer') {
+    if (this.ledgerAction() === 'AddContainerToMbn') {
       this.fromType.set('MBN');
       this.toType.set(null);
       this.from.set(0);
       this.to.set(null);
     } 
-    if (this.ledgerAction() === 'RemoveContainer') {
+    if (this.ledgerAction() === 'RemoveContainerFromMbn') {
       this.fromType.set('MBN');
+      this.toType.set(null);
+      this.from.set(0);
+      this.to.set(null);
+    }
+    if (this.ledgerAction() === 'RemoveContainerFromCustomer') {
+      this.fromType.set('Customer');
       this.toType.set(null);
       this.from.set(0);
       this.to.set(null);
@@ -217,7 +226,7 @@ export class ContainerLedgerEntryFormComponent  {
     return {
       ...defaultContainerLedgerTransaction,
       containerTypeId: this.containerType() ? this.containerType()!.id : defaultContainerLedgerTransaction.containerTypeId,
-      quantity: this.ledgerAction() === 'AddContainer' ? -this.quantity() : this.quantity(),
+      quantity: this.ledgerAction() === 'AddContainerToMbn' ? -this.quantity() : this.quantity(),
       date: this.date(),
       fromType: this.fromType(),
       from: this.customer() ? this.customer()!.id : defaultContainerLedgerTransaction.from,

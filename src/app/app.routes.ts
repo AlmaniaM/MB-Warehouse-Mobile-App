@@ -26,6 +26,25 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/home/home.page').then(page => page.HomePage)
       },
       {
+        path: 'budding',
+        loadComponent: () => import('./components/budding/budding-layout/budding-layout.component').then(component => component.BuddingLayoutComponent),
+        children: [
+          {
+            path: '',
+            redirectTo: 'entries',
+            pathMatch: 'full'
+          },
+          {
+            path: 'entries',
+            loadComponent: () => import('./pages/budding/budding-entries/budding-entries.page').then(page => page.BuddingEntriesPage)
+          },
+          {
+            path: 'entry',
+            loadComponent: () => import('./pages/budding/budding-entry-details/budding-entry-details.page').then(page => page.BuddingEntryDetailsPage)
+          },
+        ]
+      },
+      {
         path: 'container-tracking',
         loadComponent: () => import('./components/container-tracking/container-tracking-layout/container-tracking-layout.component').then(component => component.ContainerTrackingLayoutComponent),
         children: [

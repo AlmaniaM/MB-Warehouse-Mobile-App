@@ -33,9 +33,7 @@ import { ContainerLedgerEntry, CustomerContainerLedgerEntry } from 'src/app/serv
     IonList, 
     IonItem, 
     IonContent, 
-    IonHeader, 
-    IonTitle, 
-    IonToolbar, 
+    IonHeader,
     PageTopbarComponent,
     ContentTopbarComponent
   ]

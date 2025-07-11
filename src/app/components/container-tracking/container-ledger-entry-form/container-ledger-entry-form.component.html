@@ -19,14 +19,15 @@
       <ion-select aria-modal label="Action" labelPlacement="stacked" interface="popover"
         [disabled]="!isEditing() || isFetchingData()"
         [(ngModel)]="ledgerAction">
-        <ion-select-option [value]="'AddContainer'">Add Containers</ion-select-option>
-        <ion-select-option [value]="'RemoveContainer'">Remove Containers</ion-select-option>
+        <ion-select-option [value]="'AddContainerToMbn'">Add Containers To MBN</ion-select-option>
+        <ion-select-option [value]="'RemoveContainerFromMbn'">Remove Containers From MBN</ion-select-option>
+        <ion-select-option [value]="'RemoveContainerFromCustomer'">Remove Containers From Customer</ion-select-option>
         <ion-select-option [value]="'SendToCustomer'">Send Container To Customer</ion-select-option>
         <ion-select-option [value]="'RecieveFromCustomer'">Recieve Container From Customer</ion-select-option>
       </ion-select>
     </ion-item>
   }
-  @if (ledgerAction() === 'SendToCustomer' || ledgerAction() === 'RecieveFromCustomer' || initalContainerLedgerEntryType() === 'Customer') {
+  @if (ledgerAction() === 'SendToCustomer' || ledgerAction() === 'RecieveFromCustomer' || ledgerAction() === 'RemoveContainerFromCustomer' || initalContainerLedgerEntryType() === 'Customer') {
     <ion-item>
       @if (!isEditing() || initialReturnReceipt()) {
         @if (customer()) {

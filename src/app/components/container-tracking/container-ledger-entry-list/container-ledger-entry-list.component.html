@@ -95,8 +95,8 @@
               <ion-chip [color]="containerLedgerEntry.containerLedgerEntry.quantity > 0 ? 'success' : 'danger'">
                 {{ 
                   containerLedgerEntry.containerLedgerEntry.quantity > 0 ? 
-                  '+' + containerLedgerEntry.containerLedgerEntry.quantity :
-                  containerLedgerEntry.containerLedgerEntry.quantity 
+                  '+' + containerLedgerEntry.containerLedgerEntry.quantity.toLocaleString() :
+                  containerLedgerEntry.containerLedgerEntry.quantity.toLocaleString() 
                 }}
               </ion-chip>
             </ion-note>

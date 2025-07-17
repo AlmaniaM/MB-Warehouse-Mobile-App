@@ -79,7 +79,7 @@ export class ContainerLedgerEntryFormComponent  {
 
   containerLedgerEntryServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.containerLedgerEntryService.statusSubject, { requireSync: true });
   containerReturnReceiptServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = toSignal(this.containerReturnReceiptService.statusSubject, { requireSync: true });
-  containerTypeServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.containerLedgerEntryService.statusSubject, { requireSync: true });
+  containerTypeServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.containerTypeService.statusSubject, { requireSync: true });
   customerServiceStatus: Signal<'fetching' | 'creating' | 'error' | 'stable'> = toSignal(this.customerService.statusSubject, { requireSync: true });
   isFetchingData: Signal<boolean> = computed(() => {
     return ['fetching', 'creating'].includes(this.containerLedgerEntryServiceStatus()) || 

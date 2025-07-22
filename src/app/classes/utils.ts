@@ -194,6 +194,9 @@ export class Utils {
     return this.getMonthEndDate(new Date());
   }
 
+  static getNow() {
+    return new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000));
+  }
 }
 
 export interface WeekDay {

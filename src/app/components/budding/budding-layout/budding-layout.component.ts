@@ -10,6 +10,18 @@ import {
   IonTabs 
 } from "@ionic/angular/standalone";
 
+import { SelectedPlantedRootPoolService } from 'src/app/services/cache/selected-planted-root-pool.service';
+import { PlantedRootPool, PlantedRootPoolService } from 'src/app/services/inventory-tracking/pre-bud/planted-root-pool.service';
+import { CustomerService } from 'src/app/services/inventory-tracking/sourcelists/customer.service';
+import { BuddedRootPoolEntryService } from 'src/app/services/inventory-tracking/budding/budded-root-pool-entry.service';
+import { BuddedRootPoolService } from 'src/app/services/inventory-tracking/budding/budded-root-pool.service';
+import { EmployeeService } from 'src/app/services/inventory-tracking/sourcelists/employee.service';
+import { PlantedFieldService } from 'src/app/services/inventory-tracking/sourcelists/planted-field.service';
+import { PlantedTypeService } from 'src/app/services/inventory-tracking/sourcelists/planted-type.service';
+import { RootstockService } from 'src/app/services/inventory-tracking/sourcelists/rootstock.service';
+import { SupplierService } from 'src/app/services/inventory-tracking/sourcelists/supplier.service';
+import { VarietyService } from 'src/app/services/inventory-tracking/sourcelists/variety.service';
+
 @Component({
   selector: 'app-budding-layout',
   templateUrl: './budding-layout.component.html',
@@ -32,4 +44,35 @@ export class BuddingLayoutComponent  {
     return url.includes('/entry');
   });
   
+  buddedRootPoolService: BuddedRootPoolService = inject(BuddedRootPoolService);
+  buddedRootPoolEntryService: BuddedRootPoolEntryService = inject(BuddedRootPoolEntryService);
+  plantedRootPoolService: PlantedRootPoolService = inject(PlantedRootPoolService);
+  plantedFieldService: PlantedFieldService = inject(PlantedFieldService);
+  plantedTypeService: PlantedTypeService = inject(PlantedTypeService);
+  supplierService: SupplierService = inject(SupplierService);
+  rootstockService: RootstockService = inject(RootstockService);
+  varietyService: VarietyService = inject(VarietyService);
+  employeeService: EmployeeService = inject(EmployeeService);
+  customerService: CustomerService = inject(CustomerService);
+  
+  selectedPlantedRootPoolService: SelectedPlantedRootPoolService = inject(SelectedPlantedRootPoolService);
+  selectedPlantedRootPool: Signal<PlantedRootPool | null> = toSignal(this.selectedPlantedRootPoolService.selectedPlantedRootPool, { initialValue: null });
+  
+  constructor() {
+    
+    this.buddedRootPoolService.getBuddedRootPools();
+    this.buddedRootPoolEntryService.getBuddedRootPoolEntries();
+    this.plantedRootPoolService.getPlantedRootPools();
+    this.plantedFieldService.getPlantedFields();
+    this.plantedTypeService.getPlantedTypes();
+    this.supplierService.getSuppliers();
+    this.rootstockService.getRootstocks();
+    this.varietyService.getVarieties();
+    this.employeeService.getEmployees();
+    this.customerService.getCustomers();
+
+    if (this.selectedPlantedRootPool()) { 
+      this.router.navigate(['/app/budding/entry']); 
+    }
+  }
 }

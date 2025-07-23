@@ -9,7 +9,7 @@ import { provideIonicAngular } from '@ionic/angular/standalone';
 import { provideHttpClient } from '@angular/common/http';
 import { HTTP_INTERCEPTORS, withInterceptorsFromDi } from '@angular/common/http';
 import { MsalInterceptor, MSAL_INSTANCE, MSAL_GUARD_CONFIG, MSAL_INTERCEPTOR_CONFIG, MsalService, MsalGuard, MsalBroadcastService } from '@azure/msal-angular';
-import { MSALInstanceFactory, MSALGuardConfigFactory, MSALInterceptorConfigFactory } from './app/auth/msal-config';
+import { MSALInstanceFactory, MSALGuardConfigFactory, MSALInterceptorConfigFactory } from './app/modules/global/auth/msal-config';
 
 import { environment } from './environments/environment';
 import { routes } from './app/app.routes';

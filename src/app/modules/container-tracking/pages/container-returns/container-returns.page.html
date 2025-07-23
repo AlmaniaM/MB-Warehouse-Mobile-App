@@ -39,7 +39,7 @@
         </ion-accordion>
       </ion-accordion-group>
     </ion-header>
-      @if (filteredcontainerReturnReceiptListRecords().length === 0) {
+      @if (filteredContainerReturnReceiptListRecords().length === 0) {
         @if (isFetchingData()) {
           <ion-progress-bar type="indeterminate"></ion-progress-bar>
           <ion-list>
@@ -60,8 +60,8 @@
         }
       } @else {
         <cdk-virtual-scroll-viewport class="ion-content-scroll-host" [itemSize]="78" [minBufferPx]="960" [maxBufferPx]="1440">
-          <ion-list id="ledger-entries-list">
-            <ion-item *cdkVirtualFor="let containerReturnReceipt of filteredcontainerReturnReceiptListRecords(); trackBy: trackByContainerReturnReceipt" 
+          <ion-list id="return-receipts-list">
+            <ion-item *cdkVirtualFor="let containerReturnReceipt of filteredContainerReturnReceiptListRecords(); trackBy: trackByContainerReturnReceipt" 
               button [detail]="true" 
               (click)="setSelectedContainerReturnReceipt(containerReturnReceipt)"> 
               <ion-label>

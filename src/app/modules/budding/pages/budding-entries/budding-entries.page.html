@@ -2,6 +2,20 @@
 <ion-content>
   <app-content-topbar title="Budding Entries" [showRefresher]="true"></app-content-topbar>
   <div id="content">
+    <ion-header>
+      <ion-accordion-group>
+        <ion-accordion value="first">
+          <ion-item slot="header" color="light">
+            <ion-label>Filters</ion-label>
+          </ion-item>
+          <div slot="content">
+            <ion-toolbar>
+              <ion-searchbar [(ngModel)]="globalSearchFilter"></ion-searchbar>
+            </ion-toolbar>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+    </ion-header>
     <ion-list>
       <ion-item>
         <ion-label>

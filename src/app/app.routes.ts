@@ -31,17 +31,32 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            redirectTo: 'entries',
+            redirectTo: 'planted-root-pools',
             pathMatch: 'full'
           },
           {
-            path: 'entries',
-            loadComponent: () => import('./modules/budding/pages/budding-entries/budding-entries.page').then(page => page.BuddingEntriesPage)
+            path: 'planted-root-pools',
+            loadComponent: () => import('./modules/budding/pages/planted-root-pools/planted-root-pools.page').then(page => page.PlantedRootPoolsPage)
           },
           {
-            path: 'entry',
-            loadComponent: () => import('./modules/budding/pages/budding-entry-details/budding-entry-details.page').then(page => page.BuddingEntryDetailsPage)
-          },
+            path: 'planted-root-pool',
+            loadComponent: () => import('./modules/budding/components/planted-root-pool-layout/planted-root-pool-layout.component').then(page => page.PlantedRootPoolLayoutComponent),
+            children: [
+              {
+                path: '',
+                redirectTo: 'budding-entries',
+                pathMatch: 'full'
+              },
+              {
+                path: 'budding-entries',
+                loadComponent: () => import('./modules/budding/pages/budding-entries/budding-entries.page').then(page => page.BuddingEntriesPage)
+              },
+              {
+                path: 'details',
+                loadComponent: () => import('./modules/container-tracking/pages/container-return-details/container-return-details.page').then(page => page.ContainerReturnDetailsPage)
+              }
+            ]
+          }
         ]
       },
       {

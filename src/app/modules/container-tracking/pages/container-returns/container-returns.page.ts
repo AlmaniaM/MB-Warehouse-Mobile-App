@@ -143,7 +143,7 @@ export class ContainerReturnsPage {
   customerFilter: WritableSignal<Customer | null> = signal(null);
   isCreatingReturn: WritableSignal<boolean> = signal(false);
 
-  filteredcontainerReturnReceiptListRecords: Signal<ContainerReturnReceiptListRecord[]> = computed(() => { 
+  filteredContainerReturnReceiptListRecords: Signal<ContainerReturnReceiptListRecord[]> = computed(() => { 
     return this.containerReturnReceiptListRecords()
       .sort((a, b) => {
         return new Date(b.containerReturnReceipt.date).getTime() - new Date(a.containerReturnReceipt.date).getTime();

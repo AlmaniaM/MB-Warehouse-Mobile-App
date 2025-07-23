@@ -11,9 +11,11 @@ import {
 } from "@ionic/angular/standalone";
 
 import { SelectedPlantedRootPoolService } from 'src/app/modules/budding/services/selected-planted-root-pool.service';
+import { SelectedBuddedRootPoolEntryService } from '../../services/selected-budding-entry.service';
+
 import { PlantedRootPool, PlantedRootPoolService } from 'src/app/modules/budding/services/planted-root-pool.service';
 import { CustomerService } from 'src/app/modules/sourcelists/services/customer.service';
-import { BuddedRootPoolEntryService } from 'src/app/modules/budding/services/budded-root-pool-entry.service';
+import { BuddedRootPoolEntry, BuddedRootPoolEntryService } from 'src/app/modules/budding/services/budded-root-pool-entry.service';
 import { BuddedRootPoolService } from 'src/app/modules/budding/services/budded-root-pool.service';
 import { EmployeeService } from 'src/app/modules/sourcelists/services/employee.service';
 import { PlantedFieldService } from 'src/app/modules/sourcelists/services/planted-field.service';
@@ -38,12 +40,12 @@ export class BuddingLayoutComponent  {
   router: Router = inject(Router);
 	routerNavigationEvent: Signal<RouterEvent | null> = toSignal(this.router.events.pipe(filter(event => event instanceof NavigationEnd)), { initialValue: null });
 
-  isInEntryPage: Signal<boolean> = computed<boolean>(() => { 
+  isPlantedRootPoolPage: Signal<boolean> = computed<boolean>(() => { 
     if (this.routerNavigationEvent() === null) { return false; }
     const url = (this.routerNavigationEvent() as NavigationEnd).urlAfterRedirects;
-    return url.includes('/entry');
+    return url.includes('/planted-root-pool/');
   });
-  
+
   buddedRootPoolService: BuddedRootPoolService = inject(BuddedRootPoolService);
   buddedRootPoolEntryService: BuddedRootPoolEntryService = inject(BuddedRootPoolEntryService);
   plantedRootPoolService: PlantedRootPoolService = inject(PlantedRootPoolService);
@@ -57,6 +59,9 @@ export class BuddingLayoutComponent  {
   
   selectedPlantedRootPoolService: SelectedPlantedRootPoolService = inject(SelectedPlantedRootPoolService);
   selectedPlantedRootPool: Signal<PlantedRootPool | null> = toSignal(this.selectedPlantedRootPoolService.selectedPlantedRootPool, { initialValue: null });
+
+  selectedBuddedRootEntryPoolService: SelectedBuddedRootPoolEntryService = inject(SelectedBuddedRootPoolEntryService);
+  selectedBuddedRootEntryPool: Signal<BuddedRootPoolEntry | null> = toSignal(this.selectedBuddedRootEntryPoolService.selectedBuddedRootPoolEntry, { initialValue: null });
   
   constructor() {
     
@@ -72,7 +77,8 @@ export class BuddingLayoutComponent  {
     this.customerService.getCustomers();
 
     if (this.selectedPlantedRootPool()) { 
-      this.router.navigate(['/app/budding/entry']); 
+      this.router.navigate(['/app/budding/planted-root-pool']); 
     }
+
   }
 }

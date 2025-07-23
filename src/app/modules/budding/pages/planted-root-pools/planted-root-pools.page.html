@@ -1,0 +1,84 @@
+<app-page-topbar title="Planted Root Pools"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Planted Root Pools" [showRefresher]="false"></app-content-topbar>
+  <div id="content">
+    <ion-header>
+      <ion-accordion-group>
+        <ion-accordion value="first">
+          <ion-item slot="header" color="light">
+            <ion-label>Filters</ion-label>
+          </ion-item>
+          <div slot="content">
+            <ion-toolbar>
+              <ion-searchbar [(ngModel)]="globalSearchFilter"></ion-searchbar>
+            </ion-toolbar>
+            <ion-list lines="full">
+              <ion-item>
+                <ion-select aria-modal label="Field" labelPlacement="stacked" interface="popover" 
+                  [(ngModel)]="fieldFilter">
+                  @for (field of sortedPlantedFields(); track field.id) {
+                    <ion-select-option [value]="field">
+                      {{ field.field }}
+                    </ion-select-option>
+                  }
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-select aria-modal label="Year" labelPlacement="stacked" interface="popover" 
+                  [(ngModel)]="yearFilter">
+                  @for (year of plantedRootPoolPlantedYears(); track year) {
+                    <ion-select-option [value]="year">
+                      {{ year }}
+                    </ion-select-option>
+                  }
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-input label="Row" labelPlacement="stacked" 
+                  type="number" inputmode="numeric"
+                  [(ngModel)]="rowFilter">
+                </ion-input>
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+    </ion-header>
+      @if (filteredPlantedRootPoolListRecords().length === 0) {
+        @if (isFetchingData()) {
+          <ion-progress-bar type="indeterminate"></ion-progress-bar>
+          <ion-list>
+            <ion-item>
+              <ion-label>
+                Loading Planted Root Pool... 
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        } @else {
+          <ion-list>
+            <ion-item>
+              <ion-label>
+                No Planted Root Pool Found... 
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        }
+      } @else {
+        <cdk-virtual-scroll-viewport class="ion-content-scroll-host" [itemSize]="111" [minBufferPx]="960" [maxBufferPx]="1440">
+          <ion-list id="planted-root-pool-list">
+            <ion-item *cdkVirtualFor="let plantedRootPool of filteredPlantedRootPoolListRecords(); trackBy: trackByPlantedRootPool" 
+              button [detail]="true" 
+              (click)="setSelectedPlantedRootPool(plantedRootPool)"> 
+              <ion-label>
+                <strong>Row: {{ plantedRootPool.plantedRootPool.row }}</strong><br />
+                <ion-text>{{ plantedRootPool.plantedType.type }}</ion-text><br />
+                <ion-text>{{ plantedRootPool.rootstock.name }}</ion-text><br />
+                <ion-text>{{ plantedRootPool.supplier.name }}</ion-text><br />
+                <ion-note>Planted Quantity: {{ plantedRootPool.plantedRootPool.quantity }}</ion-note>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </cdk-virtual-scroll-viewport>
+      }
+	</div>
+</ion-content>

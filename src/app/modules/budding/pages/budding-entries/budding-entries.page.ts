@@ -21,33 +21,34 @@ import {
   IonHeader,
   IonFab, 
   IonFabButton, 
-  IonSelect,
-  IonModal, 
   IonProgressBar,
-  IonSelectOption, 
   IonText, 
   IonNote,
   IonToolbar, 
-  IonSearchbar, 
-  IonButton, 
-  IonButtons, 
   IonTitle,
-  IonAccordionGroup, 
-  IonAccordion,
+  IonChip,
+  IonFooter,
 } from "@ionic/angular/standalone";
 
-import { PlantedRootPool } from '../../services/planted-root-pool.service';
+import { SelectedPlantedRootPoolService } from '../../services/selected-planted-root-pool.service';
+import { PlantedRootPool, PlantedRootPoolService } from '../../services/planted-root-pool.service';
+import { BuddedRootPool, BuddedRootPoolService } from '../../services/budded-root-pool.service';
+import { BuddedRootPoolEntry, BuddedRootPoolEntryService } from '../../services/budded-root-pool-entry.service';
+import { PlantedField, PlantedFieldService } from 'src/app/modules/sourcelists/services/planted-field.service';
+import { PlantedType, PlantedTypeService } from 'src/app/modules/sourcelists/services/planted-type.service';
+import { Variety, VarietyService } from 'src/app/modules/sourcelists/services/variety.service';
+import { Employee, EmployeeService } from 'src/app/modules/sourcelists/services/employee.service';
+import { Customer, CustomerService } from 'src/app/modules/sourcelists/services/customer.service';
+
 import { ContentTopbarComponent } from 'src/app/modules/global/components/content-topbar/content-topbar.component';
 import { PageTopbarComponent } from 'src/app/modules/global/components/page-topbar/page-topbar.component';
-import { Rootstock } from 'src/app/modules/sourcelists/services/rootstock.service';
-import { Supplier } from 'src/app/modules/sourcelists/services/supplier.service';
-import { Variety } from 'src/app/modules/sourcelists/services/variety.service';
 
-export interface PlantedRootPoolListRecord{
-  plantedRootPool: PlantedRootPool;
-  rootstock: Rootstock;
-  supplier: Supplier;
-  plantedVariety: Variety | null;
+export interface BuddedRootPoolEntryListRecord {
+  buddedRootPool: BuddedRootPool;
+  buddedRootPoolEntry: BuddedRootPoolEntry;
+  buddedVariety: Variety | null;
+  budder: Employee | null;
+  customer: Customer | null;
 }
 
 @Component({
@@ -59,34 +60,111 @@ export interface PlantedRootPoolListRecord{
     CommonModule,
     FormsModule,
     ScrollingModule,
-    DatePipe,
-    IonAccordion, 
-    IonAccordionGroup, 
     IonContent,
-    IonButtons, 
-    IonButton, 
     IonTitle, 
     IonHeader, 
     IonList,
     IonItem, 
     IonIcon, 
     IonToolbar, 
-    IonSearchbar, 
     IonLabel,
     IonFab, 
     IonFabButton, 
-    IonSelect,
-    IonModal, 
     IonProgressBar,
-    IonSelectOption, 
     IonText, 
     IonNote,  
+    IonChip,
+    IonFooter,
     PageTopbarComponent,
     ContentTopbarComponent
   ]
 })
 export class BuddingEntriesPage { 
+  
+  selectedPlantedRootPoolService: SelectedPlantedRootPoolService = inject(SelectedPlantedRootPoolService);
+  buddedRootPoolService: BuddedRootPoolService = inject(BuddedRootPoolService);
+  buddedRootPoolEntryService: BuddedRootPoolEntryService = inject(BuddedRootPoolEntryService);
+  plantedFieldService: PlantedFieldService = inject(PlantedFieldService);
+  plantedTypeService: PlantedTypeService = inject(PlantedTypeService);
+  varietyService: VarietyService = inject(VarietyService);
+  employeeService: EmployeeService = inject(EmployeeService);
+  customerService: CustomerService = inject(CustomerService);
 
-  globalSearchFilter: WritableSignal<string> = signal('');
+  buddedRootPoolServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.buddedRootPoolService.statusSubject, { requireSync: true });
+  buddedRootPoolEntryServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.buddedRootPoolEntryService.statusSubject, { requireSync: true });
+  plantedFieldServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.plantedFieldService.statusSubject, { requireSync: true });
+  plantedTypeServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.plantedTypeService.statusSubject, { requireSync: true });
+  varietyServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.varietyService.statusSubject, { requireSync: true });
+  employeeServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.employeeService.statusSubject, { requireSync: true });
+  customerServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.customerService.statusSubject, { requireSync: true });
+
+  isFetchingData: Signal<boolean> = computed(() => {
+    return [
+      this.buddedRootPoolServiceStatus(),
+      this.buddedRootPoolEntryServiceStatus(),
+      this.plantedFieldServiceStatus(),
+      this.plantedTypeServiceStatus(),
+      this.varietyServiceStatus(),
+      this.employeeServiceStatus(),
+      this.customerServiceStatus(),
+    ].some(status => ['fetching', 'creating', 'updating', 'deleting'].includes(status));
+  });
+
+  selectedPlantedRootPool: Signal<PlantedRootPool | null> = toSignal(this.selectedPlantedRootPoolService.selectedPlantedRootPool, { initialValue: null });
+  buddedRootPools: Signal<BuddedRootPool[]> = toSignal(this.buddedRootPoolService.buddedRootPools, { initialValue: [] });
+  buddedRootPoolEntries: Signal<BuddedRootPoolEntry[]> = toSignal(this.buddedRootPoolEntryService.buddedRootPoolEntries, { initialValue: [] });
+  plantedFields: Signal<PlantedField[]> = toSignal(this.plantedFieldService.plantedFields, { initialValue: [] });
+  plantedTypes: Signal<PlantedType[]> = toSignal(this.plantedTypeService.plantedTypes, { initialValue: [] });
+  varieties: Signal<Variety[]> = toSignal(this.varietyService.varieties, { initialValue: [] });
+  employees: Signal<Employee[]> = toSignal(this.employeeService.employees, { initialValue: [] });
+  customers: Signal<Customer[]> = toSignal(this.customerService.customers, { initialValue: [] });
+
+  plantedFieldForSelectedPlantedRootPool: Signal<PlantedField | null> = computed(() => {
+    if (!this.selectedPlantedRootPool()) { return null; }
+    return this.plantedFields().find(field => field.id === this.selectedPlantedRootPool()!.fieldId) || null;
+  });
+
+  plantedTypeForSelectedPlantedRootPool: Signal<PlantedType | null> = computed(() => {
+    if (!this.selectedPlantedRootPool()) { return null; }
+    return this.plantedTypes().find(type => type.id === this.selectedPlantedRootPool()!.plantedTypeId) || null;
+  });
+
+  buddedRootPoolsForPlantedRootPool: Signal<BuddedRootPool[]> = computed(() => { 
+    if (!this.selectedPlantedRootPool()) { return []; }
+    if (this.buddedRootPools().length === 0) { return []; }
+
+    return this.buddedRootPools().filter(entry => entry.plantedRootPoolId === this.selectedPlantedRootPool()!.id);
+  });
+
+  buddingEntriesForPlantedRootPool: Signal<BuddedRootPoolEntryListRecord[]> = computed(() => { 
+    if (this.buddedRootPoolsForPlantedRootPool().length === 0) { return []; }
+    if (this.buddedRootPoolEntries().length === 0) { return []; }
+    if (this.plantedTypes().length === 0) { return []; }
+    if (this.varieties().length === 0) { return []; }
+    if (this.employees().length === 0) { return []; }
+    if (this.customers().length === 0) { return []; }
+ 
+    return this.buddedRootPoolEntries().map(entry => {
+      
+      const buddedRootPool = this.buddedRootPoolsForPlantedRootPool().find(pool => pool.id === entry.buddedRootPoolId);
+      if (!buddedRootPool) { return null; }
+
+      return {
+        buddedRootPool,
+        buddedRootPoolEntry: entry,
+        buddedVariety: this.varieties().find(variety => variety.id === buddedRootPool.varietyId)!,
+        budder: this.employees().find(employee => employee.id === entry.budderEmployeeId) || null,
+        customer: this.customers().find(customer => customer.id === entry.customerId) || null
+      };
+    }).filter(record => record !== null) as BuddedRootPoolEntryListRecord[];
+  });
+
+  totalBudded: Signal<number> = computed(() => {
+    return this.buddingEntriesForPlantedRootPool().reduce((total, record) => {
+      return total + (record.buddedRootPoolEntry.quantityBudded || 0);
+    }, 0);
+  });
+  
+  isCreatingBuddingEntry: WritableSignal<boolean> = signal(false);
 
 }

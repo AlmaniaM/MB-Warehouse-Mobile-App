@@ -28,19 +28,18 @@ import {
   IonSearchbar, 
   IonAccordionGroup, 
   IonAccordion,
-  IonInput
 } from "@ionic/angular/standalone";
 
 import { SelectedPlantedRootPoolService } from '../../services/selected-planted-root-pool.service';
 import { PlantedRootPool, PlantedRootPoolService } from '../../services/planted-root-pool.service';
 import { defaultPlantedField, PlantedField, PlantedFieldService } from 'src/app/modules/sourcelists/services/planted-field.service';
+import { PlantedType, PlantedTypeService } from 'src/app/modules/sourcelists/services/planted-type.service';
 import { Rootstock, RootstockService } from 'src/app/modules/sourcelists/services/rootstock.service';
 import { Supplier, SupplierService } from 'src/app/modules/sourcelists/services/supplier.service';
 import { Variety, VarietyService } from 'src/app/modules/sourcelists/services/variety.service';
 
 import { PageTopbarComponent } from 'src/app/modules/global/components/page-topbar/page-topbar.component';
 import { ContentTopbarComponent } from 'src/app/modules/global/components/content-topbar/content-topbar.component';
-import { PlantedType, PlantedTypeService } from 'src/app/modules/sourcelists/services/planted-type.service';
 
 export interface PlantedRootPoolListRecord {
   plantedRootPool: PlantedRootPool;
@@ -74,7 +73,6 @@ export interface PlantedRootPoolListRecord {
     IonSelectOption, 
     IonText, 
     IonNote,  
-    IonInput,
     PageTopbarComponent,
     ContentTopbarComponent
   ]
@@ -173,6 +171,15 @@ export class PlantedRootPoolsPage {
       ...new Set(this.plantedRootPoolListRecordsForField()
       .map(record => Number(record.plantedRootPool.plantedYear))
     )].sort((a, b) => Number(b) - Number(a));
+  });
+
+  plantedRootPoolRows: Signal<number[]> = computed(() => { 
+    if (this.plantedRootPoolListRecordsForField().length === 0) { return []; }
+
+    return [
+      ...new Set(this.plantedRootPoolListRecordsForField()
+      .map(record => record.plantedRootPool.row)
+    )].sort((a, b) => a - b);
   });
 
   plantedRootPoolPlantedYearsEffect = effect(() => { 

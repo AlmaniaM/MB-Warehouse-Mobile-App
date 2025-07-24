@@ -3,25 +3,82 @@
   <app-content-topbar title="Budding Entries" [showRefresher]="true"></app-content-topbar>
   <div id="content">
     <ion-header>
-      <ion-accordion-group>
-        <ion-accordion value="first">
-          <ion-item slot="header" color="light">
-            <ion-label>Filters</ion-label>
+      <ion-list lines="full">
+        @if (this.plantedFieldForSelectedPlantedRootPool()) {
+          <ion-item>
+            <ion-label>
+              Field: <strong>{{ plantedFieldForSelectedPlantedRootPool()!.field }}</strong>
+            </ion-label>
           </ion-item>
-          <div slot="content">
-            <ion-toolbar>
-              <ion-searchbar [(ngModel)]="globalSearchFilter"></ion-searchbar>
-            </ion-toolbar>
-          </div>
-        </ion-accordion>
-      </ion-accordion-group>
+        }
+        @if (this.plantedTypeForSelectedPlantedRootPool()) {
+          <ion-item>
+            <ion-label>
+              Planting Type: <strong>{{ plantedTypeForSelectedPlantedRootPool()!.type }}</strong>
+            </ion-label>
+          </ion-item>
+        }
+        @if (this.selectedPlantedRootPool()) {
+          <ion-item>
+            <ion-label>
+              Quantity Planted: <strong>{{ selectedPlantedRootPool()!.quantity }}</strong>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              Row: <strong>{{ selectedPlantedRootPool()!.row }}</strong>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
     </ion-header>
-    <ion-list>
-      <ion-item>
-        <ion-label>
-          Budding Not implemented yet... 
-        </ion-label>
-      </ion-item>
-    </ion-list>
-	</div>
+    @if (isFetchingData()) {
+      <ion-progress-bar type="indeterminate"></ion-progress-bar>
+    }
+    @if (buddingEntriesForPlantedRootPool().length > 0) {
+      <ion-list lines="full">
+        @for (buddingEntry of buddingEntriesForPlantedRootPool(); track buddingEntry.buddedRootPoolEntry.id) {
+          <ion-item>
+            <ion-label>
+              @if (buddingEntry.buddedVariety) {
+                <strong>{{ buddingEntry.buddedVariety!.name }}</strong><br />
+              }
+              <ion-text>{{ buddingEntry.buddedRootPoolEntry.dateBudded | date: 'MM/dd/yyyy' }}</ion-text><br />
+              @if (buddingEntry.budder) {
+                <ion-note>Budder: {{ buddingEntry.budder.firstName + ' ' + buddingEntry.budder.lastName}}</ion-note>
+              }
+            </ion-label>
+            <ion-label class="metadata-end-wrapper" slot="end">
+              <ion-note class="ion-text-wrap">
+                <ion-chip [color]="'success'">
+                  Quantity: {{ buddingEntry.buddedRootPoolEntry.quantityBudded.toLocaleString() }}
+                </ion-chip>
+              </ion-note>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    }  @else {
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            No Budding Entries Foud... 
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    }
+  </div>
 </ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-title size="small">
+      <strong>Total Budded:</strong>
+      <ion-chip [color]="'success'">{{ totalBudded().toLocaleString() }}</ion-chip>
+    </ion-title>
+  </ion-toolbar>
+</ion-footer>
+<ion-fab slot="fixed" horizontal="end" vertical="bottom">
+  <ion-fab-button color="success" (click)="isCreatingBuddingEntry.set(true)">
+    <ion-icon ios="add-outline" md="add-sharp"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

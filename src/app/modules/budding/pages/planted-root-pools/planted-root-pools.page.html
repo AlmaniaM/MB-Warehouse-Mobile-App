@@ -34,10 +34,15 @@
                 </ion-select>
               </ion-item>
               <ion-item>
-                <ion-input label="Row" labelPlacement="stacked" 
-                  type="number" inputmode="numeric"
+                <ion-select aria-modal label="Row" labelPlacement="stacked" interface="popover" 
                   [(ngModel)]="rowFilter">
-                </ion-input>
+                  <ion-select-option [value]="null">All</ion-select-option>
+                  @for (row of plantedRootPoolRows(); track row) {
+                    <ion-select-option [value]="row">
+                      {{ row }}
+                    </ion-select-option>
+                  }
+                </ion-select>
               </ion-item>
             </ion-list>
           </div>

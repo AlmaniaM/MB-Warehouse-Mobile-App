@@ -28,6 +28,9 @@ import {
   IonTitle,
   IonChip,
   IonFooter,
+  IonButtons,
+  IonButton,
+  IonModal,
 } from "@ionic/angular/standalone";
 
 import { SelectedPlantedRootPoolService } from '../../services/selected-planted-root-pool.service';
@@ -42,6 +45,7 @@ import { Customer, CustomerService } from 'src/app/modules/sourcelists/services/
 
 import { ContentTopbarComponent } from 'src/app/modules/global/components/content-topbar/content-topbar.component';
 import { PageTopbarComponent } from 'src/app/modules/global/components/page-topbar/page-topbar.component';
+import { BuddingEntryFormComponent } from '../../components/budding-entry-form/budding-entry-form.component';
 
 export interface BuddedRootPoolEntryListRecord {
   buddedRootPool: BuddedRootPool;
@@ -75,8 +79,12 @@ export interface BuddedRootPoolEntryListRecord {
     IonNote,  
     IonChip,
     IonFooter,
+    IonButtons,
+    IonButton,
+    IonModal,
     PageTopbarComponent,
-    ContentTopbarComponent
+    ContentTopbarComponent,
+    BuddingEntryFormComponent
   ]
 })
 export class BuddingEntriesPage { 
@@ -90,8 +98,8 @@ export class BuddingEntriesPage {
   employeeService: EmployeeService = inject(EmployeeService);
   customerService: CustomerService = inject(CustomerService);
 
-  buddedRootPoolServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.buddedRootPoolService.statusSubject, { requireSync: true });
-  buddedRootPoolEntryServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.buddedRootPoolEntryService.statusSubject, { requireSync: true });
+  buddedRootPoolServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'>  = toSignal(this.buddedRootPoolService.statusSubject, { requireSync: true });
+  buddedRootPoolEntryServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = toSignal(this.buddedRootPoolEntryService.statusSubject, { requireSync: true });
   plantedFieldServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.plantedFieldService.statusSubject, { requireSync: true });
   plantedTypeServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.plantedTypeService.statusSubject, { requireSync: true });
   varietyServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.varietyService.statusSubject, { requireSync: true });

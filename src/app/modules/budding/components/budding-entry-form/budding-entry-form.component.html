@@ -1,3 +1,212 @@
-<p>
-  budding-entry-form works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title size="small">
+      @if (formType() === 'view') {
+        Budding Entry Details
+      }
+      @if (formType() === 'update') {
+        Edit Budding Entry
+      }
+      @if (formType() === 'new') {
+        New Budding Entry
+      }
+    </ion-title>
+  </ion-toolbar>
+  <ion-list lines="full">
+    @if (this.plantedFieldForInitialPlantedRootPool()) {
+      <ion-item>
+        <ion-label>
+          Field: <strong>{{ plantedFieldForInitialPlantedRootPool()!.field }}</strong>
+        </ion-label>
+      </ion-item>
+    }
+    @if (this.plantedTypeForInitialPlantedRootPool()) {
+      <ion-item>
+        <ion-label>
+          Planting Type: <strong>{{ plantedTypeForInitialPlantedRootPool()!.type }}</strong>
+        </ion-label>
+      </ion-item>
+    }
+    @if (this.initialPlantedRootPool()) {
+      <ion-item>
+        <ion-label>
+          Quantity Planted: <strong>{{ initialPlantedRootPool()!.quantity ? initialPlantedRootPool()!.quantity!.toLocaleString() : 'N/A' }}</strong>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Row: <strong>{{ initialPlantedRootPool()!.row }}</strong>
+        </ion-label>
+      </ion-item>
+    }
+  </ion-list>
+</ion-header>
+@if (isFetchingData()) {
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+}
+<ion-list lines="full">
+  <ion-item>
+    @if (!isEditing()) {
+      @if (buddedVariety()) {
+        <ion-input label="Budded Variety" labelPlacement="stacked"
+          [disabled]="isFetchingData()"
+          readonly [ngModel]="buddedVariety()!.name">
+        </ion-input>
+      }
+    } @else {
+      <ion-select aria-modal label="Budded Variety" labelPlacement="stacked" interface="popover"
+        [disabled]="sortedVarieties().length === 0 || isFetchingData()"
+        [(ngModel)]="buddedVariety">
+        @for (variety of sortedVarieties(); track variety.id) {
+          <ion-select-option [value]="variety">
+            {{ variety.name }}
+          </ion-select-option>
+        }
+      </ion-select>
+    }
+  </ion-item>
+  <ion-item>
+    @if (!isEditing()) {
+      @if (budder()) {
+        <ion-input label="Budder" labelPlacement="stacked"
+          [disabled]="isFetchingData()"
+          readonly [ngModel]="budder()!.firstName + budder()!.lastName">
+        </ion-input>
+      }
+    } @else {
+      <ion-select aria-modal label="Budder" labelPlacement="stacked" interface="popover"
+        [disabled]="sortedEmployees().length === 0 || isFetchingData()"
+        [(ngModel)]="budder">
+        @for (employee of sortedEmployees(); track employee.id) {
+          <ion-select-option [value]="employee">
+            {{ employee.firstName + ' ' + employee.lastName }}
+          </ion-select-option>
+        }
+      </ion-select>
+    }
+  </ion-item>
+  <ion-item>
+    <ion-input label="Quantity Budded" labelPlacement="stacked"
+      type="number" inputmode="number" 
+      [disabled]="isFetchingData()"
+      [readonly]="!isEditing()"
+      [(ngModel)]="quantityBudded">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>Date Budded</ion-label>
+    <ion-datetime-button [disabled]="formType() === 'view' || !isEditing()" datetime="datebudded"></ion-datetime-button>
+    <ion-popover [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime id="datebudded"
+          (ionChange)="dateChanged($event)"
+          [value]="dateBuddedIso()">
+        </ion-datetime>
+      </ng-template>
+    </ion-popover>
+  </ion-item>
+  <ion-item>
+    @if (!isEditing()) {
+      @if (customer()) {
+        <ion-input label="Customer" labelPlacement="stacked"
+          [disabled]="isFetchingData()"
+          readonly [(ngModel)]="customer()!.name">
+        </ion-input>
+      }
+    } @else {
+      <ion-select aria-modal label="Customer" labelPlacement="stacked" interface="popover"
+        [disabled]="sortedCustomers().length === 0 || isFetchingData()"
+        [(ngModel)]="customer">
+        @for (customer of sortedCustomers(); track customer.id) {
+          <ion-select-option [value]="customer">
+            {{ customer.name }}
+          </ion-select-option>
+        }
+      </ion-select>
+    }
+  </ion-item>
+  <ion-item>
+    <ion-textarea label="Notes" labelPlacement="stacked" 
+      [disabled]="isFetchingData()"
+      [readonly]="!isEditing()"
+      [(ngModel)]="notes">
+    </ion-textarea>
+  </ion-item>
+</ion-list>
+@if (formType() === 'new') {
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+    <ion-fab-button color="success" 
+      [disabled]="!validBuddedRootPoolEntryToSave() || isFetchingData()" 
+      (click)="createBuddedRootPoolEntry()">
+      <ion-icon ios="checkmark-outline" md="checkmark-sharp"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+}
+@if (formType() === 'update') {
+  @if (!isEditing()) {
+    <ion-fab slot="fixed" horizontal="start" vertical="bottom">
+      <ion-fab-button [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="isDeleting.set(true)">
+        <ion-icon ios="trash-outline" md="trash-sharp"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-fab slot="fixed" [horizontal]="'end'" vertical="bottom">
+      <ion-fab-button [color]="'primary'"
+        [disabled]="isFetchingData()"
+        (click)="isEditing.set(true)">
+        <ion-icon [ios]="'pencil-outline'" [md]="'pencil-sharp'"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+  @if (isEditing()) {
+    <ion-fab slot="fixed" [horizontal]="'start'" vertical="bottom">
+      <ion-fab-button [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="resetForm(); isEditing.set(false)">
+        <ion-icon [ios]="'close-outline'" [md]="'close-sharp'"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+      <ion-fab-button color="success" 
+        [disabled]="!validBuddedRootPoolEntryToSave() || isFetchingData()" 
+        (click)="updateBuddedRootPoolEntry()">
+        <ion-icon ios="checkmark-outline" md="checkmark-sharp"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+}
+<ion-modal aria-modal [isOpen]="isDeleting()" (didDismiss)="isDeleting.set(false)">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title size="small">Delete Budding Entry</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="isDeleting.set(false)">
+            <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-text>
+        <h4>You are about to delete this Budding Entry</h4>
+        <p>Are you sure you want to do this?</p>
+      </ion-text>
+    </ion-content>
+    <ion-footer class="ion-padding">
+      <ion-button expand="block" fill="outline" [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="isDeleting.set(false); deleteBuddedRootPoolEntry()">
+        Yes, Delete Budding Entry
+        <ion-icon slot="end" ios="trash-outline" md="trash-sharp"></ion-icon>
+      </ion-button>
+      <ion-button expand="block" fill="outline" 
+        [disabled]="isFetchingData()"
+        (click)="isDeleting.set(false)">
+        No, Cancel
+        <ion-icon slot="end" ios="close-outline" md="close-sharp"></ion-icon>
+      </ion-button>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

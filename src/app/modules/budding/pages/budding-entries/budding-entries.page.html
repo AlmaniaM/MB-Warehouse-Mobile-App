@@ -21,7 +21,7 @@
         @if (this.selectedPlantedRootPool()) {
           <ion-item>
             <ion-label>
-              Quantity Planted: <strong>{{ selectedPlantedRootPool()!.quantity }}</strong>
+              Quantity Planted: <strong>{{ selectedPlantedRootPool()!.quantity ? selectedPlantedRootPool()!.quantity!.toLocaleString() : 'N/A' }}</strong>
             </ion-label>
           </ion-item>
           <ion-item>
@@ -51,7 +51,7 @@
             <ion-label class="metadata-end-wrapper" slot="end">
               <ion-note class="ion-text-wrap">
                 <ion-chip [color]="'success'">
-                  Quantity: {{ buddingEntry.buddedRootPoolEntry.quantityBudded.toLocaleString() }}
+                  # Budded: {{ buddingEntry.buddedRootPoolEntry.quantityBudded.toLocaleString() }}
                 </ion-chip>
               </ion-note>
             </ion-label>
@@ -82,3 +82,27 @@
     <ion-icon ios="add-outline" md="add-sharp"></ion-icon>
   </ion-fab-button>
 </ion-fab>
+<ion-modal aria-modal [isOpen]="isCreatingBuddingEntry()" (didDismiss)="isCreatingBuddingEntry.set(false)">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title size="small">New Budding Entry</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="isCreatingBuddingEntry.set(false)">
+            <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content id="new-budding-entry-container">
+      @if (isCreatingBuddingEntry() && selectedPlantedRootPool()) {
+        <app-budding-entry-form
+          [formType]="'new'"
+          [initialPlantedRootPool]="selectedPlantedRootPool()!"
+          [initialBuddedRootPool]="null"
+          [initialBuddedRootPoolEntry]="null">
+        </app-budding-entry-form>
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>

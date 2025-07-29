@@ -7,7 +7,7 @@ import { BuddedRootPoolEntry } from 'src/app/modules/budding/services/budded-roo
 @Injectable({
 	providedIn: 'root'
 })
-export class SelectedBuddedRootPoolEntryService {
+export class SelectedBuddingEntryService {
   
   private cacheName = environment.appName +'SelectedBuddedRootPoolEntry';
 	private selectedBuddedRootPoolEntrySubject: BehaviorSubject<BuddedRootPoolEntry | null> = new BehaviorSubject<BuddedRootPoolEntry | null>(null);

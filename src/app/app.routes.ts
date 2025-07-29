@@ -31,15 +31,15 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            redirectTo: 'planted-root-pools',
+            redirectTo: 'plantings',
             pathMatch: 'full'
           },
           {
-            path: 'planted-root-pools',
+            path: 'plantings',
             loadComponent: () => import('./modules/budding/pages/planted-root-pools/planted-root-pools.page').then(page => page.PlantedRootPoolsPage)
           },
           {
-            path: 'planted-root-pool',
+            path: 'planting',
             loadComponent: () => import('./modules/budding/components/planted-root-pool-layout/planted-root-pool-layout.component').then(page => page.PlantedRootPoolLayoutComponent),
             children: [
               {
@@ -53,8 +53,23 @@ export const routes: Routes = [
               },
               {
                 path: 'details',
-                loadComponent: () => import('./modules/container-tracking/pages/container-return-details/container-return-details.page').then(page => page.ContainerReturnDetailsPage)
-              }
+                loadComponent: () => import('./modules/budding/pages/planted-root-pool-details/planted-root-pool-details.page').then(page => page.PlantedRootPoolDetailsPage)
+              },
+              {
+                path: 'budding-entry',
+                loadComponent: () => import('./modules/budding/components/budding-entry-layout/budding-entry-layout.component').then(page => page.BuddingEntryLayoutComponent),
+                children: [
+                  {
+                    path: '',
+                    redirectTo: 'details',
+                    pathMatch: 'full'
+                  },
+                  {
+                    path: 'details',
+                    loadComponent: () => import('./modules/budding/pages/budding-entry-details/budding-entry-details.page').then(page => page.BuddingEntryDetailsPage)
+                  }
+                ]
+              },
             ]
           }
         ]

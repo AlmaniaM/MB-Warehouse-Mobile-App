@@ -46,14 +46,13 @@
 }
 <ion-list lines="full">
   <ion-item>
-    @if (!isEditing()) {
-      @if (buddedVariety()) {
-        <ion-input label="Budded Variety" labelPlacement="stacked"
-          [disabled]="isFetchingData()"
-          readonly [ngModel]="buddedVariety()!.name">
-        </ion-input>
-      }
-    } @else {
+    @if (buddedVariety() && formType() !== 'new') {
+      <ion-input label="Budded Variety" labelPlacement="stacked"
+        [disabled]="isFetchingData()"
+        readonly [ngModel]="buddedVariety()!.name">
+      </ion-input>
+    }
+    @if (isEditing() && formType() === 'new') {
       <ion-select aria-modal label="Budded Variety" labelPlacement="stacked" interface="popover"
         [disabled]="sortedVarieties().length === 0 || isFetchingData()"
         [(ngModel)]="buddedVariety">
@@ -70,7 +69,7 @@
       @if (budder()) {
         <ion-input label="Budder" labelPlacement="stacked"
           [disabled]="isFetchingData()"
-          readonly [ngModel]="budder()!.firstName + budder()!.lastName">
+          readonly [ngModel]="budder()!.firstName + ' ' + budder()!.lastName">
         </ion-input>
       }
     } @else {

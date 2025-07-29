@@ -1,16 +1,18 @@
 <ion-tabs>
-  <ion-tab-bar slot="bottom" [color]="'primary'">
-    <ion-tab-button (click)="goBack()">
-      <ion-icon ios="arrow-back-outline" md="arrow-back-sharp"></ion-icon>
-      Back
-    </ion-tab-button>
-    <ion-tab-button tab="budding-entries">
-      <ion-icon ios="list-outline" md="list-sharp"></ion-icon>
-      Budding Entries
-    </ion-tab-button>
-    <ion-tab-button tab="details">
-      <ion-icon ios="pencil-outline" md="pencil-sharp"></ion-icon>
-      Planting Details
-    </ion-tab-button>
-  </ion-tab-bar>
+  @if (!isInBuddingEntryDetailsPage()) {
+    <ion-tab-bar slot="bottom" [color]="'primary'">
+      <ion-tab-button (click)="goBack()">
+        <ion-icon ios="arrow-back-outline" md="arrow-back-sharp"></ion-icon>
+        Back
+      </ion-tab-button>
+      <ion-tab-button tab="budding-entries">
+        <ion-icon ios="list-outline" md="list-sharp"></ion-icon>
+        Budding Entries
+      </ion-tab-button>
+      <ion-tab-button tab="details">
+        <ion-icon ios="pencil-outline" md="pencil-sharp"></ion-icon>
+        Planting Details
+      </ion-tab-button>
+    </ion-tab-bar>
+  }
 </ion-tabs>

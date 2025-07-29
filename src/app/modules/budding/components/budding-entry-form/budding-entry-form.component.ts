@@ -38,16 +38,17 @@ import {
   IonTextarea
 } from '@ionic/angular/standalone';
 
+import { SelectedBuddingEntryService } from '../../services/selected-budding-entry.service';
+import { PlantedRootPool } from '../../services/planted-root-pool.service';
 import { BuddedRootPool, BuddedRootPoolService, defaultBuddedRootPool } from '../../services/budded-root-pool.service';
 import { BuddedRootPoolEntry, BuddedRootPoolEntryService, defaultBuddedRootPoolEntry } from '../../services/budded-root-pool-entry.service';
+import { PlantedField, PlantedFieldService } from 'src/app/modules/sourcelists/services/planted-field.service';
+import { PlantedType, PlantedTypeService } from 'src/app/modules/sourcelists/services/planted-type.service';
 import { Variety, VarietyService } from 'src/app/modules/sourcelists/services/variety.service';
 import { Employee, EmployeeService } from 'src/app/modules/sourcelists/services/employee.service';
 import { Customer, CustomerService } from 'src/app/modules/sourcelists/services/customer.service';
 
 import { Utils } from 'src/app/modules/global/classes/utils';
-import { PlantedRootPool } from '../../services/planted-root-pool.service';
-import { PlantedField, PlantedFieldService } from 'src/app/modules/sourcelists/services/planted-field.service';
-import { PlantedType, PlantedTypeService } from 'src/app/modules/sourcelists/services/planted-type.service';
 
 @Component({
   selector: 'app-budding-entry-form',
@@ -82,6 +83,7 @@ import { PlantedType, PlantedTypeService } from 'src/app/modules/sourcelists/ser
 })
 export class BuddingEntryFormComponent {
 
+  selectedBuddingEntryService: SelectedBuddingEntryService = inject(SelectedBuddingEntryService);
   buddedRootPoolService: BuddedRootPoolService = inject(BuddedRootPoolService);
   buddedRootPoolEntryService: BuddedRootPoolEntryService = inject(BuddedRootPoolEntryService);
   varietySerive: VarietyService = inject(VarietyService);
@@ -154,7 +156,7 @@ export class BuddingEntryFormComponent {
   initialBuddedRootPoolEffect = effect(() => {
     if (this.varieties().length === 0) { return; }
     if (!this.initialBuddedRootPool()) { return; }
-
+    
     this.buddedVariety.set(this.varieties().find(variety => variety.id === this.initialBuddedRootPool()!.varietyId) || null);
   });
 
@@ -268,6 +270,12 @@ export class BuddingEntryFormComponent {
     if (!this.validBuddedRootPoolEntryToSave()) { return; }
     this.buddedRootPoolEntryService.updateBuddedRootPoolEntries([this.validBuddedRootPoolEntryToSave()!]);
   }
+
+  justUpdatedEffect = effect(() => {
+    if (this.formType() === 'new') { return; }
+    if (this.buddedRootPoolEntryServicePreviousDataOperation() !== 'updated') { return; }
+    this.isEditing.set(false);
+  });
 
   deleteBuddedRootPoolEntry() {
     if (!this.initialBuddedRootPoolEntry()) { return; }

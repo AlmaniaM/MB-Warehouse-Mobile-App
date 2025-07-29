@@ -1,6 +1,6 @@
-<app-page-topbar title="Planted Root Pools"></app-page-topbar>
+<app-page-topbar title="Plantings"></app-page-topbar>
 <ion-content>
-  <app-content-topbar title="Planted Root Pools" [showRefresher]="false"></app-content-topbar>
+  <app-content-topbar title="Plantings" [showRefresher]="false"></app-content-topbar>
   <div id="content">
     <ion-header>
       <ion-accordion-group>
@@ -79,8 +79,19 @@
                 <ion-text>{{ plantedRootPool.plantedType.type }}</ion-text><br />
                 <ion-text>{{ plantedRootPool.rootstock.name }}</ion-text><br />
                 <ion-text>{{ plantedRootPool.supplier.name }}</ion-text><br />
-                <ion-note>Planted Quantity: {{ plantedRootPool.plantedRootPool.quantity }}</ion-note>
               </ion-label>
+            <ion-label class="metadata-end-wrapper" slot="end">
+              <ion-note class="ion-text-wrap">
+                <ion-chip [color]="'success'">
+                  # Planted: 
+                  {{ 
+                    plantedRootPool.plantedRootPool.quantity ? 
+                    plantedRootPool.plantedRootPool.quantity!.toLocaleString() :
+                    '0'
+                  }}
+                </ion-chip>
+              </ion-note>
+            </ion-label>
             </ion-item>
           </ion-list>
         </cdk-virtual-scroll-viewport>

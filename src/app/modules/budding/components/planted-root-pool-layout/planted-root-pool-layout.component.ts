@@ -1,10 +1,11 @@
 import { 
   Component, 
+  computed, 
   inject, 
   Signal 
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router, RouterEvent } from '@angular/router';
 
 import { 
   IonTabButton, 
@@ -15,6 +16,9 @@ import {
 
 import { PlantedRootPool } from '../../services/planted-root-pool.service';
 import { SelectedPlantedRootPoolService } from '../../services/selected-planted-root-pool.service';
+import { BuddedRootPoolEntry } from '../../services/budded-root-pool-entry.service';
+import { SelectedBuddingEntryService } from '../../services/selected-budding-entry.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-planted-root-pool-layout',
@@ -30,11 +34,22 @@ import { SelectedPlantedRootPoolService } from '../../services/selected-planted-
 export class PlantedRootPoolLayoutComponent {
   
   router: Router = inject(Router);
+	routerNavigationEvent: Signal<RouterEvent | null> = toSignal(this.router.events.pipe(filter(event => event instanceof NavigationEnd)), { initialValue: null });
+
   selectedPlantedRootPoolService:  SelectedPlantedRootPoolService = inject(SelectedPlantedRootPoolService);
+  selectedBuddingEntryService: SelectedBuddingEntryService = inject(SelectedBuddingEntryService);
+  
   selectedPlantedRootPool: Signal<PlantedRootPool | null> = toSignal(this.selectedPlantedRootPoolService.selectedPlantedRootPool, { initialValue: null });
+  selectedBuddedRootPoolEntry: Signal<BuddedRootPoolEntry | null> = toSignal(this.selectedBuddingEntryService.selectedBuddedRootPoolEntry, { initialValue: null });
+
+  isInBuddingEntryDetailsPage: Signal<boolean> = computed<boolean>(() => { 
+    if (this.routerNavigationEvent() === null) { return false; }
+    const url = (this.routerNavigationEvent() as NavigationEnd).urlAfterRedirects;
+    return url.includes('/budding-entry/details');
+  });
 
   goBack() {
     this.selectedPlantedRootPoolService.setPlantedRootPool(null);
-    this.router.navigate(['/app/budding/planted-root-pools']);
+    this.router.navigate(['/app/budding/plantings']);
   }
 }

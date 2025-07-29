@@ -1,16 +1,16 @@
 import { 
   Component, 
   computed, 
-  effect, 
   inject,
   signal, 
   Signal, 
   WritableSignal
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { Router } from '@angular/router';
 
 import { 
   IonContent,
@@ -34,7 +34,9 @@ import {
 } from "@ionic/angular/standalone";
 
 import { SelectedPlantedRootPoolService } from '../../services/selected-planted-root-pool.service';
-import { PlantedRootPool, PlantedRootPoolService } from '../../services/planted-root-pool.service';
+import { SelectedBuddingEntryService } from '../../services/selected-budding-entry.service';
+
+import { PlantedRootPool } from '../../services/planted-root-pool.service';
 import { BuddedRootPool, BuddedRootPoolService } from '../../services/budded-root-pool.service';
 import { BuddedRootPoolEntry, BuddedRootPoolEntryService } from '../../services/budded-root-pool-entry.service';
 import { PlantedField, PlantedFieldService } from 'src/app/modules/sourcelists/services/planted-field.service';
@@ -89,7 +91,10 @@ export interface BuddedRootPoolEntryListRecord {
 })
 export class BuddingEntriesPage { 
   
+  router: Router = inject(Router);
   selectedPlantedRootPoolService: SelectedPlantedRootPoolService = inject(SelectedPlantedRootPoolService);
+  SelectedBuddingEntryService: SelectedBuddingEntryService = inject(SelectedBuddingEntryService);
+
   buddedRootPoolService: BuddedRootPoolService = inject(BuddedRootPoolService);
   buddedRootPoolEntryService: BuddedRootPoolEntryService = inject(BuddedRootPoolEntryService);
   plantedFieldService: PlantedFieldService = inject(PlantedFieldService);
@@ -175,4 +180,8 @@ export class BuddingEntriesPage {
   
   isCreatingBuddingEntry: WritableSignal<boolean> = signal(false);
 
+  setSelectedBuddingEntry(record: BuddedRootPoolEntryListRecord) {
+    this.SelectedBuddingEntryService.setBuddedRootPoolEntry(record.buddedRootPoolEntry);
+    this.router.navigate(['/app/budding/planting/budding-entry/details']); 
+  }
 }

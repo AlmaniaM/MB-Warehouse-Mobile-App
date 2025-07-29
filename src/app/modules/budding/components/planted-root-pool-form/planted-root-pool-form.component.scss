@@ -1,0 +1,17 @@
+ion-list {
+  overflow: auto;
+}
+.icon-option {
+  display: flex;
+  align-items: center;
+}
+.icon-option ion-icon {
+  margin-right: 8px;
+}
+#edit-planted-root-pool-buttons {
+  display: flex;
+  margin: 16px;
+}
+#edit-planted-root-pool-buttons ion-button {
+  flex: 1;
+}

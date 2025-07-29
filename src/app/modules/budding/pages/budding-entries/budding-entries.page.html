@@ -4,29 +4,29 @@
   <div id="content">
     <ion-header>
       <ion-list lines="full">
-        @if (this.plantedFieldForSelectedPlantedRootPool()) {
-          <ion-item>
-            <ion-label>
-              Field: <strong>{{ plantedFieldForSelectedPlantedRootPool()!.field }}</strong>
-            </ion-label>
-          </ion-item>
-        }
-        @if (this.plantedTypeForSelectedPlantedRootPool()) {
-          <ion-item>
-            <ion-label>
-              Planting Type: <strong>{{ plantedTypeForSelectedPlantedRootPool()!.type }}</strong>
-            </ion-label>
-          </ion-item>
-        }
         @if (this.selectedPlantedRootPool()) {
-          <ion-item>
-            <ion-label>
-              Quantity Planted: <strong>{{ selectedPlantedRootPool()!.quantity ? selectedPlantedRootPool()!.quantity!.toLocaleString() : 'N/A' }}</strong>
-            </ion-label>
-          </ion-item>
+          @if (this.plantedFieldForSelectedPlantedRootPool()) {
+            <ion-item>
+              <ion-label>
+                Field: <strong>{{ plantedFieldForSelectedPlantedRootPool()!.field }}</strong>
+              </ion-label>
+            </ion-item>
+          }
           <ion-item>
             <ion-label>
               Row: <strong>{{ selectedPlantedRootPool()!.row }}</strong>
+            </ion-label>
+          </ion-item>
+          @if (this.plantedTypeForSelectedPlantedRootPool()) {
+            <ion-item>
+              <ion-label>
+                Planting Type: <strong>{{ plantedTypeForSelectedPlantedRootPool()!.type }}</strong>
+              </ion-label>
+            </ion-item>
+          }
+          <ion-item>
+            <ion-label>
+              Quantity Planted: <strong>{{ selectedPlantedRootPool()!.quantity ? selectedPlantedRootPool()!.quantity!.toLocaleString() : 'N/A' }}</strong>
             </ion-label>
           </ion-item>
         }
@@ -38,7 +38,7 @@
     @if (buddingEntriesForPlantedRootPool().length > 0) {
       <ion-list lines="full">
         @for (buddingEntry of buddingEntriesForPlantedRootPool(); track buddingEntry.buddedRootPoolEntry.id) {
-          <ion-item>
+          <ion-item button [detail]="true" (click)="setSelectedBuddingEntry(buddingEntry)">
             <ion-label>
               @if (buddingEntry.buddedVariety) {
                 <strong>{{ buddingEntry.buddedVariety!.name }}</strong><br />

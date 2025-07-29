@@ -1,0 +1,12 @@
+<app-page-topbar title="Planting Details"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Planting Details" [showRefresher]="false"></app-content-topbar>
+  <div id="content">
+    @if (selectedPlantedRootPool()) {
+      <app-planted-root-pool-form
+        [formType]="'view'"
+        [initialPlantedRootPool]="selectedPlantedRootPool()!">
+      </app-planted-root-pool-form>
+    }
+  </div>
+</ion-content>

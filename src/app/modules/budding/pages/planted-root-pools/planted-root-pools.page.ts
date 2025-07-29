@@ -28,6 +28,7 @@ import {
   IonSearchbar, 
   IonAccordionGroup, 
   IonAccordion,
+  IonChip
 } from "@ionic/angular/standalone";
 
 import { SelectedPlantedRootPoolService } from '../../services/selected-planted-root-pool.service';
@@ -72,7 +73,8 @@ export interface PlantedRootPoolListRecord {
     IonProgressBar,
     IonSelectOption, 
     IonText, 
-    IonNote,  
+    IonNote,
+    IonChip,
     PageTopbarComponent,
     ContentTopbarComponent
   ]
@@ -211,6 +213,6 @@ export class PlantedRootPoolsPage {
 
   setSelectedPlantedRootPool(record: PlantedRootPoolListRecord) { 
     this.selectedPlantedRootPoolService.setPlantedRootPool(record.plantedRootPool);
-    this.router.navigate(['/app/budding/planted-root-pool']); 
+    this.router.navigate(['/app/budding/planting']); 
   }
 }

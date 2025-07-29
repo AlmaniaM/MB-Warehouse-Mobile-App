@@ -7,8 +7,8 @@ import { IonContent } from "@ionic/angular/standalone";
 import { SelectedContainerReturnReceiptService } from 'src/app/modules/container-tracking/services/selected-container-return-receipt.service';
 import { ContainerReturnReceipt, ContainerReturnReceiptService } from 'src/app/modules/container-tracking/services/container-return-receipt.service';
 
-import { ContentTopbarComponent } from 'src/app/modules/global/components/content-topbar/content-topbar.component';
 import { PageTopbarComponent } from 'src/app/modules/global/components/page-topbar/page-topbar.component';
+import { ContentTopbarComponent } from 'src/app/modules/global/components/content-topbar/content-topbar.component';
 import { ContainerReturnReceiptFormComponent } from 'src/app/modules/container-tracking/components/container-return-receipt-form/container-return-receipt-form.component';
 
 @Component({

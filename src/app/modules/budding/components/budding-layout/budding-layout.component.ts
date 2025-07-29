@@ -11,7 +11,7 @@ import {
 } from "@ionic/angular/standalone";
 
 import { SelectedPlantedRootPoolService } from 'src/app/modules/budding/services/selected-planted-root-pool.service';
-import { SelectedBuddedRootPoolEntryService } from '../../services/selected-budding-entry.service';
+import { SelectedBuddingEntryService } from '../../services/selected-budding-entry.service';
 
 import { PlantedRootPool, PlantedRootPoolService } from 'src/app/modules/budding/services/planted-root-pool.service';
 import { CustomerService } from 'src/app/modules/sourcelists/services/customer.service';
@@ -40,10 +40,10 @@ export class BuddingLayoutComponent  {
   router: Router = inject(Router);
 	routerNavigationEvent: Signal<RouterEvent | null> = toSignal(this.router.events.pipe(filter(event => event instanceof NavigationEnd)), { initialValue: null });
 
-  isPlantedRootPoolPage: Signal<boolean> = computed<boolean>(() => { 
+  isInPlantedRootPoolPage: Signal<boolean> = computed<boolean>(() => { 
     if (this.routerNavigationEvent() === null) { return false; }
     const url = (this.routerNavigationEvent() as NavigationEnd).urlAfterRedirects;
-    return url.includes('/planted-root-pool/');
+    return url.includes('/planting/');
   });
 
   buddedRootPoolService: BuddedRootPoolService = inject(BuddedRootPoolService);
@@ -60,7 +60,7 @@ export class BuddingLayoutComponent  {
   selectedPlantedRootPoolService: SelectedPlantedRootPoolService = inject(SelectedPlantedRootPoolService);
   selectedPlantedRootPool: Signal<PlantedRootPool | null> = toSignal(this.selectedPlantedRootPoolService.selectedPlantedRootPool, { initialValue: null });
 
-  selectedBuddedRootEntryPoolService: SelectedBuddedRootPoolEntryService = inject(SelectedBuddedRootPoolEntryService);
+  selectedBuddedRootEntryPoolService: SelectedBuddingEntryService = inject(SelectedBuddingEntryService);
   selectedBuddedRootEntryPool: Signal<BuddedRootPoolEntry | null> = toSignal(this.selectedBuddedRootEntryPoolService.selectedBuddedRootPoolEntry, { initialValue: null });
   
   constructor() {
@@ -77,8 +77,7 @@ export class BuddingLayoutComponent  {
     this.customerService.getCustomers();
 
     if (this.selectedPlantedRootPool()) { 
-      this.router.navigate(['/app/budding/planted-root-pool']); 
+      this.router.navigate(['/app/budding/planting']); 
     }
-
   }
 }

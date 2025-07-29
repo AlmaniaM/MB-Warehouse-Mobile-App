@@ -2,6 +2,13 @@
 <ion-content>
   <app-content-topbar title="Budding Entry Details" [showRefresher]="true"></app-content-topbar>
   <div id="content">
-
+    @if (buddedRootPoolForBuddingEntry()) {
+      <app-budding-entry-form
+        [formType]="'update'"
+        [initialPlantedRootPool]="selectedPlantedRootPool()!"
+        [initialBuddedRootPool]="buddedRootPoolForBuddingEntry()!"
+        [initialBuddedRootPoolEntry]="selectedBuddedRootPoolEntry()!">
+      </app-budding-entry-form>
+    }
 	</div>
 </ion-content>

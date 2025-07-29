@@ -14,21 +14,21 @@
             </ion-toolbar>
             <ion-list lines="full">
               <ion-item>
-                <ion-select aria-modal label="Field" labelPlacement="stacked" interface="popover" 
-                  [(ngModel)]="fieldFilter">
-                  @for (field of sortedPlantedFields(); track field.id) {
-                    <ion-select-option [value]="field">
-                      {{ field.field }}
-                    </ion-select-option>
-                  }
-                </ion-select>
-              </ion-item>
-              <ion-item>
                 <ion-select aria-modal label="Year" labelPlacement="stacked" interface="popover" 
                   [(ngModel)]="yearFilter">
                   @for (year of plantedRootPoolPlantedYears(); track year) {
                     <ion-select-option [value]="year">
                       {{ year }}
+                    </ion-select-option>
+                  }
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-select aria-modal label="Field" labelPlacement="stacked" interface="popover" 
+                  [(ngModel)]="fieldFilter">
+                  @for (field of filteredPlantedFieldsForYear(); track field.id) {
+                    <ion-select-option [value]="field">
+                      {{ field.field }}
                     </ion-select-option>
                   }
                 </ion-select>

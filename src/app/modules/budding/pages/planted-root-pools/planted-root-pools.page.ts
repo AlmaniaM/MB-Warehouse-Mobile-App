@@ -116,23 +116,6 @@ export class PlantedRootPoolsPage {
   suppliers: Signal<Supplier[]> = toSignal(this.supplierService.suppliers, { initialValue: [] });
   varieties: Signal<Variety[]> = toSignal(this.varietyService.varieties, { initialValue: [] });
 
-  activePlantedFields: Signal<PlantedField[]> = computed(() => {
-    if (this.plantedFields().length === 0) { return []; }
-    return this.plantedFields().filter(field => field.active);
-  });
-
-  sortedPlantedFields: Signal<PlantedField[]> = computed(() => {
-    if (this.activePlantedFields().length === 0) { return []; }
-    return this.activePlantedFields().sort((a, b) => a.field.localeCompare(b.field));
-  });
-
-  sortedPlantedFieldsEffect = effect(() => { 
-    if (this.sortedPlantedFields().length === 0) { return; }
-    if (this.fieldFilter().id !== defaultPlantedField.id) { return; }
-
-    this.fieldFilter.set(this.sortedPlantedFields()[0]);
-  });
-
   plantedRootPoolListRecords: Signal<PlantedRootPoolListRecord[]> = computed(() => { 
     if (this.plantedRootPools().length === 0) { return []; }
     if (this.plantedFields().length === 0) { return []; }
@@ -153,49 +136,59 @@ export class PlantedRootPoolsPage {
     });
   });
 
+  plantedRootPoolPlantedYears: Signal<number[]> = computed<number[]>(() => { 
+    if (this.plantedRootPoolListRecords().length === 0) { return []; }
+
+    return [
+      ...new Set(this.plantedRootPoolListRecords()
+      .map(record => Number(record.plantedRootPool.plantedYear))
+    )].sort((a, b) => Number(b) - Number(a));
+  });
+
+  plantedRootPoolListRecordsEffect = effect(() => { 
+    if (this.plantedRootPoolListRecords().length === 0) { return; }
+    if (this.fieldFilter().id !== defaultPlantedField.id) { return; }
+
+    const isCurrentYearPresent = this.plantedRootPoolPlantedYears().includes(new Date().getFullYear());
+    if (isCurrentYearPresent) {
+      this.yearFilter.set(new Date().getFullYear());
+    } else {
+      this.yearFilter.set(this.plantedRootPoolPlantedYears()[0]);
+    }
+  });
+
+  filteredPlantedFieldsForYear: Signal<PlantedField[]> = computed(() => {
+    if (this.plantedRootPoolListRecords().length === 0) { return []; }
+
+    return [
+      ...new Set(
+        this.plantedRootPoolListRecords()
+          .filter(plantedRootPool => Number(plantedRootPool.plantedRootPool.plantedYear) === this.yearFilter())
+          .map(record => record.field)
+          .filter(field => field.active)
+          .sort((a, b) => a.field.localeCompare(b.field))
+      )
+    ]
+  });
+
   globalSearchFilter: WritableSignal<string> = signal('');
   fieldFilter: WritableSignal<PlantedField> = signal(defaultPlantedField);
   yearFilter: WritableSignal<number> = signal(new Date().getFullYear());
   rowFilter: WritableSignal<number | null> = signal(null);
 
-  plantedRootPoolListRecordsForField: Signal<PlantedRootPoolListRecord[]> = computed(() => {
-    if (this.fieldFilter().id === defaultPlantedField.id) { return []; }
-    if (this.plantedRootPoolListRecords().length === 0) { return []; }
-
-    return this.plantedRootPoolListRecords()
-      .filter(record => record.field.id === this.fieldFilter().id)
-  });
-
-  plantedRootPoolPlantedYears: Signal<number[]> = computed<number[]>(() => { 
-    if (this.plantedRootPoolListRecordsForField().length === 0) { return []; }
-
-    return [
-      ...new Set(this.plantedRootPoolListRecordsForField()
-      .map(record => Number(record.plantedRootPool.plantedYear))
-    )].sort((a, b) => Number(b) - Number(a));
-  });
-
-  plantedRootPoolRows: Signal<number[]> = computed(() => { 
-    if (this.plantedRootPoolListRecordsForField().length === 0) { return []; }
-
-    return [
-      ...new Set(this.plantedRootPoolListRecordsForField()
-      .map(record => record.plantedRootPool.row)
-    )].sort((a, b) => a - b);
-  });
-
-  plantedRootPoolPlantedYearsEffect = effect(() => { 
-    if (this.plantedRootPoolPlantedYears().length === 0) { return; }
-    this.yearFilter.set(this.plantedRootPoolPlantedYears()[0]);
+  yearFilterEffect = effect(() => {
+    if (this.filteredPlantedFieldsForYear().length === 0) { return; }
+    this.fieldFilter.set(this.filteredPlantedFieldsForYear()[0]);
   });
 
   filteredPlantedRootPoolListRecords: Signal<PlantedRootPoolListRecord[]> = computed(() => { 
-    if (this.plantedRootPoolListRecordsForField().length === 0) { return []; }
+    if (this.plantedRootPoolListRecords().length === 0) { return []; }
 
-    return this.plantedRootPoolListRecordsForField()
+    return this.plantedRootPoolListRecords()
       .sort((a, b) => { 
         return a.plantedRootPool.row - b.plantedRootPool.row
       })
+      .filter(record => record.field.id === this.fieldFilter().id)
       .filter(record => Number(record.plantedRootPool.plantedYear) === this.yearFilter())
       .filter(record => {
         if (this.rowFilter() === null) { return true; }
@@ -205,6 +198,15 @@ export class PlantedRootPoolsPage {
         if (this.globalSearchFilter() === '') { return true; }
         return JSON.stringify(Object.values(record)).trim().toLowerCase().includes(this.globalSearchFilter().trim().toLowerCase());
       });
+  });
+
+  plantedRootPoolRows: Signal<number[]> = computed(() => { 
+    if (this.filteredPlantedRootPoolListRecords().length === 0) { return []; }
+
+    return [
+      ...new Set(this.filteredPlantedRootPoolListRecords()
+      .map(record => record.plantedRootPool.row)
+    )].sort((a, b) => a - b);
   });
   
   trackByPlantedRootPool(index: number, record: PlantedRootPoolListRecord) { 

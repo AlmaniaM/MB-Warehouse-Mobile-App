@@ -237,6 +237,7 @@ export class BuddingEntryFormComponent {
   validBuddedRootPoolEntryToSave: WritableSignal<BuddedRootPoolEntry | null> = signal<BuddedRootPoolEntry | null>(null);
   isEditing: WritableSignal<boolean> = signal<boolean>(false);
   isDeleting: WritableSignal<boolean> = signal<boolean>(false);
+  isCreating: WritableSignal<boolean> = signal<boolean>(false);
 
   createBuddedRootPool() {
     if (!this.buddedRootPoolToCreate()) { return; }
@@ -252,11 +253,14 @@ export class BuddingEntryFormComponent {
     if (this.buddedRootPoolServicePreviousDataOperation() !== 'created') { return; }
     if (!this.buddedRootPoolForSelectedBuddedVariety()) { return; }
     if (!this.validBuddedRootPoolEntryToSave()) { return; }
+    if (!this.isCreating()) { return; }
 
+    this.isCreating.set(false);
     this.createBuddedRootPoolEntry();
   });
 
   createBuddedRootPoolEntry() {
+    this.isCreating.set(true);
     if (this.buddedRootPoolToCreate()) { 
       this.createBuddedRootPool();
       return;

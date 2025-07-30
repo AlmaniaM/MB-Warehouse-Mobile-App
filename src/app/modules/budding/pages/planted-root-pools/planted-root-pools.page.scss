@@ -16,3 +16,12 @@ cdk-virtual-scroll-viewport {
   height: 100%;
   width: 100%;
 }
+.planting-list-item ion-label {
+  margin-right: 10px;
+}
+.planting-list-item .metadata-end-wrapper {
+  margin-right: 0px;
+}
+.planting-list-item {
+  --min-height: 125px;
+}

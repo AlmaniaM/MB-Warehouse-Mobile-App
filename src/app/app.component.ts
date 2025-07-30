@@ -39,7 +39,13 @@ import {
   trashSharp,
   trashOutline,
   leafSharp,
-  leafOutline
+  leafOutline,
+  addCircleOutline,
+  addCircleSharp,
+  informationCircleOutline,
+  informationCircleSharp,
+  arrowForwardCircleOutline,
+  arrowForwardCircleSharp,
 } from 'ionicons/icons';
 
 @Component({
@@ -92,7 +98,13 @@ export class AppComponent {
       trashSharp,
       trashOutline,
       leafSharp,
-      leafOutline
+      leafOutline,
+      addCircleOutline,
+      addCircleSharp,
+      informationCircleOutline,
+      informationCircleSharp,
+      arrowForwardCircleOutline,
+      arrowForwardCircleSharp
     });
   }
 }

@@ -18,7 +18,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'container-tracking',
+        redirectTo: 'home',
         pathMatch: 'full'
       },
       {

@@ -249,8 +249,9 @@ export class BuddingEntryFormComponent {
     this.buddedRootPoolService.deleteBuddedRootPools([this.buddedRootPoolForSelectedBuddedVariety()!]);
   }
   
-  buddedRootPoolServicePreviousDataOperationEffect = effect(() => {
+  justCreatedBuddedRootPoolEffect = effect(() => {
     if (this.buddedRootPoolServicePreviousDataOperation() !== 'created') { return; }
+    if (this.buddedRootPoolEntryServiceStatus() !== 'stable') { return; }
     if (!this.buddedRootPoolForSelectedBuddedVariety()) { return; }
     if (!this.validBuddedRootPoolEntryToSave()) { return; }
     if (!this.isCreating()) { return; }
@@ -275,9 +276,10 @@ export class BuddingEntryFormComponent {
     this.buddedRootPoolEntryService.updateBuddedRootPoolEntries([this.validBuddedRootPoolEntryToSave()!]);
   }
 
-  justUpdatedEffect = effect(() => {
+  justUpdatedBuddedRootPoolEntryEffect = effect(() => {
     if (this.formType() === 'new') { return; }
     if (this.buddedRootPoolEntryServicePreviousDataOperation() !== 'updated') { return; }
+    if (this.buddedRootPoolEntryServiceStatus() !== 'stable') { return; }
     this.isEditing.set(false);
   });
 

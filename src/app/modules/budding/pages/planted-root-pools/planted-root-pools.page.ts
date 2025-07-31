@@ -37,6 +37,7 @@ import {
   IonTitle, 
   IonButtons,
   IonButton,
+  IonInput
 } from "@ionic/angular/standalone";
 
 import { SelectedPlantedRootPoolService } from '../../services/selected-planted-root-pool.service';
@@ -49,6 +50,7 @@ import { Rootstock, RootstockService } from 'src/app/modules/sourcelists/service
 import { Supplier, SupplierService } from 'src/app/modules/sourcelists/services/supplier.service';
 import { Variety, VarietyService } from 'src/app/modules/sourcelists/services/variety.service';
 import { Employee, EmployeeService } from 'src/app/modules/sourcelists/services/employee.service';
+import { Customer, CustomerService } from 'src/app/modules/sourcelists/services/customer.service';
 
 import { PageTopbarComponent } from 'src/app/modules/global/components/page-topbar/page-topbar.component';
 import { ContentTopbarComponent } from 'src/app/modules/global/components/content-topbar/content-topbar.component';
@@ -64,6 +66,7 @@ export interface PlantedRootPoolListRecord {
   firstBuddingEntryVariety: Variety | null;
   firstBuddingEntryDateBudded: Date | null;
   firstBuddingEntryBudder: Employee | null;
+  firstBuddingEntryCustomer: Supplier | null;
   buddingEntries: BuddedRootPoolEntry[];
   totalBudded: number;
 }
@@ -100,6 +103,7 @@ export interface PlantedRootPoolListRecord {
     IonTitle, 
     IonButtons,
     IonButton,
+    IonInput,
     PageTopbarComponent,
     ContentTopbarComponent,
     BuddingEntryFormComponent
@@ -119,6 +123,7 @@ export class PlantedRootPoolsPage {
   supplierService: SupplierService = inject(SupplierService);
   varietyService: VarietyService = inject(VarietyService);
   employeeService: EmployeeService = inject(EmployeeService);
+  customerService: CustomerService = inject(CustomerService);
 
   plantedRootPoolServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.plantedRootPoolService.statusSubject, { requireSync: true });
   buddedRootPoolServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = toSignal(this.buddedRootPoolService.statusSubject, { requireSync: true });
@@ -129,6 +134,9 @@ export class PlantedRootPoolsPage {
   supplierServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.supplierService.statusSubject, { requireSync: true });
   varietyServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.varietyService.statusSubject, { requireSync: true });
   employeeServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.employeeService.statusSubject, { requireSync: true });
+  customerServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.customerService.statusSubject, { requireSync: true });
+
+  buddedRootPoolEntryServicePreviousDataOperation: Signal<'created' | 'updated' | 'deleted' | null> = toSignal(this.buddedRootPoolEntryService.previousDataOperation, { initialValue: null });
 
   isFetchingData: Signal<boolean> = computed(() => {
     return [
@@ -141,6 +149,7 @@ export class PlantedRootPoolsPage {
       this.supplierServiceStatus(),
       this.varietyServiceStatus(),
       this.employeeServiceStatus(),
+      this.customerServiceStatus(),
     ].some(status => ['fetching', 'creating', 'updating', 'deleting'].includes(status));
   });
 
@@ -153,15 +162,19 @@ export class PlantedRootPoolsPage {
   suppliers: Signal<Supplier[]> = toSignal(this.supplierService.suppliers, { initialValue: [] });
   varieties: Signal<Variety[]> = toSignal(this.varietyService.varieties, { initialValue: [] });
   employees: Signal<Employee[]> = toSignal(this.employeeService.employees, { initialValue: [] });
+  customers: Signal<Customer[]> = toSignal(this.customerService.customers, { initialValue: [] });
 
   plantedRootPoolListRecords: Signal<PlantedRootPoolListRecord[]> = computed(() => { 
     if (this.plantedRootPools().length === 0) { return []; }
+    if (this.buddedRootPools().length === 0) { return []; }
     if (this.buddedRootPoolEntries().length === 0) { return []; }
     if (this.plantedFields().length === 0) { return []; }
     if (this.plantedTypes().length === 0) { return []; }
     if (this.rootstocks().length === 0) { return []; }
     if (this.suppliers().length === 0) { return []; }
     if (this.varieties().length === 0) { return []; }
+    if (this.employees().length === 0) { return []; }
+    if (this.customers().length === 0) { return []; }
 
     return this.plantedRootPools().map(plantedRootPool => {
 
@@ -176,6 +189,7 @@ export class PlantedRootPoolsPage {
       const firstBuddingEntryVariety = (firstBuddingEntry && firstBuddingEntryBuddedRootPool) ? this.varieties().find(variety => variety.id === firstBuddingEntryBuddedRootPool.varietyId) || null : null;
       const firstBuddingEntryDateBudded = firstBuddingEntry ? new Date(firstBuddingEntry.dateBudded) : null;
       const firstBuddingEntryBudder = firstBuddingEntry ? this.employees().find(employee => employee.id === firstBuddingEntry.budderEmployeeId) || null : null;
+      const firstBuddingEntryCustomer = firstBuddingEntry ? this.customers().find(customer => customer.id === firstBuddingEntry.customerId) || null : null;
 
       return {
         plantedRootPool: plantedRootPool,
@@ -187,6 +201,7 @@ export class PlantedRootPoolsPage {
         firstBuddingEntryVariety: firstBuddingEntryVariety,
         firstBuddingEntryDateBudded: firstBuddingEntryDateBudded,
         firstBuddingEntryBudder: firstBuddingEntryBudder,
+        firstBuddingEntryCustomer: firstBuddingEntryCustomer,
         buddingEntries: buddingEntries,
         totalBudded: buddingEntries.reduce((total, buddedRootPoolEntry) => total + (buddedRootPoolEntry.quantityBudded || 0), 0)
       };
@@ -249,21 +264,12 @@ export class PlantedRootPoolsPage {
       .filter(record => Number(record.plantedRootPool.plantedYear) === this.yearFilter())
       .filter(record => {
         if (this.rowFilter() === null) { return true; }
-        return record.plantedRootPool.row === this.rowFilter();
+        return record.plantedRootPool.row.toString().startsWith(this.rowFilter()!.toString());
       })
       .filter(record => {
         if (this.globalSearchFilter() === '') { return true; }
         return JSON.stringify(Object.values(record)).trim().toLowerCase().includes(this.globalSearchFilter().trim().toLowerCase());
       });
-  });
-
-  plantedRootPoolRows: Signal<number[]> = computed(() => { 
-    if (this.filteredPlantedRootPoolListRecords().length === 0) { return []; }
-
-    return [
-      ...new Set(this.filteredPlantedRootPoolListRecords()
-      .map(record => record.plantedRootPool.row)
-    )].sort((a, b) => a - b);
   });
   
   trackByPlantedRootPool(index: number, record: PlantedRootPoolListRecord) { 
@@ -277,4 +283,10 @@ export class PlantedRootPoolsPage {
 
   isCreatingBuddingEntry: WritableSignal<boolean> = signal(false);
   selectedPlantedRootPool: WritableSignal<PlantedRootPool | null> = signal(null);
+
+  justCreatedBuddedRootPoolEntryEffect = effect(() => {
+    if (this.buddedRootPoolEntryServicePreviousDataOperation() !== 'created') { return; }
+    if (this.buddedRootPoolEntryServiceStatus() !== 'stable') { return; }
+    this.isCreatingBuddingEntry.set(false);
+  });
 }

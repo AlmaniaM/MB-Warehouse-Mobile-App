@@ -3,6 +3,14 @@
   <app-content-topbar title="Plantings" [showRefresher]="false"></app-content-topbar>
   <div id="content">
     <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-icon color="primary" [ios]="'information-circle-outline'" [md]="'information-circle-sharp'"></ion-icon> 
+        </ion-buttons>
+        <ion-title size="small">
+          <i>Swipe record left for more options.</i>
+        </ion-title>
+      </ion-toolbar>
       <ion-accordion-group>
         <ion-accordion value="first">
           <ion-item slot="header" color="light">
@@ -34,15 +42,10 @@
                 </ion-select>
               </ion-item>
               <ion-item>
-                <ion-select aria-modal label="Row" labelPlacement="stacked" interface="popover" 
+                <ion-input label="Row" labelPlacement="stacked"
+                  type="number" inputmode="number" 
                   [(ngModel)]="rowFilter">
-                  <ion-select-option [value]="null">All</ion-select-option>
-                  @for (row of plantedRootPoolRows(); track row) {
-                    <ion-select-option [value]="row">
-                      {{ row }}
-                    </ion-select-option>
-                  }
-                </ion-select>
+                </ion-input>
               </ion-item>
             </ion-list>
           </div>
@@ -69,7 +72,7 @@
           </ion-list>
         }
       } @else {
-        <cdk-virtual-scroll-viewport class="ion-content-scroll-host" [itemSize]="125" [minBufferPx]="960" [maxBufferPx]="1440">
+        <cdk-virtual-scroll-viewport class="ion-content-scroll-host" [itemSize]="125" [minBufferPx]="550" [maxBufferPx]="550">
           <ion-list id="planted-root-pool-list">
             <ion-item-sliding *cdkVirtualFor="let plantedRootPool of filteredPlantedRootPoolListRecords(); trackBy: trackByPlantedRootPool">
               <ion-item class="planting-list-item" [lines]="'full'">
@@ -79,12 +82,13 @@
                   <ion-text [style.font-size.px]="12">{{ plantedRootPool.supplier.name }}</ion-text><br />
                   <ion-text [style.font-size.px]="12">{{ plantedRootPool.plantedType.type }}</ion-text><br />
                 </ion-label>
-                <ion-label [style.font-size.px]="13" slot="start">
+                <ion-label [style.font-size.px]="12" slot="start">
                   @if (plantedRootPool.buddingEntries.length > 0) {
                     @if (plantedRootPool.buddingEntries.length === 1) {
                       <strong>{{ plantedRootPool.firstBuddingEntryVariety ? plantedRootPool.firstBuddingEntryVariety.name : 'N/A' }}</strong><br />
                       <ion-text>{{ plantedRootPool.firstBuddingEntryDateBudded ? (plantedRootPool.firstBuddingEntryDateBudded | date: 'MM/dd/yyyy') : 'N/A' }}</ion-text><br />
-                      <ion-note [style.font-size.px]="13">{{ plantedRootPool.firstBuddingEntryBudder ? (plantedRootPool.firstBuddingEntryBudder.firstName + ' ' + plantedRootPool.firstBuddingEntryBudder.lastName) : 'N/A'}}</ion-note><br />
+                      <ion-text>{{ plantedRootPool.firstBuddingEntryBudder ? (plantedRootPool.firstBuddingEntryBudder.firstName + ' ' + plantedRootPool.firstBuddingEntryBudder.lastName) : 'N/A'}}</ion-text><br />
+                      <ion-note [style.font-size.px]="12">{{ plantedRootPool.firstBuddingEntryCustomer ? plantedRootPool.firstBuddingEntryCustomer.name : 'N/A'}}</ion-note><br />
                     } @else {
                       Multiple Budding Entries
                     }
@@ -117,13 +121,13 @@
       }
 	</div>
 </ion-content>
-<ion-modal aria-modal [isOpen]="isCreatingBuddingEntry()" (didDismiss)="isCreatingBuddingEntry.set(false)">
+<ion-modal aria-modal [isOpen]="isCreatingBuddingEntry()" (didDismiss)="this.selectedPlantedRootPool.set(null); isCreatingBuddingEntry.set(false)">
   <ng-template>
     <ion-header>
       <ion-toolbar color="primary">
         <ion-title size="small">New Budding Entry</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="isCreatingBuddingEntry.set(false)">
+          <ion-button (click)="this.selectedPlantedRootPool.set(null); isCreatingBuddingEntry.set(false)">
             <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
           </ion-button>
         </ion-buttons>

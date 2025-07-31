@@ -34,6 +34,8 @@ export class BuddingEntryDetailsPage {
   buddedRootPoolService: BuddedRootPoolService = inject(BuddedRootPoolService);
   buddedRootPoolEntryService: BuddedRootPoolEntryService = inject(BuddedRootPoolEntryService);
 
+  buddedRootPoolEntryServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'>  = toSignal(this.buddedRootPoolEntryService.statusSubject, { requireSync: true });
+
   selectedPlantedRootPool: Signal<PlantedRootPool | null> = toSignal(this.selectedPlantedRootPoolService.selectedPlantedRootPool, { initialValue: null });
   selectedBuddedRootPoolEntry: Signal<BuddedRootPoolEntry | null> = toSignal(this.selectedBuddingEntryService.selectedBuddedRootPoolEntry, { initialValue: null });
   buddedRootPools: Signal<BuddedRootPool[]> = toSignal(this.buddedRootPoolService.buddedRootPools, { initialValue: [] });
@@ -63,7 +65,7 @@ export class BuddingEntryDetailsPage {
   justUpdatedEffect = effect(() => {
     if (!this.updatedSelectedBuddedRootPoolEntry()) { return; }
     if (this.buddingEntryPreviousDataOperation() !== 'updated') { return; }
-    console.log('Budded Root Pool Entry Updated');
+    if (this.buddedRootPoolEntryServiceStatus() !== 'stable') { return; }
     this.selectedBuddingEntryService.setBuddedRootPoolEntry(this.updatedSelectedBuddedRootPoolEntry()!);
   });
 }

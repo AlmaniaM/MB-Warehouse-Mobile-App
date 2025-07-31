@@ -1,6 +1,7 @@
 import { 
   Component, 
   computed, 
+  effect, 
   inject,
   signal, 
   Signal, 
@@ -111,6 +112,8 @@ export class BuddingEntriesPage {
   employeeServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.employeeService.statusSubject, { requireSync: true });
   customerServiceStatus: Signal<'fetching' | 'error' | 'stable'> = toSignal(this.customerService.statusSubject, { requireSync: true });
 
+  buddedRootPoolEntryServicePreviousDataOperation: Signal<'created' | 'updated' | 'deleted' | null> = toSignal(this.buddedRootPoolEntryService.previousDataOperation, { initialValue: null });
+
   isFetchingData: Signal<boolean> = computed(() => {
     return [
       this.buddedRootPoolServiceStatus(),
@@ -184,4 +187,12 @@ export class BuddingEntriesPage {
     this.SelectedBuddingEntryService.setBuddedRootPoolEntry(record.buddedRootPoolEntry);
     this.router.navigate(['/app/budding/planting/budding-entry/details']); 
   }
+
+  justCreatedBuddedRootPoolEntryEffect = effect(() => {
+    if (this.buddedRootPoolEntryServicePreviousDataOperation() !== 'created') { return; }
+    if (this.buddedRootPoolEntryServiceStatus() !== 'stable') { return; }
+
+    this.isCreatingBuddingEntry.set(false);
+  });
+
 }

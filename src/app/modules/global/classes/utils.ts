@@ -38,6 +38,24 @@ export class Utils {
     };
   }
 
+  static memoizeArray<Args extends unknown[], T>(fn: (args: Args) => T): (args: Args) => T {
+  const cache = new Map<any, any>();
+
+  return (args: Args): T => {
+    let current = cache;
+    for (const arg of args) {
+      if (!current.has(arg)) current.set(arg, new Map());
+      current = current.get(arg);
+    }
+
+    if (current.has("__result")) return current.get("__result");
+
+    const result = fn(args);
+    current.set("__result", result);
+    return result;
+  };
+}
+
   static orderObjectProperties(obj: Record<string, any>): Record<string, any> {
     return Object.keys(obj).sort().reduce((result: Record<string, any>, key: string) => {
       const value = obj[key];

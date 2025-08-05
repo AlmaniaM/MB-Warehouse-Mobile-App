@@ -53,7 +53,8 @@
       </ion-input>
     }
     @if (isEditing() && formType() === 'new') {
-      <ion-select aria-modal label="Budded Variety" labelPlacement="stacked" interface="popover"
+      <ion-select aria-modal label="Budded Variety" labelPlacement="stacked" interface="action-sheet"
+        [interfaceOptions]="{header:'Select Variety'}"
         [disabled]="sortedVarieties().length === 0 || isFetchingData()"
         [(ngModel)]="buddedVariety">
         @for (variety of sortedVarieties(); track variety.id) {
@@ -73,7 +74,8 @@
         </ion-input>
       }
     } @else {
-      <ion-select aria-modal label="Budder" labelPlacement="stacked" interface="popover"
+      <ion-select aria-modal label="Budder" labelPlacement="stacked" interface="action-sheet"
+        [interfaceOptions]="{header:'Select Budder'}"
         [disabled]="sortedEmployees().length === 0 || isFetchingData()"
         [(ngModel)]="budder">
         @for (employee of sortedEmployees(); track employee.id) {
@@ -114,7 +116,8 @@
         </ion-input>
       }
     } @else {
-      <ion-select aria-modal label="Customer" labelPlacement="stacked" interface="popover"
+      <ion-select aria-modal label="Customer" labelPlacement="stacked" interface="action-sheet"
+        [interfaceOptions]="{header:'Select Customer'}"
         [disabled]="sortedCustomers().length === 0 || isFetchingData()"
         [(ngModel)]="customer">
         @for (customer of sortedCustomers(); track customer.id) {

@@ -26,7 +26,8 @@
         </ion-input>
       }
     } @else {
-      <ion-select aria-modal label="Customer" labelPlacement="stacked" interface="popover"
+      <ion-select aria-modal label="Customer" labelPlacement="stacked" interface="action-sheet"
+        [interfaceOptions]="{header:'Select Customer'}"
         [disabled]="sortedCustomers().length === 0 || isFetchingData()"
         [(ngModel)]="customer">
         @for (customer of sortedCustomers(); track customer.id) {

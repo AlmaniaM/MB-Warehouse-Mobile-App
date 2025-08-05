@@ -16,7 +16,8 @@
 <ion-list lines="full">
   @if (formType() === 'new' && !initialReturnReceipt()) {
     <ion-item>
-      <ion-select aria-modal label="Action" labelPlacement="stacked" interface="popover"
+      <ion-select aria-modal label="Action" labelPlacement="stacked" interface="action-sheet"
+        [interfaceOptions]="{header:'Select Action'}"
         [disabled]="!isEditing() || isFetchingData()"
         [(ngModel)]="ledgerAction">
         <ion-select-option [value]="'AddContainerToMbn'">Add Containers To MBN</ion-select-option>
@@ -37,7 +38,8 @@
           </ion-input>
         }
       } @else {
-        <ion-select aria-modal label="Customer" labelPlacement="stacked" interface="popover"
+        <ion-select aria-modal label="Customer" labelPlacement="stacked" interface="action-sheet"
+          [interfaceOptions]="{header:'Select Customer'}"
           [disabled]="sortedCustomers().length === 0 || isFetchingData()"
           [(ngModel)]="customer">
           @for (customer of sortedCustomers(); track customer.id) {
@@ -60,7 +62,8 @@
             </ion-input>
           }
         } @else {
-          <ion-select aria-modal label="Return Receipt" labelPlacement="stacked" interface="popover"
+          <ion-select aria-modal label="Return Receipt" labelPlacement="stacked" interface="action-sheet"
+            [interfaceOptions]="{header:'Select Return Receipt'}"
             [disabled]="containerReturnReceiptsForCustomer().length === 0 || isFetchingData()"
             [(ngModel)]="containerReturnReceipt">
             @for (containerReturnReceipt of containerReturnReceiptsForCustomer(); track containerReturnReceipt.id) {
@@ -82,7 +85,8 @@
         </ion-input>
       }
     } @else {
-      <ion-select aria-modal label="Container Type" labelPlacement="stacked" interface="popover"
+      <ion-select aria-modal label="Container Type" labelPlacement="stacked" interface="action-sheet"
+        [interfaceOptions]="{header:'Select Container Type'}"
         [disabled]="sortedContainerTypes().length === 0 || isFetchingData()"
         [(ngModel)]="containerType">
         @for (containerType of sortedContainerTypes(); track containerType.id) {

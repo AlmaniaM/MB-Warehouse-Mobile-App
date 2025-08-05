@@ -11,7 +11,8 @@
           </ion-toolbar>
           <ion-list lines="full">
             <ion-item>
-              <ion-select aria-modal label="Year" labelPlacement="stacked" interface="popover" 
+              <ion-select aria-modal label="Year" labelPlacement="stacked" interface="action-sheet" 
+                [interfaceOptions]="{header:'Select Year'}"
                 [(ngModel)]="yearFilter">
                 @for (year of containerLedgerEntryYears(); track year) {
                   <ion-select-option [value]="year">
@@ -21,7 +22,8 @@
               </ion-select>
             </ion-item>
             <ion-item>
-              <ion-select aria-modal label="Entry Type" labelPlacement="stacked" interface="popover" 
+              <ion-select aria-modal label="Entry Type" labelPlacement="stacked" interface="action-sheet" 
+                [interfaceOptions]="{header:'Select Entry Type'}"
                 [(ngModel)]="entryTypeFilter">
                 <ion-select-option [value]="null">All</ion-select-option>
                 <ion-select-option [value]="'add'">Add</ion-select-option>
@@ -29,7 +31,8 @@
               </ion-select>
             </ion-item>
             <ion-item>
-              <ion-select aria-modal label="Container Type" labelPlacement="stacked" interface="popover" 
+              <ion-select aria-modal label="Container Type" labelPlacement="stacked" interface="action-sheet" 
+                [interfaceOptions]="{header:'Select Container Type'}"
                 [(ngModel)]="containerTypeFilter">
                 <ion-select-option [value]="null">All</ion-select-option>
                 @for (containerType of containerTypes(); track containerType.id) {
@@ -41,7 +44,8 @@
             </ion-item>
             @if (ledgerType() === 'Customer') {
               <ion-item>
-                <ion-select aria-modal label="Customer" labelPlacement="stacked" interface="popover" 
+                <ion-select aria-modal label="Customer" labelPlacement="stacked" interface="action-sheet" 
+                  [interfaceOptions]="{header:'Select Customer'}"
                   [(ngModel)]="customerFilter">
                   <ion-select-option [value]="null">All</ion-select-option>
                   @for (customer of sortedCustomers(); track customer.id) {

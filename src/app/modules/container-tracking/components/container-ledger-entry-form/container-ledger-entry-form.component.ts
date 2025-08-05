@@ -211,7 +211,7 @@ export class ContainerLedgerEntryFormComponent  {
   containerReturnReceiptDisplayString: Signal<string> = computed(() => {
     if (!this.containerReturnReceipt()) { return 'N/A'; }
     return this.containerReturnReceipt()!.containerReceiptReference ||
-      `${this.customer()!.name} - ${this.containerReturnReceipt()!.date.toLocaleDateString()}`;
+      `${this.customer()!.name} - ${new Date(this.containerReturnReceipt()!.date).toLocaleDateString()}`;
   });
   shipmentNumber: WritableSignal<string | null> = signal<string | null>(null);
   shipmentYear: WritableSignal<number | null> = signal<number | null>(null);

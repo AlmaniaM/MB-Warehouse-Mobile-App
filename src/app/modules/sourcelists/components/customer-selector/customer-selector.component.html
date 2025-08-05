@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title size="small">Select {{ label() }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="selectionCancelledChanged.emit()">
+        <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar [(ngModel)]="searchFilter"></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">  
+  <ion-list>
+    @for (customer of filteredCustomers(); track customer.id) {
+      <ion-item>
+        <ion-checkbox [value]="customer" 
+          (ionChange)="checkboxChange($event)">
+          {{ customer.name }}
+        </ion-checkbox>
+      </ion-item>
+    }
+  </ion-list>
+</ion-content>
+<ion-footer class="ion-padding">
+  <ion-button expand="block" fill="outline" [color]="'success'"
+    [disabled]="selectedCustomers().length === 0"
+    (click)="selectedCustomersChanged.emit(this.selectedCustomers())">
+    Select ({{ selectedCustomers().length }}) Customers 
+    <ion-icon slot="end" ios="checkmark-outline" md="checkmark-sharp"></ion-icon>
+  </ion-button>
+  <ion-button expand="block" fill="outline" 
+    (click)="selectionCancelledChanged.emit()">
+    Cancel
+    <ion-icon slot="end" ios="close-outline" md="close-sharp"></ion-icon>
+  </ion-button>
+</ion-footer>

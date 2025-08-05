@@ -49,6 +49,7 @@ import { Employee, EmployeeService } from 'src/app/modules/sourcelists/services/
 import { Customer, CustomerService } from 'src/app/modules/sourcelists/services/customer.service';
 
 import { Utils } from 'src/app/modules/global/classes/utils';
+import { CustomerSelectorComponent } from 'src/app/modules/sourcelists/components/customer-selector/customer-selector.component';
 
 @Component({
   selector: 'app-budding-entry-form',
@@ -78,7 +79,8 @@ import { Utils } from 'src/app/modules/global/classes/utils';
     IonInput,
     IonTextarea,
     IonText,
-    IonProgressBar, 
+    IonProgressBar,
+    CustomerSelectorComponent
   ]
 })
 export class BuddingEntryFormComponent {

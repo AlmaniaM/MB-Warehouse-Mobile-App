@@ -22,26 +22,31 @@
             </ion-toolbar>
             <ion-list lines="full">
               <ion-item>
-                <ion-select aria-modal label="Year" labelPlacement="stacked" interface="action-sheet" 
-                  [interfaceOptions]="{header:'Select Year'}"
-                  [(ngModel)]="yearFilter">
-                  @for (year of plantedRootPoolPlantedYears(); track year) {
-                    <ion-select-option [value]="year">
-                      {{ year }}
-                    </ion-select-option>
-                  }
-                </ion-select>
+                @if (plantedRootPoolPlantedYears().length > 0) {
+                  <ion-select aria-modal label="Year" labelPlacement="stacked" interface="action-sheet" 
+                    [interfaceOptions]="{header:'Select Year'}"
+                    [(ngModel)]="yearFilter">
+                    @for (year of plantedRootPoolPlantedYears(); track year) {
+                      <ion-select-option [value]="year">
+                        {{ year }}
+                      </ion-select-option>
+                    }
+                  </ion-select>
+                }
               </ion-item>
               <ion-item>
-                <ion-select aria-modal label="Field" labelPlacement="stacked" interface="action-sheet" 
-                  [interfaceOptions]="{header:'Select Field'}"
-                  [(ngModel)]="fieldFilter">
-                  @for (field of filteredPlantedFieldsForYear(); track field.id) {
-                    <ion-select-option [value]="field">
-                      {{ field.field }}
-                    </ion-select-option>
-                  }
-                </ion-select>
+                @if (filteredPlantedFieldsForYear().length > 0) {
+                  <ion-select aria-modal label="Field" labelPlacement="stacked" interface="action-sheet" 
+                    [interfaceOptions]="{header:'Select Field'}"
+                    [(ngModel)]="fieldFilter"
+                    [compareWith]="fieldCompare">
+                    @for (field of filteredPlantedFieldsForYear(); track field.id) {
+                      <ion-select-option [value]="field">
+                        {{ field.field }}
+                      </ion-select-option>
+                    }
+                  </ion-select>
+                }
               </ion-item>
               <ion-item>
                 <ion-input label="Row" labelPlacement="stacked"

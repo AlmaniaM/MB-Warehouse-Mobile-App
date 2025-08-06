@@ -171,6 +171,10 @@ export class PlantedRootPoolsPage {
   employees: Signal<Employee[]> = toSignal(this.employeeService.employees, { initialValue: [] });
   customers: Signal<Customer[]> = toSignal(this.customerService.customers, { initialValue: [] });
 
+  constructor() {
+    this.triggerFilterSettings.set(true);
+  }
+
   plantedRootPoolListRecords: Signal<PlantedRootPoolListRecord[]> = computed(() => { 
     if (this.plantedRootPools().length === 0) { return []; }
     if (this.buddedRootPools().length === 0) { return []; }
@@ -225,8 +229,9 @@ export class PlantedRootPoolsPage {
   });
 
   plantedRootPoolListRecordsEffect = effect(() => { 
+    if (this.isFetchingData()) { return; }
+    if (this.cachedSettings() !== null) { return; }
     if (this.plantedRootPoolListRecords().length === 0) { return; }
-    if (this.fieldFilter().id !== defaultPlantedField.id) { return; }
 
     const isCurrentYearPresent = this.plantedRootPoolPlantedYears().includes(new Date().getFullYear());
     if (isCurrentYearPresent) {
@@ -235,6 +240,7 @@ export class PlantedRootPoolsPage {
       this.yearFilter.set(this.plantedRootPoolPlantedYears()[0]);
     }
   });
+
 
   filteredPlantedFieldsForYear: Signal<PlantedField[]> = computed(() => {
     if (this.plantedRootPoolListRecords().length === 0) { return []; }
@@ -251,25 +257,21 @@ export class PlantedRootPoolsPage {
   });
 
   globalSearchFilter: WritableSignal<string> = signal('');
-  fieldFilter: WritableSignal<PlantedField> = signal(defaultPlantedField);
-  yearFilter: WritableSignal<number> = signal(new Date().getFullYear());
+  yearFilter: WritableSignal<number | null> = signal(null);
+  fieldFilter: WritableSignal<PlantedField | null> = signal(null);
   rowFilter: WritableSignal<number | null> = signal(null);
 
   cachedSettings = toSignal(this.cachedSettingsService.cachedSettings, { initialValue: null });
 
   filtersEffect = effect(() => { 
-
+    if (this.triggerFilterSettings()) { return; }
+    
     this.cachedSettingsService.setSettings({
       globalSearchFilter: this.globalSearchFilter(),
       fieldFilter: this.fieldFilter(),
       yearFilter: this.yearFilter(),
       rowFilter: this.rowFilter()
     });
-  });
-
-  yearFilterEffect = effect(() => {
-    if (this.filteredPlantedFieldsForYear().length === 0) { return; }
-    this.fieldFilter.set(this.filteredPlantedFieldsForYear()[0]);
   });
 
   filteredPlantedRootPoolListRecords: Signal<PlantedRootPoolListRecord[]> = computed(() => { 
@@ -279,7 +281,10 @@ export class PlantedRootPoolsPage {
       .sort((a, b) => { 
         return a.plantedRootPool.row - b.plantedRootPool.row
       })
-      .filter(record => record.field.id === this.fieldFilter().id)
+      .filter(record => {
+        if (this.fieldFilter() === null) { return false; }
+        return record.field.id === this.fieldFilter()!.id
+      })
       .filter(record => Number(record.plantedRootPool.plantedYear) === this.yearFilter())
       .filter(record => {
         if (this.rowFilter() === null) { return true; }
@@ -294,19 +299,19 @@ export class PlantedRootPoolsPage {
   triggerFilterSettings: WritableSignal<boolean> = signal(false);
 
   filteredPlantedRootPoolListRecordsEffect = effect(() => {
+    if (this.isFetchingData()) { return; }
     if (this.plantedRootPoolListRecords().length === 0) { return; }
     if (this.cachedSettings() === null) { return; }
     if (!this.triggerFilterSettings()) { return; }
 
     this.triggerFilterSettings.set(false);
 
-    
     if (this.cachedSettings().globalSearchFilter) {
       this.globalSearchFilter.set(String(this.cachedSettings().globalSearchFilter));
     }
 
     if (this.cachedSettings().fieldFilter) {
-      this.fieldFilter.set(this.cachedSettings().fieldFilter);
+      this.fieldFilter.set(this.cachedSettings().fieldFilter as PlantedField);
     }
 
     if (this.cachedSettings().yearFilter) {
@@ -320,6 +325,10 @@ export class PlantedRootPoolsPage {
 
   trackByPlantedRootPool(index: number, record: PlantedRootPoolListRecord) { 
     return record.plantedRootPool.id;
+  }
+  
+  fieldCompare(a: PlantedField, b: PlantedField) {
+    return a.id === b.id;
   }
 
   setSelectedPlantedRootPool(record: PlantedRootPoolListRecord) { 

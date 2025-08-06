@@ -301,7 +301,9 @@ export class PlantedRootPoolsPage {
   filteredPlantedRootPoolListRecordsEffect = effect(() => {
     if (this.isFetchingData()) { return; }
     if (this.plantedRootPoolListRecords().length === 0) { return; }
-    if (this.cachedSettings() === null) { return; }
+    if (this.cachedSettings() === null) { 
+      this.triggerFilterSettings.set(false);
+    }
     if (!this.triggerFilterSettings()) { return; }
 
     this.triggerFilterSettings.set(false);
@@ -328,6 +330,7 @@ export class PlantedRootPoolsPage {
   }
   
   fieldCompare(a: PlantedField, b: PlantedField) {
+    if (!a || !b) { return false; }
     return a.id === b.id;
   }
 

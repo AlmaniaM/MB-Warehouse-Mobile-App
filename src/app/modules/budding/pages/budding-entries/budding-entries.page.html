@@ -36,7 +36,7 @@
       <ion-progress-bar type="indeterminate"></ion-progress-bar>
     }
     @if (buddingEntriesForPlantedRootPool().length > 0) {
-      <ion-list lines="full">
+      <ion-list id="budding-entries-list" lines="full">
         @for (buddingEntry of buddingEntriesForPlantedRootPool(); track buddingEntry.buddedRootPoolEntry.id) {
           <ion-item button [detail]="true" (click)="setSelectedBuddingEntry(buddingEntry)">
             <ion-label>

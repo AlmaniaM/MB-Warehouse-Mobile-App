@@ -38,16 +38,19 @@
           </ion-input>
         }
       } @else {
-        <ion-select aria-modal label="Customer" labelPlacement="stacked" interface="action-sheet"
-          [interfaceOptions]="{header:'Select Customer'}"
+        <ion-input id="customer-select" label="Customer" labelPlacement="stacked"
           [disabled]="sortedCustomers().length === 0 || isFetchingData()"
-          [(ngModel)]="customer">
-          @for (customer of sortedCustomers(); track customer.id) {
-            <ion-select-option [value]="customer">
-              {{ customer.name }}
-            </ion-select-option>
-          }
-        </ion-select>
+          readonly [ngModel]="customer() ? customer()!.name : ''">
+        </ion-input>
+        <ion-modal aria-modal trigger="customer-select" #customerSelectModal [keepContentsMounted]="true">
+          <ng-template>
+            <app-customer-selector
+              [selectMultiple]="false"
+              (selectionCancelledChanged)="customerSelectModal.dismiss()"
+              (selectedCustomersChanged)="customer.set($event[0]); customerSelectModal.dismiss()">
+            </app-customer-selector>
+          </ng-template>
+        </ion-modal>
       }
     </ion-item>
   }
@@ -85,16 +88,19 @@
         </ion-input>
       }
     } @else {
-      <ion-select aria-modal label="Container Type" labelPlacement="stacked" interface="action-sheet"
-        [interfaceOptions]="{header:'Select Container Type'}"
-        [disabled]="sortedContainerTypes().length === 0 || isFetchingData()"
-        [(ngModel)]="containerType">
-        @for (containerType of sortedContainerTypes(); track containerType.id) {
-          <ion-select-option [value]="containerType">
-            {{ containerType.name }}
-          </ion-select-option>
-        }
-      </ion-select>
+        <ion-input id="container-type-select" label="Container Type" labelPlacement="stacked"
+          [disabled]="sortedContainerTypes().length === 0 || isFetchingData()"
+          readonly [ngModel]="containerType() ? containerType()!.name : ''">
+        </ion-input>
+        <ion-modal aria-modal trigger="container-type-select" #containerTypeSelectModal [keepContentsMounted]="true">
+          <ng-template>
+            <app-container-type-selector
+              [selectMultiple]="false"
+              (selectionCancelledChanged)="containerTypeSelectModal.dismiss()"
+              (selectedContainerTypesChanged)="containerType.set($event[0]); containerTypeSelectModal.dismiss()">
+            </app-container-type-selector>
+          </ng-template>
+        </ion-modal>
     }
   </ion-item>
   <ion-item>

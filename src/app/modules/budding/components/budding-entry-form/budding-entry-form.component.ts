@@ -50,6 +50,8 @@ import { Customer, CustomerService } from 'src/app/modules/sourcelists/services/
 
 import { Utils } from 'src/app/modules/global/classes/utils';
 import { CustomerSelectorComponent } from 'src/app/modules/sourcelists/components/customer-selector/customer-selector.component';
+import { VarietySelectorComponent } from 'src/app/modules/sourcelists/components/variety-selector/variety-selector.component';
+import { EmployeeSelectorComponent } from 'src/app/modules/sourcelists/components/employee-selector/employee-selector.component';
 
 @Component({
   selector: 'app-budding-entry-form',
@@ -80,7 +82,9 @@ import { CustomerSelectorComponent } from 'src/app/modules/sourcelists/component
     IonTextarea,
     IonText,
     IonProgressBar,
-    CustomerSelectorComponent
+    CustomerSelectorComponent,
+    VarietySelectorComponent,
+    EmployeeSelectorComponent
   ]
 })
 export class BuddingEntryFormComponent {

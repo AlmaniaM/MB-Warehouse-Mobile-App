@@ -16,6 +16,7 @@
     @for (customer of filteredCustomers(); track customer.id) {
       <ion-item>
         <ion-checkbox [value]="customer" 
+          [checked]="isChecked(customer)"
           (ionChange)="checkboxChange($event)">
           {{ customer.name }}
         </ion-checkbox>

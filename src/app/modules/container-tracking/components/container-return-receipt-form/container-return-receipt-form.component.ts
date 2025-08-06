@@ -37,11 +37,12 @@ import {
   IonDatetime 
 } from '@ionic/angular/standalone';
 
+import { SelectedContainerReturnReceiptService } from 'src/app/modules/container-tracking/services/selected-container-return-receipt.service';
 import { ContainerReturnReceipt, ContainerReturnReceiptService, defaultContainerReturnReceipt } from 'src/app/modules/container-tracking/services/container-return-receipt.service';
 import { Customer, CustomerService, defaultCustomer } from 'src/app/modules/sourcelists/services/customer.service';
 
 import { Utils } from 'src/app/modules/global/classes/utils';
-import { SelectedContainerReturnReceiptService } from 'src/app/modules/container-tracking/services/selected-container-return-receipt.service';
+import { CustomerSelectorComponent } from 'src/app/modules/sourcelists/components/customer-selector/customer-selector.component';
 
 @Component({
   selector: 'app-container-return-receipt-form',
@@ -71,6 +72,7 @@ import { SelectedContainerReturnReceiptService } from 'src/app/modules/container
     IonInput,
     IonText, 
     IonProgressBar, 
+    CustomerSelectorComponent,
   ]
 })
 export class ContainerReturnReceiptFormComponent {

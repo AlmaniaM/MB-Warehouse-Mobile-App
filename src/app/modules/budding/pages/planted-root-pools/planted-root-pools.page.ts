@@ -40,6 +40,7 @@ import {
   IonInput
 } from "@ionic/angular/standalone";
 
+import { CachedSettingsService, SETTINGS_IDENTIFIER } from 'src/app/modules/global/services/cached-settings.service';
 import { SelectedPlantedRootPoolService } from '../../services/selected-planted-root-pool.service';
 import { PlantedRootPool, PlantedRootPoolService } from '../../services/planted-root-pool.service';
 import { BuddedRootPoolEntry, BuddedRootPoolEntryService } from '../../services/budded-root-pool-entry.service';
@@ -55,6 +56,7 @@ import { Customer, CustomerService } from 'src/app/modules/sourcelists/services/
 import { PageTopbarComponent } from 'src/app/modules/global/components/page-topbar/page-topbar.component';
 import { ContentTopbarComponent } from 'src/app/modules/global/components/content-topbar/content-topbar.component';
 import { BuddingEntryFormComponent } from '../../components/budding-entry-form/budding-entry-form.component';
+import { Utils } from 'src/app/modules/global/classes/utils';
 
 export interface PlantedRootPoolListRecord {
   plantedRootPool: PlantedRootPool;
@@ -107,11 +109,16 @@ export interface PlantedRootPoolListRecord {
     PageTopbarComponent,
     ContentTopbarComponent,
     BuddingEntryFormComponent
+  ],
+  providers: [
+    { provide: SETTINGS_IDENTIFIER, useValue: 'PlantedRootPools' },
+    CachedSettingsService
   ]
 })
 export class PlantedRootPoolsPage { 
 
   router: Router = inject(Router);
+  cachedSettingsService: CachedSettingsService = inject(CachedSettingsService);
   selectedPlantedRootPoolService: SelectedPlantedRootPoolService = inject(SelectedPlantedRootPoolService);
 
   plantedRootPoolService: PlantedRootPoolService = inject(PlantedRootPoolService);
@@ -248,6 +255,18 @@ export class PlantedRootPoolsPage {
   yearFilter: WritableSignal<number> = signal(new Date().getFullYear());
   rowFilter: WritableSignal<number | null> = signal(null);
 
+  cachedSettings = toSignal(this.cachedSettingsService.cachedSettings, { initialValue: null });
+
+  filtersEffect = effect(() => { 
+
+    this.cachedSettingsService.setSettings({
+      globalSearchFilter: this.globalSearchFilter(),
+      fieldFilter: this.fieldFilter(),
+      yearFilter: this.yearFilter(),
+      rowFilter: this.rowFilter()
+    });
+  });
+
   yearFilterEffect = effect(() => {
     if (this.filteredPlantedFieldsForYear().length === 0) { return; }
     this.fieldFilter.set(this.filteredPlantedFieldsForYear()[0]);
@@ -272,6 +291,33 @@ export class PlantedRootPoolsPage {
       });
   });
   
+  triggerFilterSettings: WritableSignal<boolean> = signal(false);
+
+  filteredPlantedRootPoolListRecordsEffect = effect(() => {
+    if (this.plantedRootPoolListRecords().length === 0) { return; }
+    if (this.cachedSettings() === null) { return; }
+    if (!this.triggerFilterSettings()) { return; }
+
+    this.triggerFilterSettings.set(false);
+
+    
+    if (this.cachedSettings().globalSearchFilter) {
+      this.globalSearchFilter.set(String(this.cachedSettings().globalSearchFilter));
+    }
+
+    if (this.cachedSettings().fieldFilter) {
+      this.fieldFilter.set(this.cachedSettings().fieldFilter);
+    }
+
+    if (this.cachedSettings().yearFilter) {
+      this.yearFilter.set(Number(this.cachedSettings().yearFilter));
+    }
+
+    if (this.cachedSettings().rowFilter) {
+      this.rowFilter.set(Number(this.cachedSettings().rowFilter));
+    }
+  });
+
   trackByPlantedRootPool(index: number, record: PlantedRootPoolListRecord) { 
     return record.plantedRootPool.id;
   }
@@ -287,6 +333,8 @@ export class PlantedRootPoolsPage {
   justCreatedBuddedRootPoolEntryEffect = effect(() => {
     if (this.buddedRootPoolEntryServicePreviousDataOperation() !== 'created') { return; }
     if (this.buddedRootPoolEntryServiceStatus() !== 'stable') { return; }
+    
     this.isCreatingBuddingEntry.set(false);
+    this.triggerFilterSettings.set(true);
   });
 }

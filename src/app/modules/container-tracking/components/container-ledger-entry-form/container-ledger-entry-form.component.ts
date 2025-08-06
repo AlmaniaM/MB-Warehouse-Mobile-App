@@ -29,7 +29,8 @@ import {
   IonLabel, 
   IonDatetimeButton, 
   IonPopover, 
-  IonDatetime 
+  IonDatetime,
+  IonModal, 
 } from '@ionic/angular/standalone';
 
 import { 
@@ -43,7 +44,10 @@ import {
 import { ContainerReturnReceipt, ContainerReturnReceiptService } from 'src/app/modules/container-tracking/services/container-return-receipt.service';
 import { ContainerType, ContainerTypeService } from 'src/app/modules/sourcelists/services/container-type.service';
 import { Customer, CustomerService } from 'src/app/modules/sourcelists/services/customer.service';
+
 import { Utils } from 'src/app/modules/global/classes/utils';
+import { CustomerSelectorComponent } from 'src/app/modules/sourcelists/components/customer-selector/customer-selector.component';
+import { ContainerTypeSelectorComponent } from 'src/app/modules/sourcelists/components/container-type-selector/container-type-selector.component';
 
 @Component({
   selector: 'app-container-ledger-entry-form',
@@ -67,7 +71,10 @@ import { Utils } from 'src/app/modules/global/classes/utils';
     IonSelectOption,
     IonInput,
     IonTextarea,
-    IonProgressBar, 
+    IonProgressBar,
+    IonModal,
+    CustomerSelectorComponent,
+    ContainerTypeSelectorComponent
   ]
 })
 export class ContainerLedgerEntryFormComponent  {

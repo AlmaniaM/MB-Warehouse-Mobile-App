@@ -26,16 +26,19 @@
         </ion-input>
       }
     } @else {
-      <ion-select aria-modal label="Customer" labelPlacement="stacked" interface="action-sheet"
-        [interfaceOptions]="{header:'Select Customer'}"
+      <ion-input id="customer-select" label="Customer" labelPlacement="stacked"
         [disabled]="sortedCustomers().length === 0 || isFetchingData()"
-        [(ngModel)]="customer">
-        @for (customer of sortedCustomers(); track customer.id) {
-          <ion-select-option [value]="customer">
-            {{ customer.name }}
-          </ion-select-option>
-        }
-      </ion-select>
+        readonly [ngModel]="customer() ? customer()!.name : ''">
+      </ion-input>
+      <ion-modal aria-modal trigger="customer-select" #customerSelectModal [keepContentsMounted]="true">
+        <ng-template>
+          <app-customer-selector
+            [selectMultiple]="false"
+            (selectionCancelledChanged)="customerSelectModal.dismiss()"
+            (selectedCustomersChanged)="customer.set($event[0]); customerSelectModal.dismiss()">
+          </app-customer-selector>
+        </ng-template>
+      </ion-modal>
     }
   </ion-item>
   <ion-item>

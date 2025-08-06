@@ -82,6 +82,10 @@ export class CustomerSelectorComponent {
     return this.selectedCustomers().map(customer => customer.id);
   });
 
+  isChecked(customer: Customer): boolean {
+    return this.selectedCustomerIds().includes(customer.id);
+  }
+
   checkboxChange(event: CustomEvent<{ checked: boolean; value: Customer }>)  {
 
     const customer = event.detail.value;
@@ -97,5 +101,4 @@ export class CustomerSelectorComponent {
       this.selectedCustomers.update(customers => customers.filter(c => c.id !== customer.id));
     }
   }
-
 }

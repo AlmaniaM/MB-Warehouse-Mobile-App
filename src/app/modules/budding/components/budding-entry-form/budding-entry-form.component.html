@@ -53,16 +53,20 @@
       </ion-input>
     }
     @if (isEditing() && formType() === 'new') {
-      <ion-select aria-modal label="Budded Variety" labelPlacement="stacked" interface="action-sheet"
-        [interfaceOptions]="{header:'Select Variety'}"
+      <ion-input id="variety-select" label="Budded Variety" labelPlacement="stacked"
         [disabled]="sortedVarieties().length === 0 || isFetchingData()"
-        [(ngModel)]="buddedVariety">
-        @for (variety of sortedVarieties(); track variety.id) {
-          <ion-select-option [value]="variety">
-            {{ variety.name }}
-          </ion-select-option>
-        }
-      </ion-select>
+        readonly [ngModel]="buddedVariety() ? buddedVariety()!.name : ''">
+      </ion-input>
+      <ion-modal aria-modal trigger="variety-select" #varietySelectModal [keepContentsMounted]="true">
+        <ng-template>
+          <app-variety-selector
+            [label]="'Budded Variety'"
+            [selectMultiple]="false"
+            (selectionCancelledChanged)="varietySelectModal.dismiss()"
+            (selectedVarietiesChanged)="buddedVariety.set($event[0]); varietySelectModal.dismiss()">
+          </app-variety-selector>
+        </ng-template>
+      </ion-modal>
     }
   </ion-item>
   <ion-item>
@@ -74,16 +78,20 @@
         </ion-input>
       }
     } @else {
-      <ion-select aria-modal label="Budder" labelPlacement="stacked" interface="action-sheet"
-        [interfaceOptions]="{header:'Select Budder'}"
+      <ion-input id="budder-select" label="Budder" labelPlacement="stacked"
         [disabled]="sortedEmployees().length === 0 || isFetchingData()"
-        [(ngModel)]="budder">
-        @for (employee of sortedEmployees(); track employee.id) {
-          <ion-select-option [value]="employee">
-            {{ employee.firstName + ' ' + employee.lastName }}
-          </ion-select-option>
-        }
-      </ion-select>
+        readonly [ngModel]="budder() ? (budder()!.firstName + ' ' + budder()!.lastName) : ''">
+      </ion-input>
+      <ion-modal aria-modal trigger="budder-select" #budderSelectModal [keepContentsMounted]="true">
+        <ng-template>
+          <app-employee-selector
+            [label]="'Budder'"
+            [selectMultiple]="false"
+            (selectionCancelledChanged)="budderSelectModal.dismiss()"
+            (selectedEmployeesChanged)="budder.set($event[0]); budderSelectModal.dismiss()">
+          </app-employee-selector>
+        </ng-template>
+      </ion-modal>
     }
   </ion-item>
   <ion-item>

@@ -1,3 +1,39 @@
-<p>
-  employee-selector works!
-</p>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title size="small">Select {{ label() }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="selectionCancelledChanged.emit()">
+        <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar [(ngModel)]="searchFilter"></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">  
+  <ion-list>
+    @for (employee of filteredEmployees(); track employee.id) {
+      <ion-item>
+        <ion-checkbox [value]="employee" 
+          [checked]="isChecked(employee)"
+          (ionChange)="checkboxChange($event)">
+          {{ employee.firstName + ' ' + employee.lastName }}
+        </ion-checkbox>
+      </ion-item>
+    }
+  </ion-list>
+</ion-content>
+<ion-footer class="ion-padding">
+  <ion-button expand="block" fill="outline" [color]="'success'"
+    [disabled]="selectedEmployees().length === 0"
+    (click)="selectedEmployeesChanged.emit(this.selectedEmployees())">
+    Select ({{ selectedEmployees().length }}) Employees 
+    <ion-icon slot="end" ios="checkmark-outline" md="checkmark-sharp"></ion-icon>
+  </ion-button>
+  <ion-button expand="block" fill="outline" 
+    (click)="selectionCancelledChanged.emit()">
+    Cancel
+    <ion-icon slot="end" ios="close-outline" md="close-sharp"></ion-icon>
+  </ion-button>
+</ion-footer>

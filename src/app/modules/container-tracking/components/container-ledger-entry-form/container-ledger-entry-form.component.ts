@@ -205,7 +205,7 @@ export class ContainerLedgerEntryFormComponent  {
   containerType: WritableSignal<ContainerType | null> = signal<ContainerType | null>(null);
   quantity: WritableSignal<number> = signal<number>(0);
   date: WritableSignal<Date> = signal<Date>(new Date());
-  dateIso: Signal<string> = computed<string>(() => this.date() ? Utils.adjustToLocalTime(this.date()!).toISOString() : '');
+  dateIso: Signal<string> = computed<string>(() => this.date() ? this.date()!.toISOString() : '');
   customer: WritableSignal<Customer | null> = signal<Customer | null>(null);
   fromType: WritableSignal<'MBN' | 'Customer'> = signal<'MBN' | 'Customer'>('MBN');
   from: WritableSignal<number> = signal<number>(0);
@@ -224,7 +224,8 @@ export class ContainerLedgerEntryFormComponent  {
   shipmentYear: WritableSignal<number | null> = signal<number | null>(null);
 
   dateChanged(event: CustomEvent) {
-    this.date.set(new Date(event.detail.value!));
+    const iso = event.detail.value!;
+    this.date.set(Utils.parseDateAsLocal(iso));
   }
 
   containerLedgerTransaction: Signal<ContainerLedgerTransaction> = computed(() => { 

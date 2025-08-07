@@ -121,9 +121,10 @@ export class Utils {
     firstMonday.setDate(date.getDate() + (1 - date.getDay() + 7) % 7);
     return firstMonday;
   }
-
-  static adjustToLocalTime(date: Date) { 
-    return new Date(new Date(date).getTime() - (new Date(date).getTimezoneOffset() * 60000));
+  
+  static parseDateAsLocal(isoDateOnly: string): Date {
+    const [y, m, d] = isoDateOnly.split('-').map(Number)
+    return new Date(y, m - 1, d)
   }
 
   static getWeekNumber(date: Date) {

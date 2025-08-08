@@ -205,7 +205,7 @@ export class ContainerLedgerEntryFormComponent  {
   containerType: WritableSignal<ContainerType | null> = signal<ContainerType | null>(null);
   quantity: WritableSignal<number> = signal<number>(0);
   date: WritableSignal<Date> = signal<Date>(new Date());
-  dateIso: Signal<string> = computed<string>(() => this.date() ? this.date()!.toISOString() : '');
+  dateIso: Signal<string> = computed<string>(() => this.date() ? this.date()!.toISOString().slice(0, 10) : '');
   customer: WritableSignal<Customer | null> = signal<Customer | null>(null);
   fromType: WritableSignal<'MBN' | 'Customer'> = signal<'MBN' | 'Customer'>('MBN');
   from: WritableSignal<number> = signal<number>(0);

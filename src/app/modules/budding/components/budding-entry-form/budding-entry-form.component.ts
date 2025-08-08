@@ -185,7 +185,7 @@ export class BuddingEntryFormComponent {
   budder: WritableSignal<Employee | null> = signal<Employee | null>(null);
   quantityBudded: WritableSignal<number> = signal<number>(0);
   dateBudded: WritableSignal<Date> = signal<Date>(new Date());
-  dateBuddedIso: Signal<string> = computed<string>(() => this.dateBudded() ? this.dateBudded()!.toISOString() : '');
+  dateBuddedIso: Signal<string> = computed<string>(() => this.dateBudded() ? this.dateBudded()!.toISOString().slice(0, 10) : '');
   customer: WritableSignal<Customer | null> = signal<Customer | null>(null);
   notes: WritableSignal<string | null> = signal<string | null>(null);
 

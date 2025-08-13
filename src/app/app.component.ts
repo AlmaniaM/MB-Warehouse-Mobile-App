@@ -46,6 +46,8 @@ import {
   informationCircleSharp,
   arrowForwardCircleOutline,
   arrowForwardCircleSharp,
+  calculatorOutline,
+  calculatorSharp,
 } from 'ionicons/icons';
 
 @Component({
@@ -104,7 +106,9 @@ export class AppComponent {
       informationCircleOutline,
       informationCircleSharp,
       arrowForwardCircleOutline,
-      arrowForwardCircleSharp
+      arrowForwardCircleSharp,
+      calculatorOutline,
+      calculatorSharp
     });
   }
 }

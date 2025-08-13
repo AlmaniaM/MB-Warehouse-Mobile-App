@@ -413,8 +413,9 @@ export class BuddingTotalsPage {
 
   });
 
-  fieldCompare(a: PlantedField, b: PlantedField) {
-    if (!a || !b) { return false; }
+  fieldCompare(a: PlantedField | null, b: PlantedField | null) {
+    if (a === null && b === null) { return true; }
+    if (a === null || b === null) { return false; }
     return a.id === b.id;
   }
 

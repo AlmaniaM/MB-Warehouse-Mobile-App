@@ -1,3 +1,5 @@
+import { Signal, signal, effect } from "@angular/core";
+
 export class Utils {
 
   static generateUUID(characterLength: number = 12): string { 
@@ -39,22 +41,22 @@ export class Utils {
   }
 
   static memoizeArray<Args extends unknown[], T>(fn: (args: Args) => T): (args: Args) => T {
-  const cache = new Map<any, any>();
+    const cache = new Map<any, any>();
 
-  return (args: Args): T => {
-    let current = cache;
-    for (const arg of args) {
-      if (!current.has(arg)) current.set(arg, new Map());
-      current = current.get(arg);
-    }
+    return (args: Args): T => {
+      let current = cache;
+      for (const arg of args) {
+        if (!current.has(arg)) current.set(arg, new Map());
+        current = current.get(arg);
+      }
 
-    if (current.has("__result")) return current.get("__result");
+      if (current.has("__result")) return current.get("__result");
 
-    const result = fn(args);
-    current.set("__result", result);
-    return result;
-  };
-}
+      const result = fn(args);
+      current.set("__result", result);
+      return result;
+    };
+  }
 
   static orderObjectProperties(obj: Record<string, any>): Record<string, any> {
     return Object.keys(obj).sort().reduce((result: Record<string, any>, key: string) => {
@@ -104,6 +106,51 @@ export class Utils {
 
     return true;
   }
+  
+  static debounceSignal<T>(input: Signal<T>, timeOutMs = 0): Signal<T> {
+    const debounceSignal = signal(input());
+    effect(() => {
+      const value = input();
+      const timeout = setTimeout(() => {
+        debounceSignal.set(value);
+      }, timeOutMs);
+      return () => {
+        clearTimeout(timeout);
+      };
+    });
+    return debounceSignal;
+  }
+  
+  static parseDateTimeAsLocal(isoUtc: string) {
+  
+    const utc = new Date(isoUtc);
+  
+    return new Date(
+      utc.getFullYear(), utc.getMonth(), utc.getDate(),
+      utc.getHours(), utc.getMinutes(), utc.getSeconds(), utc.getMilliseconds()
+    );
+  }
+
+  static toLocalIsoNoZ(datetime: Date) {
+    function pad(n: number, w = 2) { 
+      return String(n).padStart(w, '0');
+    }
+  
+    return `${datetime.getFullYear()}-${pad(datetime.getMonth()+1)}-${pad(datetime.getDate())}T${pad(datetime.getHours())}:${pad(datetime.getMinutes())}:${pad(datetime.getSeconds())}.${pad(datetime.getMilliseconds(),3)}`;
+  }
+
+  static parseIonDateTimeLocal(dateFromIonDateTime: string) {
+  
+    if (/[zZ]|[+\-]\d{2}:\d{2}$/.test(dateFromIonDateTime)) {
+      return new Date(dateFromIonDateTime); 
+    } // has offset -> let JS parse
+  
+    const [ds, ts='00:00:00.000'] = dateFromIonDateTime.split('T');
+    const [y,m,d] = ds.split('-').map(Number);
+    const [hh,mm,ssms='0'] = ts.split(':');
+    const [ss,ms='0'] = ssms.split('.');
+    return new Date(y, m-1, Number(d), Number(hh), Number(mm), Number(ss), Number(ms));
+  }
 
   static getTotalWeeksInYear(year: number) {
     const firstDayOfYear = new Date(year, 0, 1);
@@ -120,11 +167,6 @@ export class Utils {
     const firstMonday = new Date(date);
     firstMonday.setDate(date.getDate() + (1 - date.getDay() + 7) % 7);
     return firstMonday;
-  }
-  
-  static parseDateAsLocal(isoDateOnly: string): Date {
-    const [y, m, d] = isoDateOnly.split('-').map(Number)
-    return new Date(y, m - 1, d)
   }
 
   static getWeekNumber(date: Date) {

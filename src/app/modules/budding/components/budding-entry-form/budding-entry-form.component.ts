@@ -185,13 +185,15 @@ export class BuddingEntryFormComponent {
   budder: WritableSignal<Employee | null> = signal<Employee | null>(null);
   quantityBudded: WritableSignal<number> = signal<number>(0);
   dateBudded: WritableSignal<Date> = signal<Date>(new Date());
-  dateBuddedIso: Signal<string> = computed<string>(() => this.dateBudded() ? this.dateBudded()!.toISOString().slice(0, 10) : '');
+  dateBuddedLocal: Signal<string> = computed<string>(() => {
+    return this.dateBudded() ? Utils.toLocalIsoNoZ(this.dateBudded()!)  : ''
+  });
   customer: WritableSignal<Customer | null> = signal<Customer | null>(null);
   notes: WritableSignal<string | null> = signal<string | null>(null);
 
   dateChanged(event: CustomEvent) {
     const iso = event.detail.value!;
-    this.dateBudded.set(Utils.parseDateAsLocal(iso));
+    this.dateBudded.set(Utils.parseIonDateTimeLocal(iso));
   }
 
   buddedRootPoolForSelectedBuddedVariety: Signal<BuddedRootPool | null> = computed(() => { 

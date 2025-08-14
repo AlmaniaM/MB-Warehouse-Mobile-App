@@ -1,4 +1,5 @@
-import { Component, computed, effect, inject, OnInit, signal, Signal, WritableSignal } from '@angular/core';
+import { Component, computed, effect, inject, signal, Signal, WritableSignal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,23 +12,11 @@ import {
   IonHeader,
   IonSelect,
   IonProgressBar,
-  IonSelectOption, 
-  IonText, 
-  IonNote,
+  IonSelectOption,
   IonToolbar, 
   IonSearchbar, 
   IonAccordionGroup, 
   IonAccordion,
-  IonChip,
-  IonItemOption,
-  IonItemOptions,
-  IonItemSliding,
-  IonIcon,
-  IonModal,
-  IonTitle, 
-  IonButtons,
-  IonButton,
-  IonInput
 } from "@ionic/angular/standalone";
 
 import { PageTopbarComponent } from "src/app/modules/global/components/page-topbar/page-topbar.component";
@@ -41,13 +30,9 @@ import { defaultSupplier, Supplier, SupplierService } from 'src/app/modules/sour
 import { defaultVariety, Variety, VarietyService } from 'src/app/modules/sourcelists/services/variety.service';
 import { defaultEmployee, Employee, EmployeeService } from 'src/app/modules/sourcelists/services/employee.service';
 import { Customer, CustomerService, defaultCustomer } from 'src/app/modules/sourcelists/services/customer.service';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { BuddedRootPool, BuddedRootPoolService, defaultBuddedRootPool } from '../../services/budded-root-pool.service';
 import { defaultPlantedRootPool, PlantedRootPool, PlantedRootPoolService } from '../../services/planted-root-pool.service';
-import { BuddedRootPoolEntryListRecord } from '../budding-entries/budding-entries.page';
-import { groupBy } from 'rxjs';
 import { CachedSettingsService, SETTINGS_IDENTIFIER } from 'src/app/modules/global/services/cached-settings.service';
-import { ScrollingModule } from '@angular/cdk/scrolling';
 
 interface BuddedRootPoolEntryListForTotalsRecord {
   buddedRootPoolEntry: BuddedRootPoolEntry;
@@ -126,15 +111,6 @@ interface DatesWithRows {
     IonSelect,
     IonProgressBar,
     IonSelectOption,
-    IonText,
-    IonNote,
-    IonChip,
-    IonItemOption,
-    IonItemOptions,
-    IonItemSliding,
-    IonIcon,
-    IonTitle,
-    IonButtons,
     PageTopbarComponent,
     ContentTopbarComponent
 ],
@@ -308,7 +284,6 @@ export class BuddingTotalsPage {
   buddedEntriesTotalsByBudderRecords: Signal<BuddedRootPoolEntryTotalByBudderRecord[]> = computed(() => {
     if (this.filteredBuddingEntriesForTotalsTable().length === 0) { return []; }
 
-    // Filter out records where budderEmployeeRecord is undefined or null
     const recordsWithValidBudders = this.filteredBuddingEntriesForTotalsTable()
       .filter(record => record.budderEmployeeRecord && record.budderEmployeeRecord.id !== undefined);
     

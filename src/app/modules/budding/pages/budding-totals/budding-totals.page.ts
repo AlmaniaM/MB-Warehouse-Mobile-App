@@ -418,7 +418,13 @@ export class BuddingTotalsPage {
         totalBuddedQuantity: total,
         buddingEntries: entries
       };
-    });
+    })
+    .filter(record => {
+      if (!this.dateFilter() || this.viewFilter() !== 'totalsByBudder') { return true; }
+      return record.buddingEntries.some(entry => 
+        new Date(entry.buddedRootPoolEntry.dateBudded).toDateString() === this.dateFilter()
+      );
+    })
   });
 
   // list completed rows by day
@@ -479,9 +485,10 @@ export class BuddingTotalsPage {
   });
 
   globalSearchFilter: WritableSignal<string> = signal('');
+  viewFilter: WritableSignal<'totalsByDay'| 'totalsByVarietyAndRootstock' | 'totalsByBudder'| 'completedRowsByDay'> = signal('totalsByDay');
   yearFilter: WritableSignal<number | null> = signal(new Date().getFullYear());
   fieldFilter: WritableSignal<PlantedField | null> = signal(null);
-  viewFilter: WritableSignal<'totalsByDay'| 'totalsByVarietyAndRootstock' | 'totalsByBudder'| 'completedRowsByDay'> = signal('totalsByDay');
+  dateFilter: WritableSignal<string | null> = signal(null);
 
   cachedSettings = toSignal(this.cachedSettingsService.cachedSettings, { initialValue: null });
   triggerFilterSettings: WritableSignal<boolean> = signal(false);

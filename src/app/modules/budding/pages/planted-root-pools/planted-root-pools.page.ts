@@ -231,7 +231,7 @@ export class PlantedRootPoolsPage {
   plantedRootPoolListRecordsEffect = effect(() => { 
     if (this.isFetchingData()) { return; }
     if (this.cachedSettings() !== null) { return; }
-    if (this.plantedRootPoolListRecords().length === 0) { return; }
+    if (this.plantedRootPoolPlantedYears().length === 0) { return; }
 
     const isCurrentYearPresent = this.plantedRootPoolPlantedYears().includes(new Date().getFullYear());
     if (isCurrentYearPresent) {

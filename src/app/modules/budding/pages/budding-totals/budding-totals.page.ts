@@ -17,29 +17,36 @@ import {
   IonSearchbar, 
   IonAccordionGroup, 
   IonAccordion,
+  IonItemDivider,
+  IonItemGroup,
+  IonNote,
+  IonChip,
+  IonFooter,
+  IonTitle,
+  IonText
 } from "@ionic/angular/standalone";
 
 import { PageTopbarComponent } from "src/app/modules/global/components/page-topbar/page-topbar.component";
 import { ContentTopbarComponent } from "src/app/modules/global/components/content-topbar/content-topbar.component";
 
-import { BuddedRootPoolEntry, BuddedRootPoolEntryService, defaultBuddedRootPoolEntry } from '../../services/budded-root-pool-entry.service';
-import { defaultPlantedField, PlantedField, PlantedFieldService } from 'src/app/modules/sourcelists/services/planted-field.service';
-import { defaultPlantedType, PlantedType, PlantedTypeService } from 'src/app/modules/sourcelists/services/planted-type.service';
-import { defaultRootstock, Rootstock, RootstockService } from 'src/app/modules/sourcelists/services/rootstock.service';
-import { defaultSupplier, Supplier, SupplierService } from 'src/app/modules/sourcelists/services/supplier.service';
-import { defaultVariety, Variety, VarietyService } from 'src/app/modules/sourcelists/services/variety.service';
-import { defaultEmployee, Employee, EmployeeService } from 'src/app/modules/sourcelists/services/employee.service';
-import { Customer, CustomerService, defaultCustomer } from 'src/app/modules/sourcelists/services/customer.service';
-import { BuddedRootPool, BuddedRootPoolService, defaultBuddedRootPool } from '../../services/budded-root-pool.service';
-import { defaultPlantedRootPool, PlantedRootPool, PlantedRootPoolService } from '../../services/planted-root-pool.service';
+import { BuddedRootPoolEntry, BuddedRootPoolEntryService } from '../../services/budded-root-pool-entry.service';
+import {  PlantedField, PlantedFieldService } from 'src/app/modules/sourcelists/services/planted-field.service';
+import { PlantedType, PlantedTypeService } from 'src/app/modules/sourcelists/services/planted-type.service';
+import { Rootstock, RootstockService } from 'src/app/modules/sourcelists/services/rootstock.service';
+import { Supplier, SupplierService } from 'src/app/modules/sourcelists/services/supplier.service';
+import { Variety, VarietyService } from 'src/app/modules/sourcelists/services/variety.service';
+import { Employee, EmployeeService } from 'src/app/modules/sourcelists/services/employee.service';
+import { Customer, CustomerService } from 'src/app/modules/sourcelists/services/customer.service';
+import { BuddedRootPool, BuddedRootPoolService } from '../../services/budded-root-pool.service';
+import { PlantedRootPool, PlantedRootPoolService } from '../../services/planted-root-pool.service';
 import { CachedSettingsService, SETTINGS_IDENTIFIER } from 'src/app/modules/global/services/cached-settings.service';
 
-interface BuddedRootPoolEntryListForTotalsRecord {
+interface BuddingEntryTotalListRecord {
   buddedRootPoolEntry: BuddedRootPoolEntry;
   buddedRootPool: BuddedRootPool;
   plantedRootPool: PlantedRootPool;
-  customerRecord: Customer;
-  budderEmployeeRecord: Employee;
+  customerRecord: Customer | null;
+  budderEmployeeRecord: Employee | null;
   plantedFieldRecord: PlantedField;
   varietyRecord: Variety;
   plantedTypeRecord: PlantedType;
@@ -47,49 +54,38 @@ interface BuddedRootPoolEntryListForTotalsRecord {
   rootstockRecord: Rootstock;
 }
 
-const defaultBuddedRootPoolEntryListForTotalsRecord: BuddedRootPoolEntryListForTotalsRecord = {
-  buddedRootPoolEntry: defaultBuddedRootPoolEntry,
-  buddedRootPool: defaultBuddedRootPool,
-  plantedRootPool: defaultPlantedRootPool,
-  customerRecord: defaultCustomer,
-  budderEmployeeRecord: defaultEmployee,
-  plantedFieldRecord: defaultPlantedField,
-  varietyRecord: defaultVariety,
-  plantedTypeRecord: defaultPlantedType,
-  supplierRecord: defaultSupplier,
-  rootstockRecord: defaultRootstock,
-};
-
-interface BuddedRootPoolEntryTotalByDayRecord {
+interface TotalByDayListRecord {
   date: string;
-  total: number;
-  entries: BuddedRootPoolEntryListForTotalsRecord[];
+  buddingEntries: BuddingEntryTotalListRecord[];
+  totalBuddedQuantity: number;
 }
 
-interface BuddedRootPoolEntryTotalByVarietyAndRootstockRecord {
+interface TotalByVarietyAndRootstockListRecord {
   variety: Variety;
   rootstock: Rootstock;
-  total: number;
-  entries: BuddedRootPoolEntryListForTotalsRecord[];
+  buddingEntries: BuddingEntryTotalListRecord[];
+  totalBuddedQuantity: number;
 }
 
-interface BuddedRootPoolEntryTotalByBudderRecord {
+interface TotalByBudderListRecord {
   budder: Employee;
-  total: number;
-  entries: BuddedRootPoolEntryListForTotalsRecord[];
+  buddingEntries: BuddingEntryTotalListRecord[];
+  totalBuddedQuantity: number;
 }
 
-interface RowsWithBuddedRootPoolEntries {
-  date: string;
+interface CompletedRow {
   row: number;
-  entries: BuddedRootPoolEntryListForTotalsRecord[];
+  plantings: PlantedRootPool[];
+  buddingEntries: BuddingEntryTotalListRecord[];
+  dateCompleted: Date;
+  totalBuddedQuantity: number;
 }
 
-interface DatesWithRows {
-  date: string;
-  rows: RowsWithBuddedRootPoolEntries[];
+interface DateWithCompletedRows { 
+  dateCompleted: string;
+  completedRows: CompletedRow[];
+  totalBuddedQuantity: number;
 }
-
 
 @Component({
   selector: 'app-budding-totals',
@@ -111,6 +107,13 @@ interface DatesWithRows {
     IonSelect,
     IonProgressBar,
     IonSelectOption,
+    IonItemDivider,
+    IonItemGroup,
+    IonNote,
+    IonChip,
+    IonFooter,
+    IonTitle,
+    IonText,
     PageTopbarComponent,
     ContentTopbarComponent
 ],
@@ -179,8 +182,47 @@ export class BuddingTotalsPage {
     this.triggerFilterSettings.set(true);
   }
 
-  buddingEntriesListForTotalsRecords: Signal<BuddedRootPoolEntryListForTotalsRecord[]> = computed(() => {
-    
+  plantedRootPoolPlantedYears: Signal<number[]> = computed<number[]>(() => { 
+    if (this.plantedRootPools().length === 0) { return []; }
+
+    return [
+      ...new Set(this.plantedRootPools()
+      .map(record => Number(record.plantedYear))
+    )].sort((a, b) => Number(b) - Number(a));
+  });
+
+
+  plantedRootPoolListRecordsEffect = effect(() => { 
+    if (this.isFetchingData()) { return; }
+    if (this.cachedSettings() !== null) { return; }
+    if (this.plantedRootPoolPlantedYears().length === 0) { return; }
+
+    const isCurrentYearPresent = this.plantedRootPoolPlantedYears().includes(new Date().getFullYear());
+    if (isCurrentYearPresent) {
+      this.yearFilter.set(new Date().getFullYear());
+    } else {
+      this.yearFilter.set(this.plantedRootPoolPlantedYears()[0]);
+    }
+  });
+
+
+  filteredPlantedFieldsForYear: Signal<PlantedField[]> = computed(() => {
+    if (this.plantedRootPools().length === 0) { return []; }
+
+    return [
+      ...new Set(
+        this.plantedRootPools()
+          .filter(plantedRootPool => Number(plantedRootPool.plantedYear) === this.yearFilter())
+          .map(record => {
+            return this.plantedFields().find(field => field.id === record.fieldId)!;
+          })
+          .filter(field => field.active)
+          .sort((a, b) => a.field.localeCompare(b.field))
+      )
+    ]
+  });
+
+  buddingEntryTotalListRecords: Signal<BuddingEntryTotalListRecord[]> = computed(() => {
     if (this.plantedRootPools().length === 0) { return []; }
     if (this.buddedRootPools().length === 0) { return []; }
     if (this.buddedRootPoolEntries().length === 0) { return []; }
@@ -195,40 +237,38 @@ export class BuddingTotalsPage {
     return this.buddedRootPoolEntries().map(entry => {
 
       const buddedRootPool = this.buddedRootPools().find(pool => pool.id === entry.buddedRootPoolId);
-      const plantedRootPool = this.plantedRootPools().find(pool => pool.id === buddedRootPool?.plantedRootPoolId);
-
-      if (!buddedRootPool || !plantedRootPool) { return defaultBuddedRootPoolEntryListForTotalsRecord; }
+      if (!buddedRootPool) { return null; }
+      
+      const plantedRootPool = this.plantedRootPools().find(pool => pool.id === buddedRootPool!.plantedRootPoolId);
+      if (!plantedRootPool) { return null; }
 
       return {
         buddedRootPoolEntry: entry,
-        buddedRootPool: buddedRootPool,
         plantedRootPool: plantedRootPool,
-        customerRecord: this.customers().find(customer => customer.id === entry.customerId)!,
-        budderEmployeeRecord: this.employees().find(employee => employee.id === entry.budderEmployeeId)!,
-        plantedFieldRecord: this.plantedFields().find(field => field.id === plantedRootPool?.fieldId)!,
-        varietyRecord: this.varieties().find(variety => variety.id === buddedRootPool?.varietyId)!,
-        plantedTypeRecord: this.plantedTypes().find(type => type.id === plantedRootPool?.plantedTypeId)!,
-        supplierRecord: this.suppliers().find(supplier => supplier.id === plantedRootPool?.supplierId)!,
-        rootstockRecord: this.rootstocks().find(stock => stock.id === plantedRootPool?.rootstockId)!,
+        plantedFieldRecord: this.plantedFields().find(field => field.id === plantedRootPool!.fieldId)!,
+        plantedTypeRecord: this.plantedTypes().find(type => type.id === plantedRootPool!.plantedTypeId)!,
+        rootstockRecord: this.rootstocks().find(stock => stock.id === plantedRootPool!.rootstockId)!,
+        supplierRecord: this.suppliers().find(supplier => supplier.id === plantedRootPool!.supplierId)!,
+        buddedRootPool: buddedRootPool,
+        varietyRecord: this.varieties().find(variety => variety.id === buddedRootPool!.varietyId)!,
+        customerRecord: this.customers().find(customer => customer.id === entry.customerId) || null,
+        budderEmployeeRecord: this.employees().find(employee => employee.id === entry.budderEmployeeId) || null,
       };
-    });
+    }).filter(record => record !== null)
+      .sort((a, b) => a.plantedFieldRecord.field.localeCompare(b.plantedFieldRecord.field))
   });
 
-  buddingEntryYears: Signal<number[]> = computed(() => {
-    return Array.from(new Set(this.buddingEntriesListForTotalsRecords().map(record => new Date(record.buddedRootPoolEntry.dateBudded).getFullYear()))).sort((a, b) => b - a);
-  });
+  filteredBuddingEntryTotalListRecords: Signal<BuddingEntryTotalListRecord[]> = computed(() => {
+    if (this.buddingEntryTotalListRecords().length === 0) { return []; }
 
-  filteredBuddingEntriesForTotalsTable: Signal<BuddedRootPoolEntryListForTotalsRecord[]> = computed(() => {
-    if (this.buddingEntriesListForTotalsRecords().length === 0) { return []; }
-
-    return this.buddingEntriesListForTotalsRecords()
+    return this.buddingEntryTotalListRecords()
       .filter(record => {
-        if (this.fieldFilter() === null) { return true; }
-        return record.plantedFieldRecord.id === this.fieldFilter()?.id;
+        if (!this.yearFilter()) { return false; }
+        return Number(record.plantedRootPool.plantedYear) === this.yearFilter();
       })
       .filter(record => {
-        if (this.yearFilter() === null) { return true; }
-        return new Date(record.buddedRootPoolEntry.dateBudded).getFullYear() === this.yearFilter();
+        if (!this.fieldFilter()) { return true; }
+        return record.plantedFieldRecord.id === this.fieldFilter()!.id;
       })
       .filter(record => {
         if (this.globalSearchFilter() === '') { return true; }
@@ -236,69 +276,138 @@ export class BuddingTotalsPage {
       });
   });
 
-  // for totals by day
+  buddingEntryRows: Signal<number[]> = computed(() => {
+    if (this.filteredBuddingEntryTotalListRecords().length === 0) { return []; }
+    
+    return [
+      ...new Set(this.filteredBuddingEntryTotalListRecords().map(record => record.plantedRootPool.row))
+    ]
+  });
 
-  buddedEntriesTotalsByDayRecords: Signal<BuddedRootPoolEntryTotalByDayRecord[]> = computed(() => {
-    if (this.filteredBuddingEntriesForTotalsTable().length === 0) { return []; }
+  buddingEntryPlantings: Signal<PlantedRootPool[]> = computed(() => {
+    if (this.filteredBuddingEntryTotalListRecords().length === 0) { return []; }
+    
+    return [
+      ...new Set(this.filteredBuddingEntryTotalListRecords().map(record => record.plantedRootPool))
+    ]
+  });
 
-    const dates = Array.from(new Set(this.filteredBuddingEntriesForTotalsTable().map(record => { return new Date(record.buddedRootPoolEntry.dateBudded).toDateString(); })))
-    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+  buddingEntryPlantingsCompleted: Signal<PlantedRootPool[]> = computed(() => {
+    if (this.buddingEntryPlantings().length === 0) { return []; }
 
-    return dates.map(date => {
-      const entriesForDate = this.filteredBuddingEntriesForTotalsTable().filter(record => new Date(record.buddedRootPoolEntry.dateBudded).toDateString() === date);
-      const total = entriesForDate.reduce((sum, record) => sum + (record.buddedRootPoolEntry.quantityBudded || 0), 0);
+    return this.buddingEntryPlantings().filter(planting => planting.buddingComplete);
+  });
+
+  buddingEntryDates: Signal<string[]> = computed(() => {
+    if (this.filteredBuddingEntryTotalListRecords().length === 0) { return []; }
+    return [
+      ...new Set(this.filteredBuddingEntryTotalListRecords().map(record => {
+        return new Date(record.buddedRootPoolEntry.dateBudded).toDateString();
+      }))
+    ]
+  });
+
+  buddingEntryVarieties: Signal<Variety[]> = computed(() => {
+    if (this.filteredBuddingEntryTotalListRecords().length === 0) { return []; }
+
+    return [
+      ...new Set(this.filteredBuddingEntryTotalListRecords().map(record => record.varietyRecord))
+    ]
+  });
+
+  buddingEntryRootstocks: Signal<Rootstock[]> = computed(() => {
+    if (this.filteredBuddingEntryTotalListRecords().length === 0) { return []; }
+    
+    return [
+      ...new Set(this.filteredBuddingEntryTotalListRecords().map(record => record.rootstockRecord))
+    ];
+  });
+
+  buddingEntryVarietyRootstockCombinations: Signal<{ variety: Variety, rootstock: Rootstock }[]> = computed(() => {
+    if (this.filteredBuddingEntryTotalListRecords().length === 0) { return []; }
+
+    return this.filteredBuddingEntryTotalListRecords().flatMap(record => {
       return {
-        date: date,
-        total: total,
-        entries: entriesForDate
+        variety: record.varietyRecord,
+        rootstock: record.rootstockRecord
       };
-    });
+    }).filter((value, index, self) => 
+      index === self.findIndex(v => v.variety.id === value.variety.id && v.rootstock.id === value.rootstock.id)
+    );
+  });
+
+  buddingEntryBudders: Signal<Employee[]> = computed(() =>{
+    if (this.filteredBuddingEntryTotalListRecords().length === 0) { return []; }
+      
+    return [
+      ...new Set(this.filteredBuddingEntryTotalListRecords()
+        .map(record => {
+          if (!record.budderEmployeeRecord) { return null; }
+          return record.budderEmployeeRecord
+        })
+        .filter(budder => budder !== null) as Employee[])
+    ];
+  });
+
+  // for totals by day
+  buddedEntriesTotalsByDayRecords: Signal<TotalByDayListRecord[]> = computed(() => {
+    if (this.filteredBuddingEntryTotalListRecords().length === 0) { return []; }
+    if (this.buddingEntryDates().length === 0) { return []; }
+
+    return this.buddingEntryDates()
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+      .map(date => {
+      
+        const entriesForDate = this.filteredBuddingEntryTotalListRecords().filter(record => { 
+          return new Date(record.buddedRootPoolEntry.dateBudded).toDateString() === date
+        });
+        const total = entriesForDate.reduce((sum, record) => sum + (record.buddedRootPoolEntry.quantityBudded || 0), 0);
+        
+        return {
+          date: date,
+          totalBuddedQuantity: total,
+          buddingEntries: entriesForDate
+        };
+      });
   });
 
   //totals by variety and rootstock
-  buddedEntriesTotalsByVarietyAndRootstockRecords: Signal<BuddedRootPoolEntryTotalByVarietyAndRootstockRecord[]> = computed(() => {
-    if (this.filteredBuddingEntriesForTotalsTable().length === 0) { return []; }
+  buddedEntriesTotalsByVarietyAndRootstockRecords: Signal<TotalByVarietyAndRootstockListRecord[]> = computed(() => {
+    if (this.filteredBuddingEntryTotalListRecords().length === 0) { return []; }
+    if (this.buddingEntryVarietyRootstockCombinations().length === 0) { return []; }
+    
+    return this.buddingEntryVarietyRootstockCombinations()
+      .sort((a, b) => a.variety.name.localeCompare(b.variety.name))
+      .sort((a, b) => a.rootstock.name.localeCompare(b.rootstock.name))
+      .map(varietyPlusRootstock => {
 
-    const varieties = Array.from(new Set(this.filteredBuddingEntriesForTotalsTable().map(record => record.varietyRecord)));
-    const rootstocks = Array.from(new Set(this.filteredBuddingEntriesForTotalsTable().map(record => record.rootstockRecord)));
-
-    return varieties.flatMap(variety => {
-      return rootstocks.map(rootstock => {
-        const entries = this.filteredBuddingEntriesForTotalsTable().filter(record => {
-          return record.varietyRecord && record.rootstockRecord && 
-                 record.varietyRecord.id === variety.id && 
-                 record.rootstockRecord.id === rootstock.id;
+        const entries = this.filteredBuddingEntryTotalListRecords().filter(record => {
+          return record.varietyRecord.id === varietyPlusRootstock.variety.id && 
+            record.rootstockRecord.id === varietyPlusRootstock.rootstock.id;
         });
+      
         const total = entries.reduce((sum, record) => sum + (record.buddedRootPoolEntry.quantityBudded || 0), 0);
+
         return {
-          variety: variety,
-          rootstock: rootstock,
-          total: total,
-          entries: entries
+          variety: varietyPlusRootstock.variety,
+          rootstock: varietyPlusRootstock.rootstock,
+          totalBuddedQuantity: total,
+          buddingEntries: entries
         };
       });
-    });
   });
 
   //totals by budder
-  buddedEntriesTotalsByBudderRecords: Signal<BuddedRootPoolEntryTotalByBudderRecord[]> = computed(() => {
-    if (this.filteredBuddingEntriesForTotalsTable().length === 0) { return []; }
+  buddedEntriesTotalsByBudderRecords: Signal<TotalByBudderListRecord[]> = computed(() => {
+    if (this.filteredBuddingEntryTotalListRecords().length === 0) { return []; }
+    if (this.buddingEntryBudders().length === 0) { return []; }
 
-    const recordsWithValidBudders = this.filteredBuddingEntriesForTotalsTable()
-      .filter(record => record.budderEmployeeRecord && record.budderEmployeeRecord.id !== undefined);
-    
-    if (recordsWithValidBudders.length === 0) { return []; }
-
-    const budders = Array.from(new Set(recordsWithValidBudders.map(record => record.budderEmployeeRecord)))
-    .filter(budder => budder !== undefined && budder !== null);
-
-    return budders.map(budder => {
-      if (!budder) return { budder: defaultEmployee, total: 0, entries: [] };
+    return this.buddingEntryBudders().map(budder => {
       
-      const entries = recordsWithValidBudders.filter(record => 
-        record.budderEmployeeRecord && 
-        record.budderEmployeeRecord.id === budder.id
-      );
+      const entries = this.filteredBuddingEntryTotalListRecords().filter(record => {
+        if (!record.budderEmployeeRecord) { return null; }
+        return record.budderEmployeeRecord.id === budder.id;
+      }).filter(record => record !== null);
       
       const total = entries.reduce((sum, record) => 
         sum + (record.buddedRootPoolEntry.quantityBudded || 0), 0
@@ -306,44 +415,67 @@ export class BuddingTotalsPage {
       
       return {
         budder: budder,
-        total: total,
-        entries: entries
+        totalBuddedQuantity: total,
+        buddingEntries: entries
       };
     });
   });
 
   // list completed rows by day
-  completedRowsWithEntries: Signal<RowsWithBuddedRootPoolEntries[]> = computed(() => {
-    if (this.filteredBuddingEntriesForTotalsTable().length === 0) { return []; }
+  completedRows: Signal<CompletedRow[]> = computed(() => { 
+    if (this.buddingEntryRows().length === 0) { return []; }
+    if (this.buddingEntryPlantings().length === 0) { return []; }
+    if (this.filteredBuddingEntryTotalListRecords().length === 0) { return []; }
 
-    const completedEntries = this.filteredBuddingEntriesForTotalsTable().filter(record => record.plantedRootPool.buddingComplete);
-    const rows = Array.from(new Set(completedEntries.map(record => record.plantedRootPool.row)));
+    return this.buddingEntryRows().map(row => {
 
-    let completedRowsWithMostRecentDate = [];
-    for (const row of rows) {
-      const entriesForRow = completedEntries.filter(record => record.plantedRootPool.row === row);
+      const plantings = this.buddingEntryPlantings().filter(planting => planting.row === row);
+      const buddingEntries = this.filteredBuddingEntryTotalListRecords().filter(record => record.plantedRootPool.row === row);
+      const dateCompleted = new Date(Math.max(...buddingEntries.map(entry => new Date(entry.buddedRootPoolEntry.dateBudded).getTime())));
+      const total = buddingEntries.reduce((sum, record) => sum + (record.buddedRootPoolEntry.quantityBudded || 0), 0);
 
-      const mostRecentEntry = entriesForRow.reduce((latest, current) => {
-        return latest.buddedRootPoolEntry.dateBudded > current.buddedRootPoolEntry.dateBudded ? latest : current;
-      });
+      if (plantings.length === 0 || buddingEntries.length === 0) { return null; }
 
-      completedRowsWithMostRecentDate.push({
+      return {
         row: row,
-        date: new Date(mostRecentEntry.buddedRootPoolEntry.dateBudded).toDateString(),
-        entries: entriesForRow
-      });
-    }
-    return completedRowsWithMostRecentDate.sort((a, b) => {
-      return a.date > b.date ? -1 : 1;
+        plantings: plantings,
+        buddingEntries: buddingEntries,
+        dateCompleted: dateCompleted,
+        totalBuddedQuantity: total
+      };
+    }).filter(row => row !== null) as CompletedRow[];
+  });
+
+  completedRowDates: Signal<string[]> = computed(() => {
+    if (this.completedRows().length === 0) { return []; }
+    return [
+      ...new Set(this.completedRows()
+      .map(row => row.dateCompleted.toDateString()))
+    ].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+  });
+
+  datesWithCompletedRows: Signal<DateWithCompletedRows[]> = computed(() => { 
+    if (this.completedRowDates().length === 0) {return []; }
+
+    return this.completedRowDates().map(date => {
+      const completedRowsForDate = this.completedRows().filter(row => 
+        row.dateCompleted.toDateString() === date
+      );
+
+      return {
+        dateCompleted: date,
+        totalBuddedQuantity: completedRowsForDate.reduce((sum, row) => sum + row.totalBuddedQuantity, 0),
+        completedRows: completedRowsForDate
+      };
     });
   });
 
-  datesWithCompletedRows: Signal<DatesWithRows[]> = computed(() => {
-    const uniqueDates = Array.from(new Set(this.completedRowsWithEntries().map(row => row.date))).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
-    return uniqueDates.map(date => ({
-      date: date,
-      rows: this.completedRowsWithEntries().filter(row => row.date === date)
-    }));
+  totalQuantityBudded: Signal<number> = computed(() => {
+    return this.filteredBuddingEntryTotalListRecords().reduce((sum, record) => sum + (record.buddedRootPoolEntry.quantityBudded || 0), 0);
+  });
+
+  totalQuantityBuddedForCompletedRows: Signal<number> = computed(() => {
+    return this.completedRows().reduce((sum, row) => sum + row.totalBuddedQuantity, 0);
   });
 
   globalSearchFilter: WritableSignal<string> = signal('');
@@ -366,7 +498,7 @@ export class BuddingTotalsPage {
 
   filteredBuddingEntriesEffect = effect(() => {
     if (this.isFetchingData()) { return; }
-    if (this.buddingEntriesListForTotalsRecords().length === 0) { return; }
+    if (this.buddingEntryTotalListRecords().length === 0) { return; }
     if (this.cachedSettings() === null) { 
       this.triggerFilterSettings.set(false);
     }
@@ -385,7 +517,6 @@ export class BuddingTotalsPage {
     if (this.cachedSettings().yearFilter) {
       this.yearFilter.set(Number(this.cachedSettings().yearFilter));
     }
-
   });
 
   fieldCompare(a: PlantedField | null, b: PlantedField | null) {
@@ -393,5 +524,4 @@ export class BuddingTotalsPage {
     if (a === null || b === null) { return false; }
     return a.id === b.id;
   }
-
 }

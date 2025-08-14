@@ -114,12 +114,12 @@ export class ContainerReturnReceiptFormComponent {
 
   containerReceiptReference: WritableSignal<string | null> = signal(null);
   date: WritableSignal<Date> = signal<Date>(new Date());
-  dateIso: Signal<string> = computed<string>(() => this.date() ? this.date()!.toISOString().slice(0, 10) : '');
+  dateIso: Signal<string> = computed<string>(() => this.date() ? Utils.toLocalIsoNoZ(this.date()!) : '');
   customer: WritableSignal<Customer | null> = signal(null);
 
   dateChanged(event: CustomEvent) {
     const iso = event.detail.value!;
-    this.date.set(Utils.parseDateAsLocal(iso));
+    this.date.set(Utils.parseIonDateTimeLocal(iso));
   }
 
   updatedContainerReturnReceipt: Signal<ContainerReturnReceipt> = computed(() => {

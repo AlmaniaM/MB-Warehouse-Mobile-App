@@ -108,9 +108,8 @@
     <ion-popover [keepContentsMounted]="true">
       <ng-template>
         <ion-datetime id="datebudded"
-          presentation="date"
           (ionChange)="dateChanged($event)"
-          [value]="dateBuddedIso()">
+          [value]="dateBuddedLocal()">
         </ion-datetime>
       </ng-template>
     </ion-popover>

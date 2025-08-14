@@ -32,11 +32,11 @@
                 </ion-select>
               </ion-item>
               <ion-item>
-                @if (buddingEntryYears().length > 0) {
+                @if (plantedRootPoolPlantedYears().length > 0) {
                   <ion-select aria-modal label="Year" labelPlacement="stacked" interface="action-sheet" 
                     [interfaceOptions]="{header:'Select Year'}"
                     [(ngModel)]="yearFilter">
-                    @for (year of buddingEntryYears(); track year) {
+                    @for (year of plantedRootPoolPlantedYears(); track year) {
                       <ion-select-option [value]="year">
                         {{ year }}
                       </ion-select-option>
@@ -45,7 +45,7 @@
                 }
               </ion-item>
               <ion-item>
-                @if (plantedFields().length > 0) {
+                @if (filteredPlantedFieldsForYear().length > 0) {
                   <ion-select aria-modal label="Field" labelPlacement="stacked" interface="action-sheet" 
                     [interfaceOptions]="{header:'Select Field'}"
                     [(ngModel)]="fieldFilter"
@@ -53,7 +53,7 @@
                     <ion-select-option [value]="null">
                       All Fields
                     </ion-select-option>
-                    @for (field of plantedFields(); track field.id) {
+                    @for (field of filteredPlantedFieldsForYear(); track field.id) {
                       <ion-select-option [value]="field">
                         {{ field.field }}
                       </ion-select-option>
@@ -66,7 +66,7 @@
         </ion-accordion>
       </ion-accordion-group>
     </ion-header>
-      @if (filteredBuddingEntriesForTotalsTable().length === 0) {
+      @if (filteredBuddingEntryTotalListRecords().length === 0) {
         @if (isFetchingData()) {
           <ion-progress-bar type="indeterminate"></ion-progress-bar>
           <ion-list>
@@ -86,83 +86,122 @@
           </ion-list>
         }
       } @else {
-        @switch (viewFilter()) {
-          @case ('totalsByDay') {
-            <ion-list>
+        <ion-list id="totals-list">
+          @switch (viewFilter()) {
+            @case ('totalsByDay') {
               @for (dayTotal of buddedEntriesTotalsByDayRecords(); track dayTotal.date) {
                 <ion-item>
                   <ion-label>
-                    <h2>{{ dayTotal.date | date:'MM-dd-yyyy' }}</h2>
-                    <p>Total buds: {{ dayTotal.total }}</p>
+                    <strong>{{ dayTotal.date | date:'MM/dd/yyyy' }}</strong>
+                      <br />
+                      <ion-text>{{ dayTotal.buddingEntries[0].plantedFieldRecord.field }}</ion-text>
+                  </ion-label>
+                  <ion-label slot="end" class="metadata-end-wrapper">
+                    <ion-note class="ion-text-wrap">  
+                      <ion-chip [color]="'success'">
+                        Budded: {{ dayTotal.totalBuddedQuantity.toLocaleString() }}
+                      </ion-chip>
+                    </ion-note>
                   </ion-label>
                 </ion-item>
               }
-            </ion-list>
-          }
-          @case ('totalsByVarietyAndRootstock') {
-            <ion-list>
+            }
+            @case ('totalsByVarietyAndRootstock') {
               @for (varietyRootstockTotal of buddedEntriesTotalsByVarietyAndRootstockRecords(); track $index) {
-                @if (varietyRootstockTotal.total > 0 && varietyRootstockTotal.variety && varietyRootstockTotal.rootstock) {
-                  <ion-item>
-                    <ion-label>
-                      <h2>{{ varietyRootstockTotal.variety.name }} on {{ varietyRootstockTotal.rootstock.name }}</h2>
-                      <p>Total buds: {{ varietyRootstockTotal.total }}</p>
-                    </ion-label>
-                  </ion-item>
-                }
+                <ion-item>
+                  <ion-label>
+                    <strong>{{ varietyRootstockTotal.variety.name + ' - ' + varietyRootstockTotal.rootstock.name }}</strong>
+                      <br />
+                      <ion-text>{{ varietyRootstockTotal.buddingEntries[0].plantedFieldRecord.field }}</ion-text>
+                  </ion-label>
+                  <ion-label slot="end" class="metadata-end-wrapper">
+                    <ion-note class="ion-text-wrap">
+                      <ion-chip [color]="'success'">
+                        Budded: {{ varietyRootstockTotal.totalBuddedQuantity.toLocaleString() }}
+                      </ion-chip>
+                    </ion-note>
+                  </ion-label>
+                </ion-item>
               }
-            </ion-list>
-          }
-          @case ('totalsByBudder') {
-            <ion-list>
+            }
+            @case ('totalsByBudder') {
               @for (budderTotal of buddedEntriesTotalsByBudderRecords(); track $index) {
-                @if (budderTotal && budderTotal.budder && budderTotal.budder.firstName && budderTotal.budder.lastName) {
-                  <ion-item>
-                    <ion-label>
-                      <h2>{{ budderTotal.budder.firstName }}&nbsp;{{ budderTotal.budder.lastName }}</h2>
-                      <p>Total buds: {{ budderTotal.total }}</p>
-                    </ion-label>
-                  </ion-item>
-                }
+                <ion-item>
+                  <ion-label>
+                    <strong>{{ budderTotal.budder.firstName + ' ' + budderTotal.budder.lastName }}</strong>
+                      <br />
+                      <ion-text>{{ budderTotal.buddingEntries[0].plantedFieldRecord.field }}</ion-text>
+                  </ion-label>
+                  <ion-label slot="end" class="metadata-end-wrapper">
+                    <ion-note class="ion-text-wrap">
+                      <ion-chip [color]="'success'">
+                        Budded: {{ budderTotal.totalBuddedQuantity.toLocaleString() }}
+                      </ion-chip>
+                    </ion-note>
+                  </ion-label>
+                </ion-item>
               }
-            </ion-list>
-          }
-          @case ('completedRowsByDay') {
-            <ion-list>
+            }
+            @case ('completedRowsByDay') {
               @for (date of datesWithCompletedRows(); track $index) {
-                <ion-accordion-group>
-                  <ion-accordion>
-                    <ion-item slot="header">
+                <ion-item-group>
+                  <ion-item-divider>
+                    <ion-label>
+                      <strong>{{ date.dateCompleted | date: 'MM/dd/yyyy' }}</strong>
+                        <br />
+                        <ion-text>{{ date.completedRows[0].buddingEntries[0].plantedFieldRecord.field }}</ion-text>
+                    </ion-label>
+                    <ion-label slot="end" class="metadata-end-wrapper">
+                      <ion-note class="ion-text-wrap">
+                        <ion-chip [color]="'success'">
+                          Budded: {{ date.totalBuddedQuantity.toLocaleString() }}
+                        </ion-chip>
+                      </ion-note>
+                    </ion-label>
+                  </ion-item-divider>
+                  @for (row of date.completedRows; track $index) {
+                    <ion-item [lines]="'none'">
                       <ion-label>
-                        <h2>{{ date.date | date:'MM-dd-yyyy' }}</h2>
-                        <p>{{ date.rows.length }} completed rows</p>
+                        <strong>Row {{ row.row }}</strong>
+                      </ion-label>
+                      <ion-label slot="end" class="metadata-end-wrapper">
+                        <ion-note class="ion-text-wrap">
+                          <ion-chip [color]="'success'">
+                            Budded: {{ row.totalBuddedQuantity.toLocaleString() }} 
+                          </ion-chip>
+                        </ion-note>
                       </ion-label>
                     </ion-item>
-                    <ion-list slot="content">
-                      @for (row of date.rows; track row.row) {
-                        <ion-item>
-                          <ion-label>
-                            <h3>Row {{ row.row }}</h3>
-                            <p>{{ row.entries.length }} budding entries</p>
-                          </ion-label>
-                        </ion-item>
-                      }
-                    </ion-list>
-                  </ion-accordion>
-                </ion-accordion-group>
+                  }
+                </ion-item-group>
               }
-            </ion-list>
+            } @default {
+              <ion-list>
+                <ion-item>
+                  <ion-label>
+                    Please select a valid view from the filters
+                  </ion-label>
+                </ion-item>
+              </ion-list>
+            }
           }
-          @default {
-            <ion-list>
-              <ion-item>
-                <ion-label>
-                  Please select a valid view from the filters
-                </ion-label>
-              </ion-item>
-            </ion-list>
-          }
-        }
+        </ion-list>
       }
 	</div>
 </ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-title size="small">
+      <strong>Total Budded:</strong>
+      @if (viewFilter() === 'completedRowsByDay') {
+        <ion-chip [color]="'success'">
+          {{ totalQuantityBudded().toLocaleString() }}
+        </ion-chip>
+      } @else {
+        <ion-chip [color]="'success'">
+          {{ totalQuantityBuddedForCompletedRows().toLocaleString() }}
+        </ion-chip>
+      }
+    </ion-title>
+  </ion-toolbar>
+</ion-footer>

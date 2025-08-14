@@ -1,0 +1,168 @@
+<app-page-topbar title="Budding Totals"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Budding Totals" [showRefresher]="false"></app-content-topbar>
+  <div id="content">
+    <ion-header>
+      <ion-accordion-group>
+        <ion-accordion value="first">
+          <ion-item slot="header" color="light">
+            <ion-label>Filters</ion-label>
+          </ion-item>
+          <div slot="content">
+            <ion-toolbar>
+              <ion-searchbar [(ngModel)]="globalSearchFilter"></ion-searchbar>
+            </ion-toolbar>
+            <ion-list lines="full">
+              <ion-item>
+                <ion-select aria-modal label="View" labelPlacement="stacked" interface="action-sheet" 
+                  [interfaceOptions]="{header:'Select View'}"
+                  [(ngModel)]="viewFilter">
+                  <ion-select-option value="totalsByDay">
+                    Totals by Day
+                  </ion-select-option>
+                  <ion-select-option value="totalsByVarietyAndRootstock">
+                    Totals by Variety And Rootstock
+                  </ion-select-option>
+                  <ion-select-option value="totalsByBudder">
+                    Totals by Budder
+                  </ion-select-option>
+                  <ion-select-option value="completedRowsByDay">
+                    Completed Rows by Day
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                @if (buddingEntryYears().length > 0) {
+                  <ion-select aria-modal label="Year" labelPlacement="stacked" interface="action-sheet" 
+                    [interfaceOptions]="{header:'Select Year'}"
+                    [(ngModel)]="yearFilter">
+                    @for (year of buddingEntryYears(); track year) {
+                      <ion-select-option [value]="year">
+                        {{ year }}
+                      </ion-select-option>
+                    }
+                  </ion-select>
+                }
+              </ion-item>
+              <ion-item>
+                @if (plantedFields().length > 0) {
+                  <ion-select aria-modal label="Field" labelPlacement="stacked" interface="action-sheet" 
+                    [interfaceOptions]="{header:'Select Field'}"
+                    [(ngModel)]="fieldFilter"
+                    [compareWith]="fieldCompare">
+                    <ion-select-option [value]="null">
+                      All Fields
+                    </ion-select-option>
+                    @for (field of plantedFields(); track field.id) {
+                      <ion-select-option [value]="field">
+                        {{ field.field }}
+                      </ion-select-option>
+                    }
+                  </ion-select>
+                }
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+    </ion-header>
+      @if (filteredBuddingEntriesForTotalsTable().length === 0) {
+        @if (isFetchingData()) {
+          <ion-progress-bar type="indeterminate"></ion-progress-bar>
+          <ion-list>
+            <ion-item>
+              <ion-label>
+                Loading Budding Entry Totals... 
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        } @else {
+          <ion-list>
+            <ion-item>
+              <ion-label>
+                No Budding Entry Totals Found... 
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        }
+      } @else {
+        @switch (viewFilter()) {
+          @case ('totalsByDay') {
+            <ion-list>
+              @for (dayTotal of buddedEntriesTotalsByDayRecords(); track dayTotal.date) {
+                <ion-item>
+                  <ion-label>
+                    <h2>{{ dayTotal.date | date:'MM-dd-yyyy' }}</h2>
+                    <p>Total buds: {{ dayTotal.total }}</p>
+                  </ion-label>
+                </ion-item>
+              }
+            </ion-list>
+          }
+          @case ('totalsByVarietyAndRootstock') {
+            <ion-list>
+              @for (varietyRootstockTotal of buddedEntriesTotalsByVarietyAndRootstockRecords(); track $index) {
+                @if (varietyRootstockTotal.total > 0 && varietyRootstockTotal.variety && varietyRootstockTotal.rootstock) {
+                  <ion-item>
+                    <ion-label>
+                      <h2>{{ varietyRootstockTotal.variety.name }} on {{ varietyRootstockTotal.rootstock.name }}</h2>
+                      <p>Total buds: {{ varietyRootstockTotal.total }}</p>
+                    </ion-label>
+                  </ion-item>
+                }
+              }
+            </ion-list>
+          }
+          @case ('totalsByBudder') {
+            <ion-list>
+              @for (budderTotal of buddedEntriesTotalsByBudderRecords(); track $index) {
+                @if (budderTotal && budderTotal.budder && budderTotal.budder.firstName && budderTotal.budder.lastName) {
+                  <ion-item>
+                    <ion-label>
+                      <h2>{{ budderTotal.budder.firstName }}&nbsp;{{ budderTotal.budder.lastName }}</h2>
+                      <p>Total buds: {{ budderTotal.total }}</p>
+                    </ion-label>
+                  </ion-item>
+                }
+              }
+            </ion-list>
+          }
+          @case ('completedRowsByDay') {
+            <ion-list>
+              @for (date of datesWithCompletedRows(); track $index) {
+                <ion-accordion-group>
+                  <ion-accordion>
+                    <ion-item slot="header">
+                      <ion-label>
+                        <h2>{{ date.date | date:'MM-dd-yyyy' }}</h2>
+                        <p>{{ date.rows.length }} completed rows</p>
+                      </ion-label>
+                    </ion-item>
+                    <ion-list slot="content">
+                      @for (row of date.rows; track row.row) {
+                        <ion-item>
+                          <ion-label>
+                            <h3>Row {{ row.row }}</h3>
+                            <p>{{ row.entries.length }} budding entries</p>
+                          </ion-label>
+                        </ion-item>
+                      }
+                    </ion-list>
+                  </ion-accordion>
+                </ion-accordion-group>
+              }
+            </ion-list>
+          }
+          @default {
+            <ion-list>
+              <ion-item>
+                <ion-label>
+                  Please select a valid view from the filters
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          }
+        }
+      }
+	</div>
+</ion-content>

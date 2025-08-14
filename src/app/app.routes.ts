@@ -33,6 +33,10 @@ export const routes: Routes = [
             path: '',
             redirectTo: 'plantings',
             pathMatch: 'full'
+          },          
+          {
+            path: 'budding-totals',
+            loadComponent: () => import('./modules/budding/pages/budding-totals/budding-totals.page').then( m => m.BuddingTotalsPage)
           },
           {
             path: 'plantings',
@@ -146,4 +150,5 @@ export const routes: Routes = [
     redirectTo: 'not-found',
     pathMatch: 'full'
   },
+
 ];

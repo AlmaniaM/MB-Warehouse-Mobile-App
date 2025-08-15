@@ -185,15 +185,9 @@
   <ion-toolbar>
     <ion-title size="small">
       <strong>Total Budded:</strong>
-      @if (viewFilter() === 'completedRowsByDay') {
         <ion-chip [color]="'success'">
           {{ totalQuantityBudded().toLocaleString() }}
         </ion-chip>
-      } @else {
-        <ion-chip [color]="'success'">
-          {{ totalQuantityBuddedForCompletedRows().toLocaleString() }}
-        </ion-chip>
-      }
     </ion-title>
   </ion-toolbar>
 </ion-footer>

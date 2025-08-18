@@ -40,6 +40,7 @@ import { ContainerLedgerEntryListRecord } from 'src/app/modules/container-tracki
 import { PageTopbarComponent } from 'src/app/modules/global/components/page-topbar/page-topbar.component';
 import { ContentTopbarComponent } from 'src/app/modules/global/components/content-topbar/content-topbar.component';
 import { ContainerLedgerEntryFormComponent } from 'src/app/modules/container-tracking/components/container-ledger-entry-form/container-ledger-entry-form.component';
+import { ContainerTrackingReturnReceiptReportComponent } from "../../components/container-tracking-return-receipt-report/container-tracking-return-receipt-report.component";
 
 @Component({
   selector: 'app-container-return-ledger-entries',
@@ -47,28 +48,29 @@ import { ContainerLedgerEntryFormComponent } from 'src/app/modules/container-tra
   styleUrls: ['./container-return-ledger-entries.page.scss'],
   imports: [
     DatePipe,
-    IonFooter, 
-    IonTitle, 
-    IonFab, 
-    IonModal, 
-    IonToolbar, 
-    IonButtons, 
-    IonButton, 
-    IonIcon, 
-    IonFabButton, 
-    IonChip, 
-    IonNote, 
-    IonText, 
-    IonLabel, 
+    IonFooter,
+    IonTitle,
+    IonFab,
+    IonModal,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonFabButton,
+    IonChip,
+    IonNote,
+    IonText,
+    IonLabel,
     IonContent,
-    IonItem, 
-    IonList, 
-    IonHeader, 
+    IonItem,
+    IonList,
+    IonHeader,
     IonProgressBar,
     PageTopbarComponent,
     ContentTopbarComponent,
-    ContainerLedgerEntryFormComponent
-  ]
+    ContainerLedgerEntryFormComponent,
+    ContainerTrackingReturnReceiptReportComponent
+]
 })
 export class ContainerReturnLedgerEntriesPage {
 

@@ -1,3 +1,8 @@
-<p>
-  container-tracking-return-receipt-report works!
-</p>
+<div class="report-container">
+  @if (isFetching()) {
+    <ion-progress-bar mode="indeterminate"></ion-progress-bar>
+  }
+  @if (receiptReportHtml()) {
+    <div class="html-report" [innerHTML]="receiptReportHtml()"></div>
+  }
+</div>

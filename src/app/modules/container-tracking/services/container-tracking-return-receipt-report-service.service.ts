@@ -5,6 +5,7 @@ import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { ToastService } from 'src/app/modules/global/services/toast.service';
+import { CachedApiKeysService } from '../../global/services/cached-api-keys.service';
 
 export type ContainerReceiptEmailRequest = {
   user: string;
@@ -20,6 +21,8 @@ export class ContainerTrackingReturnReceiptReportServiceService {
 
   private httpClient: HttpClient = inject(HttpClient);
   private toastService: ToastService = inject(ToastService);
+  private cachedApiKeysService: CachedApiKeysService = inject(CachedApiKeysService);
+  private mbnReportServiceApiKey: Signal<string | null> = toSignal(this.cachedApiKeysService.mbnReportServiceApiKey, { initialValue: null });
 
   public statusSubject: BehaviorSubject<'fetching' | 'error' | 'stable'> = new BehaviorSubject<'fetching' | 'error' | 'stable'>('stable');
   public requestErrorSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
@@ -30,12 +33,21 @@ export class ContainerTrackingReturnReceiptReportServiceService {
   public readonly containerReturnReceiptReportHtml: Observable<string> = this.containerReturnReceiptReportHtmlSubject.asObservable();
 
   getContainerReturnReceiptReportHtml(containerReturnReceiptId: number) {
+    if (!this.mbnReportServiceApiKey()) {
+      this.toastService.openToast('API Key is missing.');
+      return;
+    }
+
     this.statusSubject.next('fetching');
     this.requestErrorSubject.next(null);
 
+    const url = `${environment.azureReportServiceBaseUrl}html/container/receipt/${containerReturnReceiptId}`;
+    const headers = {
+      'apiKey': this.mbnReportServiceApiKey()!
+    }
+
     this.httpClient.get<string>(
-      `${environment.azureReportServiceBaseUrl}html/container/receipt/${containerReturnReceiptId}`,
-      { responseType: 'text' as 'json' }
+      url, { headers: headers, responseType: 'text' as 'json' }
     ).pipe(
       catchError((error: HttpErrorResponse) => {
         this.statusSubject.next('error');
@@ -52,12 +64,23 @@ export class ContainerTrackingReturnReceiptReportServiceService {
   }
 
   getContainerReturnReceiptReportPdf(containerReturnReceiptId: number, action: 'download' | 'preview') {
+    if (!this.mbnReportServiceApiKey()) {
+      this.toastService.openToast('API Key is missing.');
+    }
+
     this.statusSubject.next('fetching');
     this.requestErrorSubject.next(null);
 
+    const headers = {
+      'apiKey': this.mbnReportServiceApiKey()!
+    };
+
     return this.httpClient.get(
       `${environment.azureReportServiceBaseUrl}pdf/${action}/container/receipt/${containerReturnReceiptId}`,
-      { responseType: 'blob' }
+      { 
+        headers: headers,
+        responseType: 'blob'
+      }
     ).pipe(
       catchError((error: HttpErrorResponse) => {
         this.statusSubject.next('error');
@@ -69,13 +92,24 @@ export class ContainerTrackingReturnReceiptReportServiceService {
   }
 
   sendContainerReturnReceiptEmail(containerReturnReceiptId: number, emailRequest: ContainerReceiptEmailRequest) {
+    if (!this.mbnReportServiceApiKey()) {
+      this.toastService.openToast('API Key is missing.');
+    }
+    
     this.statusSubject.next('fetching');
     this.requestErrorSubject.next(null);
+
+    const headers = {
+      'apiKey': this.mbnReportServiceApiKey()!
+    };
 
     return this.httpClient.post(
       `${environment.azureReportServiceBaseUrl}email/container/receipt/${containerReturnReceiptId}`,
       emailRequest,
-      { responseType: 'text' }
+      { 
+        headers: headers, 
+        responseType: 'text'
+      }
     ).pipe(
       catchError((error: HttpErrorResponse) => {
         this.statusSubject.next('error');

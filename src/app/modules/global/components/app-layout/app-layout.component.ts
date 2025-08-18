@@ -1,4 +1,4 @@
-import { Component, Signal, computed, inject } from '@angular/core';
+import { Component, Signal, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -24,6 +24,8 @@ import { AppPage } from 'src/app/modules/global/types/app-types';
 import { AccountInfo } from '@azure/msal-browser';
 import { AzureAuthenticationService } from 'src/app/modules/global/auth/azure-auth.service';
 import { ContainerTypeService } from 'src/app/modules/sourcelists/services/container-type.service';
+import { ApiKeysService } from '../../services/api-keys.service';
+import { CachedApiKeysService } from '../../services/cached-api-keys.service';
 
 @Component({
   selector: 'app-layout',
@@ -76,4 +78,17 @@ export class AppLayoutComponent {
   constructor() {
     this.constainerTypeService.getContainerTypes();
   }
+
+  apiKeysService: ApiKeysService = inject(ApiKeysService);
+  cachedApiKeysService: CachedApiKeysService = inject(CachedApiKeysService);
+
+  mbnReportServiceApiKey: Signal<string> = toSignal(this.apiKeysService.mbnReportServiceApiKey, { initialValue: '' });
+  cachedMbnReportServiceApiKey: Signal<string | null> = toSignal(this.cachedApiKeysService.mbnReportServiceApiKey, { initialValue: null });
+  cachedMbnReportServiceApiKeyEffect = effect(() => {
+    if (!this.cachedMbnReportServiceApiKey()) {
+      this.apiKeysService.getMbnReportServiceApiKey();
+    }
+    if (!this.mbnReportServiceApiKey()) { return; }
+    this.cachedApiKeysService.setMbnReportServiceApiKey(this.mbnReportServiceApiKey());
+  }, { allowSignalWrites: true });
 }

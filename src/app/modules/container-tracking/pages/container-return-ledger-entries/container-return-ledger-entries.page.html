@@ -38,17 +38,14 @@
                 <ion-chip [color]="customerContainerLedgerEntry.containerLedgerEntry.quantity > 0 ? 'success' : 'danger'">
                   {{ 
                     customerContainerLedgerEntry.containerLedgerEntry.quantity > 0 ? 
-                    '+' + customerContainerLedgerEntry.containerLedgerEntry.quantity :
-                    customerContainerLedgerEntry.containerLedgerEntry.quantity 
+                    '+' + customerContainerLedgerEntry.containerLedgerEntry.quantity.toLocaleString() :
+                    customerContainerLedgerEntry.containerLedgerEntry.quantity.toLocaleString() 
                   }}
                 </ion-chip>
               </ion-note>
             </ion-label>
           </ion-item>
         }
-        <div id="return-receipt-report">
-          <app-container-tracking-return-receipt-report></app-container-tracking-return-receipt-report>
-        </div>
       </ion-list>
     }  @else {
       <ion-list>

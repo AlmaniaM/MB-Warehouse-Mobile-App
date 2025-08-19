@@ -1,8 +1,11 @@
 <div class="report-container">
   @if (isFetching()) {
-    <ion-progress-bar mode="indeterminate"></ion-progress-bar>
+    <ion-progress-bar type="indeterminate"></ion-progress-bar>
   }
-  @if (receiptReportHtml()) {
-    <div class="html-report" [innerHTML]="receiptReportHtml()"></div>
+  @if (reportType() === 'html' && receiptReportHtml()) {
+    <div class="html-report" [innerHTML]="receiptReportHtml()!"></div>
+  }
+  @if (reportType() === 'pdf') {
+    <iframe *ngIf="receiptReportPdfUrl()" class="pdf-report" [src]="receiptReportPdfUrl()!"></iframe>
   }
 </div>

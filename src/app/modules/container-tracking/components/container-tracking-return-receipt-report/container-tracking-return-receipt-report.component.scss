@@ -1,0 +1,14 @@
+:host {
+  height: 100%;
+	width: 100%;
+	overflow: hidden;
+	display: flex;
+  flex-direction: column;
+}
+.report-container {
+	flex: 1;
+}
+.pdf-report {
+	height: 100%;
+	width: 100%;
+}

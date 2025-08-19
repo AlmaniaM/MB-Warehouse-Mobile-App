@@ -17,18 +17,10 @@
                 <ion-select aria-modal label="View" labelPlacement="stacked" interface="action-sheet" 
                   [interfaceOptions]="{header:'Select View'}"
                   [(ngModel)]="viewFilter">
-                  <ion-select-option value="totalsByDay">
-                    Totals by Day
-                  </ion-select-option>
-                  <ion-select-option value="totalsByVarietyAndRootstock">
-                    Totals by Variety And Rootstock
-                  </ion-select-option>
-                  <ion-select-option value="totalsByBudder">
-                    Totals by Budder
-                  </ion-select-option>
-                  <ion-select-option value="completedRowsByDay">
-                    Completed Rows by Day
-                  </ion-select-option>
+                  <ion-select-option value="totalsByDay">Totals by Day</ion-select-option>
+                  <ion-select-option value="totalsByVarietyAndRootstock">Totals by Variety And Rootstock</ion-select-option>
+                  <ion-select-option value="totalsByBudder">Totals by Budder</ion-select-option>
+                  <ion-select-option value="completedRowsByDay">Completed Rows by Day</ion-select-option>
                 </ion-select>
               </ion-item>
               <ion-item>
@@ -37,9 +29,7 @@
                     [interfaceOptions]="{header:'Select Year'}"
                     [(ngModel)]="yearFilter">
                     @for (year of plantedRootPoolPlantedYears(); track year) {
-                      <ion-select-option [value]="year">
-                        {{ year }}
-                      </ion-select-option>
+                      <ion-select-option [value]="year">{{ year }}</ion-select-option>
                     }
                   </ion-select>
                 }
@@ -50,17 +40,27 @@
                     [interfaceOptions]="{header:'Select Field'}"
                     [(ngModel)]="fieldFilter"
                     [compareWith]="fieldCompare">
-                    <ion-select-option [value]="null">
-                      All Fields
-                    </ion-select-option>
+                    <ion-select-option [value]="null">All Fields</ion-select-option>
                     @for (field of filteredPlantedFieldsForYear(); track field.id) {
-                      <ion-select-option [value]="field">
-                        {{ field.field }}
-                      </ion-select-option>
+                      <ion-select-option [value]="field">{{ field.field }}</ion-select-option>
                     }
                   </ion-select>
                 }
               </ion-item>
+              @if (viewFilter() === 'totalsByBudder') {
+                <ion-item>
+                  @if (buddingEntryDates().length > 0) {
+                    <ion-select aria-modal label="Date" labelPlacement="stacked" interface="action-sheet" 
+                      [interfaceOptions]="{header:'Select Date'}"
+                      [(ngModel)]="dateFilter">
+                      <ion-select-option [value]="null">All Days</ion-select-option>
+                      @for (date of buddingEntryDates(); track date) {
+                        <ion-select-option [value]="date">{{ date | date:'MM/dd/yyyy' }}</ion-select-option>
+                      }
+                    </ion-select>
+                  }
+                </ion-item>
+              }
             </ion-list>
           </div>
         </ion-accordion>
@@ -93,8 +93,6 @@
                 <ion-item>
                   <ion-label>
                     <strong>{{ dayTotal.date | date:'MM/dd/yyyy' }}</strong>
-                      <br />
-                      <ion-text>{{ dayTotal.buddingEntries[0].plantedFieldRecord.field }}</ion-text>
                   </ion-label>
                   <ion-label slot="end" class="metadata-end-wrapper">
                     <ion-note class="ion-text-wrap">  
@@ -111,8 +109,6 @@
                 <ion-item>
                   <ion-label>
                     <strong>{{ varietyRootstockTotal.variety.name + ' - ' + varietyRootstockTotal.rootstock.name }}</strong>
-                      <br />
-                      <ion-text>{{ varietyRootstockTotal.buddingEntries[0].plantedFieldRecord.field }}</ion-text>
                   </ion-label>
                   <ion-label slot="end" class="metadata-end-wrapper">
                     <ion-note class="ion-text-wrap">
@@ -129,8 +125,6 @@
                 <ion-item>
                   <ion-label>
                     <strong>{{ budderTotal.budder.firstName + ' ' + budderTotal.budder.lastName }}</strong>
-                      <br />
-                      <ion-text>{{ budderTotal.buddingEntries[0].plantedFieldRecord.field }}</ion-text>
                   </ion-label>
                   <ion-label slot="end" class="metadata-end-wrapper">
                     <ion-note class="ion-text-wrap">
@@ -148,8 +142,6 @@
                   <ion-item-divider>
                     <ion-label>
                       <strong>{{ date.dateCompleted | date: 'MM/dd/yyyy' }}</strong>
-                        <br />
-                        <ion-text>{{ date.completedRows[0].buddingEntries[0].plantedFieldRecord.field }}</ion-text>
                     </ion-label>
                     <ion-label slot="end" class="metadata-end-wrapper">
                       <ion-note class="ion-text-wrap">
@@ -193,15 +185,9 @@
   <ion-toolbar>
     <ion-title size="small">
       <strong>Total Budded:</strong>
-      @if (viewFilter() === 'completedRowsByDay') {
         <ion-chip [color]="'success'">
           {{ totalQuantityBudded().toLocaleString() }}
         </ion-chip>
-      } @else {
-        <ion-chip [color]="'success'">
-          {{ totalQuantityBuddedForCompletedRows().toLocaleString() }}
-        </ion-chip>
-      }
     </ion-title>
   </ion-toolbar>
 </ion-footer>

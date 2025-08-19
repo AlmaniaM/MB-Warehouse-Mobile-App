@@ -404,21 +404,25 @@ export class BuddingTotalsPage {
 
     return this.buddingEntryBudders().map(budder => {
       
-      const entries = this.filteredBuddingEntryTotalListRecords().filter(record => {
-        if (!record.budderEmployeeRecord) { return null; }
-        return record.budderEmployeeRecord.id === budder.id;
-      }).filter(record => record !== null);
+      const entries = this.filteredBuddingEntryTotalListRecords()
+        .filter(record => {
+          if (!record.budderEmployeeRecord) { return null; }
+          return record.budderEmployeeRecord.id === budder.id;
+        })
+        .filter(record => record !== null)
+        .filter(record => {
+          if (!this.dateFilter() || this.viewFilter() !== 'totalsByBudder') { return true; }
+          return new Date(record.buddedRootPoolEntry.dateBudded).toDateString() === this.dateFilter()
+        });
       
-      const total = entries.reduce((sum, record) => 
-        sum + (record.buddedRootPoolEntry.quantityBudded || 0), 0
-      );
+      const total = entries.reduce((sum, record) => sum + (record.buddedRootPoolEntry.quantityBudded || 0), 0);
       
       return {
         budder: budder,
         totalBuddedQuantity: total,
         buddingEntries: entries
       };
-    });
+    })
   });
 
   // list completed rows by day
@@ -471,17 +475,25 @@ export class BuddingTotalsPage {
   });
 
   totalQuantityBudded: Signal<number> = computed(() => {
-    return this.filteredBuddingEntryTotalListRecords().reduce((sum, record) => sum + (record.buddedRootPoolEntry.quantityBudded || 0), 0);
-  });
-
-  totalQuantityBuddedForCompletedRows: Signal<number> = computed(() => {
-    return this.completedRows().reduce((sum, row) => sum + row.totalBuddedQuantity, 0);
+    switch (this.viewFilter()) {
+      case 'totalsByDay':
+        return this.buddedEntriesTotalsByDayRecords().reduce((sum, record) => sum + record.totalBuddedQuantity, 0);
+      case 'totalsByVarietyAndRootstock':
+        return this.buddedEntriesTotalsByVarietyAndRootstockRecords().reduce((sum, record) => sum + record.totalBuddedQuantity, 0);
+      case 'totalsByBudder':
+        return this.buddedEntriesTotalsByBudderRecords().reduce((sum, record) => sum + record.totalBuddedQuantity, 0);
+      case 'completedRowsByDay':
+        return this.datesWithCompletedRows().reduce((sum, record) => sum + record.completedRows.reduce((rowSum, row) => rowSum + row.totalBuddedQuantity, 0), 0);
+      default:
+        return this.buddingEntryTotalListRecords().reduce((sum, record) => sum + (record.buddedRootPoolEntry.quantityBudded || 0), 0);
+    };
   });
 
   globalSearchFilter: WritableSignal<string> = signal('');
+  viewFilter: WritableSignal<'totalsByDay'| 'totalsByVarietyAndRootstock' | 'totalsByBudder'| 'completedRowsByDay'> = signal('totalsByDay');
   yearFilter: WritableSignal<number | null> = signal(new Date().getFullYear());
   fieldFilter: WritableSignal<PlantedField | null> = signal(null);
-  viewFilter: WritableSignal<'totalsByDay'| 'totalsByVarietyAndRootstock' | 'totalsByBudder'| 'completedRowsByDay'> = signal('totalsByDay');
+  dateFilter: WritableSignal<string | null> = signal(null);
 
   cachedSettings = toSignal(this.cachedSettingsService.cachedSettings, { initialValue: null });
   triggerFilterSettings: WritableSignal<boolean> = signal(false);

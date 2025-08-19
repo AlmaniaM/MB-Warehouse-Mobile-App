@@ -1,0 +1,8 @@
+<div class="report-container">
+  @if (isFetching()) {
+    <ion-progress-bar mode="indeterminate"></ion-progress-bar>
+  }
+  @if (receiptReportHtml()) {
+    <div class="html-report" [innerHTML]="receiptReportHtml()"></div>
+  }
+</div>

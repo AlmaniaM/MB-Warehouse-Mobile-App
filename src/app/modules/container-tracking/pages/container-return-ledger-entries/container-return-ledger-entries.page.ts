@@ -40,7 +40,6 @@ import { ContainerLedgerEntryListRecord } from 'src/app/modules/container-tracki
 import { PageTopbarComponent } from 'src/app/modules/global/components/page-topbar/page-topbar.component';
 import { ContentTopbarComponent } from 'src/app/modules/global/components/content-topbar/content-topbar.component';
 import { ContainerLedgerEntryFormComponent } from 'src/app/modules/container-tracking/components/container-ledger-entry-form/container-ledger-entry-form.component';
-import { ContainerTrackingReturnReceiptReportComponent } from "../../components/container-tracking-return-receipt-report/container-tracking-return-receipt-report.component";
 
 @Component({
   selector: 'app-container-return-ledger-entries',
@@ -68,8 +67,7 @@ import { ContainerTrackingReturnReceiptReportComponent } from "../../components/
     IonProgressBar,
     PageTopbarComponent,
     ContentTopbarComponent,
-    ContainerLedgerEntryFormComponent,
-    ContainerTrackingReturnReceiptReportComponent
+    ContainerLedgerEntryFormComponent
 ]
 })
 export class ContainerReturnLedgerEntriesPage {
@@ -96,7 +94,10 @@ export class ContainerReturnLedgerEntriesPage {
   });
 
   customerContainerLedgerEntryListRecords: Signal<ContainerLedgerEntryListRecord[]> = computed(() => { 
+    if (!this.selectedContainerReturnReceipt()) { return []; }
     if (this.customerContainerLedgerEntries().length === 0) { return []; }
+    if (this.containerTypes().length === 0) { return []; }
+    if (this.customers().length === 0) { return []; }
     
     return this.customerContainerLedgerEntries()
       .filter(entry => {

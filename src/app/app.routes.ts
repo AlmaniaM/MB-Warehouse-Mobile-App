@@ -105,6 +105,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./modules/container-tracking/pages/container-return-ledger-entries/container-return-ledger-entries.page').then(page => page.ContainerReturnLedgerEntriesPage)
               },
               {
+                path: 'receipt',
+                loadComponent: () => import('./modules/container-tracking/pages/container-return-receipt/container-return-receipt.page').then(page => page.ContainerReturnReceiptPage)
+              },
+              {
                 path: 'details',
                 loadComponent: () => import('./modules/container-tracking/pages/container-return-details/container-return-details.page').then(page => page.ContainerReturnDetailsPage)
               }
@@ -150,5 +154,4 @@ export const routes: Routes = [
     redirectTo: 'not-found',
     pathMatch: 'full'
   },
-
 ];

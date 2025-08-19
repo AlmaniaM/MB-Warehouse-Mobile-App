@@ -1,0 +1,33 @@
+<app-page-topbar title="Return Entries"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Return Entries" [showRefresher]="false"></app-content-topbar>
+  <div id="content">
+    <ion-header>
+      <ion-list lines="full">
+        @if (selectedContainerReturnReceiptCustomer()) {
+          <ion-item>
+            {{ selectedContainerReturnReceiptCustomer().name }}
+          </ion-item>
+        }
+        @if (selectedContainerReturnReceipt()) {
+          <ion-item>
+            {{ selectedContainerReturnReceipt()!.date | date: 'MM/dd/yyy'}}
+          </ion-item>
+          @if (selectedContainerReturnReceipt()!.containerReceiptReference) {
+            <ion-item>
+              Receipt Reference: {{ selectedContainerReturnReceipt()!.containerReceiptReference }}
+            </ion-item>
+          }
+        }
+      </ion-list>
+    </ion-header>
+    @if (isFetchingData()) {
+      <ion-progress-bar type="indeterminate"></ion-progress-bar>
+    }
+    <div id="return-receipt-report-container">
+      <app-container-tracking-return-receipt-report
+        [reportType]="'pdf'">
+      </app-container-tracking-return-receipt-report>
+    </div>
+  </div>
+</ion-content>

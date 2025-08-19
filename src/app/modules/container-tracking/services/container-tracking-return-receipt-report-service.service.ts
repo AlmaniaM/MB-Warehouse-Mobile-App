@@ -30,7 +30,10 @@ export class ContainerTrackingReturnReceiptReportServiceService {
   public readonly requestError: Observable<any> = this.requestErrorSubject.asObservable();
 
   private containerReturnReceiptReportHtmlSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  private containerReturnReceiptReportPdfUrlSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+
   public readonly containerReturnReceiptReportHtml: Observable<string> = this.containerReturnReceiptReportHtmlSubject.asObservable();
+  public readonly containerReturnReceiptReportPdfUrl: Observable<string | null> = this.containerReturnReceiptReportPdfUrlSubject.asObservable();
 
   getContainerReturnReceiptReportHtml(containerReturnReceiptId: number) {
     if (!this.mbnReportServiceApiKey()) {
@@ -75,12 +78,9 @@ export class ContainerTrackingReturnReceiptReportServiceService {
       'apiKey': this.mbnReportServiceApiKey()!
     };
 
-    return this.httpClient.get(
+    this.httpClient.get(
       `${environment.azureReportServiceBaseUrl}pdf/${action}/container/receipt/${containerReturnReceiptId}`,
-      { 
-        headers: headers,
-        responseType: 'blob'
-      }
+      { headers: headers, responseType: 'blob' }
     ).pipe(
       catchError((error: HttpErrorResponse) => {
         this.statusSubject.next('error');
@@ -88,7 +88,12 @@ export class ContainerTrackingReturnReceiptReportServiceService {
         this.toastService.openToast('Failed to fetch container return receipt PDF');
         return throwError(() => error);
       })
-    );
+    ).subscribe(blobResponse => {
+      const blob = new Blob([blobResponse], { type: 'application/pdf' });
+      const fileUrl = URL.createObjectURL(blob);
+      this.containerReturnReceiptReportPdfUrlSubject.next(fileUrl);
+      this.statusSubject.next('stable');
+    });
   }
 
   sendContainerReturnReceiptEmail(containerReturnReceiptId: number, emailRequest: ContainerReceiptEmailRequest) {
@@ -103,13 +108,9 @@ export class ContainerTrackingReturnReceiptReportServiceService {
       'apiKey': this.mbnReportServiceApiKey()!
     };
 
-    return this.httpClient.post(
+    this.httpClient.post(
       `${environment.azureReportServiceBaseUrl}email/container/receipt/${containerReturnReceiptId}`,
-      emailRequest,
-      { 
-        headers: headers, 
-        responseType: 'text'
-      }
+      emailRequest, { headers: headers, responseType: 'text' }
     ).pipe(
       catchError((error: HttpErrorResponse) => {
         this.statusSubject.next('error');

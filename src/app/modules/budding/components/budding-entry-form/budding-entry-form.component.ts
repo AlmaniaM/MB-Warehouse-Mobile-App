@@ -179,6 +179,7 @@ export class BuddingEntryFormComponent {
     this.quantityBudded.set(this.initialBuddedRootPoolEntry()!.quantityBudded);
     this.dateBudded.set(new Date(this.initialBuddedRootPoolEntry()!.dateBudded));
     this.customer.set(this.customers().find(c => c.id === this.initialBuddedRootPoolEntry()!.customerId) || null);
+    this.notes.set(this.initialBuddedRootPoolEntry()!.notes);
   });
 
   buddedVariety: WritableSignal<Variety | null> = signal<Variety | null>(null);

@@ -1,0 +1,74 @@
+<app-page-topbar title="Pallet Contents"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Pallet Contents" [showRefresher]="true"></app-content-topbar>
+  <div id="content">
+    @if (selectedPallet()) {
+      <ion-header>
+        <ion-list lines="full">
+          <ion-item>
+            <ion-label>
+              <strong>Pallet ID:</strong> {{ selectedPallet()!.palletKey }}
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <strong>Pallet Number:</strong> {{ selectedPallet()!.palletNumber }}
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <strong>Dig Date:</strong> {{ selectedPallet()!.digDate | date: 'MM/dd/yyyy' }}
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <strong>Delivery Year:</strong> {{ selectedPallet()!.deliveryYear }}
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <strong>Status:</strong> 
+              <ion-chip [color]="selectedPallet()!.archive ? 'medium' : 'success'">
+                {{ selectedPallet()!.archive ? 'Archived' : 'Active' }}
+              </ion-chip>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-header>
+      <ion-list lines="full">
+        @for (content of palletContents(); track trackByContent($index, content)) {
+          <ion-item>
+            <ion-label>
+              <strong>{{ content.varietyName }} - {{ content.rootstockName }}</strong><br />
+              <ion-text>Field: {{ content.fieldName }}</ion-text><br />
+              <ion-text>Quantity: {{ content.quantity }}</ion-text><br />
+              <ion-text>Size: {{ content.digTreeSizeName }}</ion-text><br />
+              <ion-text>Type: {{ content.plantedTypeName }}</ion-text>
+              @if (content.note) {
+                <br />
+                <ion-note>{{ content.note }}</ion-note>
+              }
+            </ion-label>
+            <ion-label class="metadata-end-wrapper" slot="end">
+              <ion-note class="ion-text-wrap">
+                <ion-checkbox 
+                  [checked]="content.isReceivedWarehouse ?? false"
+                  (ionChange)="onContentReceivedChange(content, $event.detail.checked)">
+                </ion-checkbox>
+                Received
+              </ion-note>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    } @else {
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            No pallet selected
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    }
+  </div>
+</ion-content>

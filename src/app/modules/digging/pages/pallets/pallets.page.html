@@ -1,0 +1,76 @@
+<app-page-topbar title="Pallet List"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Pallet List" [showRefresher]="true"></app-content-topbar>
+  <div id="content">
+    @if (pallets().length === 0) {
+      @if (isFetchingData()) {
+        <ion-progress-bar type="indeterminate"></ion-progress-bar>
+        <ion-list>
+          <ion-item>
+            <ion-label>
+              Loading Pallets... 
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      } @else {
+        <ion-list>
+          <ion-item>
+            <ion-label>
+              No Pallets Found... 
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      }
+    } @else {
+      <cdk-virtual-scroll-viewport class="ion-content-scroll-host" [itemSize]="78" [minBufferPx]="960" [maxBufferPx]="1440">
+        <ion-list id="pallets-list">
+          <ion-item *cdkVirtualFor="let pallet of pallets(); trackBy: trackByPallet" 
+            button [detail]="true" (click)="setSelectedPallet(pallet)"> 
+            <ion-label>
+              <strong>Pallet Number: {{ pallet.palletNumber }}</strong><br />
+              <ion-text>Dig Date: {{ pallet.digDate | date: 'M/d/yyyy h:mm a' }}</ion-text><br />
+              <ion-text>Delivery Year: {{ pallet.deliveryYear }}</ion-text>
+            </ion-label>
+            <ion-label class="metadata-end-wrapper" slot="end">
+              <ion-note class="ion-text-wrap">
+                <ion-checkbox 
+                  [checked]="pallet.archive"
+                  [disabled]="false"
+                  (ionChange)="toggleArchiveStatus(pallet)">
+                </ion-checkbox>
+                Archived
+              </ion-note>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </cdk-virtual-scroll-viewport>
+    }
+  </div>
+</ion-content>
+<ion-fab slot="fixed" horizontal="end" vertical="bottom">
+  <ion-fab-button color="success" (click)="isCreatingPallet.set(true)">
+    <ion-icon ios="add-outline" md="add-sharp"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+<ion-modal aria-modal [isOpen]="isCreatingPallet()" (didDismiss)="isCreatingPallet.set(false)">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title size="small">New Pallet</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="isCreatingPallet.set(false)">
+            <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content id="new-pallet-container">
+      @if (isCreatingPallet()) {
+        <app-pallet-form
+          [formType]="'new'"
+          [initialPallet]="null">
+        </app-pallet-form>
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>

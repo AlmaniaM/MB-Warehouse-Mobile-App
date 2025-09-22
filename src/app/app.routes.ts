@@ -142,6 +142,40 @@ export const routes: Routes = [
             ]
           },
         ]
+      },
+      {
+        path: 'digging',
+        loadComponent: () => import('./modules/digging/components/digging-layout/digging-layout.component').then(component => component.DiggingLayoutComponent),
+        children: [
+          {
+            path: '',
+            redirectTo: 'pallets',
+            pathMatch: 'full'
+          },
+          {
+            path: 'pallets',
+            loadComponent: () => import('./modules/digging/pages/pallets/pallets.page').then(page => page.PalletsPage)
+          },
+          {
+            path: 'pallet',
+            loadComponent: () => import('./modules/digging/components/pallet-details-layout/pallet-details-layout.component').then(component => component.PalletDetailsLayoutComponent),
+            children: [
+              {
+                path: '',
+                redirectTo: 'contents',
+                pathMatch: 'full'
+              },
+              {
+                path: 'contents',
+                loadComponent: () => import('./modules/digging/pages/pallet-contents/pallet-contents.page').then(page => page.PalletContentsPage)
+              },
+              {
+                path: 'details',
+                loadComponent: () => import('./modules/digging/pages/pallet-details/pallet-details.page').then(page => page.PalletDetailsPage)
+              }
+            ]
+          }
+        ]
       }
     ]
   },

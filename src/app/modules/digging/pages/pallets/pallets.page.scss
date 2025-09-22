@@ -1,0 +1,15 @@
+#content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+cdk-virtual-scroll-viewport {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+}
+#pallets-list {
+  height: 100%;
+  width: 100%;
+}

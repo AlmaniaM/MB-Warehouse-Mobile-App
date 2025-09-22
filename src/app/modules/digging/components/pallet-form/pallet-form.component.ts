@@ -160,7 +160,7 @@ export class PalletFormComponent  {
   
   createPallet() {
     if (!this.validPalletToCommit()) { return; }
-    this.palletService.createPallets([this.validPalletToCommit()!]);
+    this.palletService.createPallet(this.validPalletToCommit()!);
     this.resetForm();
     this.formSubmit.emit();
   }
@@ -181,14 +181,14 @@ export class PalletFormComponent  {
       return; 
     }
     
-    this.palletService.updatePallets([this.validPalletToCommit()!]);
+    this.palletService.updatePallet(this.validPalletToCommit()!);
     this.isEditing.set(false);
     this.formUpdate.emit();
   }
 
   deletePallet() {
     if (!this.initialPallet()) { return; }
-    this.palletService.deletePallets([this.initialPallet()!]);
+    this.palletService.deletePallet(this.initialPallet()!.palletKey);
     this.isDeleting.set(false);
     this.formDelete.emit();
   }

@@ -37,7 +37,8 @@ import {
   IonFooter
 } from '@ionic/angular/standalone';
 
-import { Pallet, PalletService, defaultPallet } from 'src/app/modules/digging/services/pallet.service';
+import { Pallet, PalletService, createDefaultPallet } from 'src/app/modules/digging/services/pallet.service';
+import { SelectedPalletService } from 'src/app/modules/digging/services/selected-pallet.service';
 import { Utils } from 'src/app/modules/global/classes/utils';
 
 @Component({
@@ -114,16 +115,6 @@ export class PalletFormComponent  {
     this.digDate.set(Utils.parseIonDateTimeLocal(iso));
   }
 
-  updatedPallet: Signal<Pallet> = computed(() => {
-    return {
-      ...this.formType() === 'new' ? defaultPallet : this.initialPallet()!,
-      palletNumber: this.palletNumber(),
-      digDate: this.digDate(),
-      deliveryYear: this.deliveryYear(),
-      archive: this.archive()
-    };
-  });
-
   updatedPalletIsValid: Signal<boolean> = computed(() => { 
     if (this.palletNumber() === null || this.palletNumber() === undefined || this.palletNumber() < 0) { 
       return false; 
@@ -137,30 +128,55 @@ export class PalletFormComponent  {
     return true;
   });
 
-  validPalletToCommit: WritableSignal<Pallet | null> = signal<Pallet | null>(null);
+  formTitle: Signal<string> = computed(() => {
+    const formType = this.formType();
+    const isEditing = this.isEditing();
+    
+    switch (formType) {
+      case 'new':
+        return 'New Pallet';
+      case 'view':
+        return isEditing ? 'Edit Pallet' : 'View Pallet';
+      case 'update':
+        return 'Edit Pallet';
+      default:
+        return 'Pallet';
+    }
+  });
+
+  updatedPallet: Signal<Pallet | null> = computed(() => {
+    if (!this.updatedPalletIsValid() || !this.initialPallet()) { return null; }
+    
+    return {
+      ...this.initialPallet()!,
+      palletNumber: this.palletNumber(),
+      digDate: this.digDate(),
+      deliveryYear: this.deliveryYear(),
+      archive: this.archive()
+    };
+  });
+
   isEditing: WritableSignal<boolean> = signal<boolean>(false);
   isDeleting: WritableSignal<boolean> = signal<boolean>(false);
-  
-  updatedPalletIsValidEffect = effect(() => { 
-    if (this.formType() === 'view') { 
-      return; 
-    }
-    if (!this.updatedPalletIsValid()) { 
-      return; 
-    }
-    
-    this.validPalletToCommit.set(this.updatedPallet());
-  });
-  
-  // Add output events
+
   formSubmit = output<void>();
-  formCancel = output<void>();
   formUpdate = output<void>();
   formDelete = output<void>();
   
+  private readonly defaultPallet: Pallet = createDefaultPallet();
+  
   createPallet() {
-    if (!this.validPalletToCommit()) { return; }
-    this.palletService.createPallet(this.validPalletToCommit()!);
+    if (!this.updatedPalletIsValid()) { return; }
+    
+    const pallet: Pallet = {
+      ...this.defaultPallet,
+      palletNumber: this.palletNumber(),
+      digDate: this.digDate(),
+      deliveryYear: this.deliveryYear(),
+      archive: this.archive()
+    };
+    
+    this.palletService.createPallet(pallet);
     this.resetForm();
     this.formSubmit.emit();
   }
@@ -172,16 +188,20 @@ export class PalletFormComponent  {
     this.archive.set(false);
   }
 
-  onCancel() {
-    this.formCancel.emit();
-  }
-
   updatePallet() {
-    if (!this.validPalletToCommit()) { 
+    if (!this.updatedPalletIsValid()) { 
       return; 
     }
     
-    this.palletService.updatePallet(this.validPalletToCommit()!);
+    const pallet: Pallet = {
+      ...this.initialPallet()!,
+      palletNumber: this.palletNumber(),
+      digDate: this.digDate(),
+      deliveryYear: this.deliveryYear(),
+      archive: this.archive()
+    };
+    
+    this.palletService.updatePallet(pallet);
     this.isEditing.set(false);
     this.formUpdate.emit();
   }

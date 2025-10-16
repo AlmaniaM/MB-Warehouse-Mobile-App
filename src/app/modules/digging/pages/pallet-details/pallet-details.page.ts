@@ -1,6 +1,5 @@
 import { 
-  Component, 
-  computed, 
+  Component,
   inject, 
   Signal, 
   effect
@@ -39,25 +38,29 @@ export class PalletDetailsPage {
   selectedPalletService: SelectedPalletService = inject(SelectedPalletService);
   palletService: PalletService = inject(PalletService);
   router: Router = inject(Router);
-  
+
   selectedPallet: Signal<Pallet | null> = this.selectedPalletService.selectedPallet;
   palletServicePreviousDataOperation: Signal<'created' | 'updated' | 'deleted' | null> = toSignal(this.palletService.previousDataOperationSubject, { requireSync: true });
-  
   palletServicePreviousDataOperationEffect = effect(() => {
-    if (this.palletServicePreviousDataOperation() !== 'deleted') { return; }
-    this.selectedPalletService.setPallet(null);
-    this.router.navigate(['/app/digging/pallets']);
+    if (this.palletServicePreviousDataOperation() === 'deleted') {
+      this.selectedPalletService.setPallet(null);
+      this.router.navigate(['/app/digging/pallets']);
+    }
   });
 
-  onFormUpdate() {
-    // Form update handled by the pallet-form component
-  }
+  palletServicePreviousDataOperationUpdateEffect = effect(() => {
+    if (this.palletServicePreviousDataOperation() !== 'updated') { return; }
+    
+    const currentPallet = this.selectedPallet();
+    if (!currentPallet) { return; }
+    
+    const updatedPallet = this.palletService.receivedPalletsSubject.value.find(p => p.palletKey === currentPallet.palletKey);
+    if (updatedPallet) {
+      this.selectedPalletService.setPallet(updatedPallet);
+    }
+  });
 
-  onFormDelete() {
-    // Form delete handled by the pallet-form component
-  }
-
-  onFormCancel() {
-    // Form cancel handled by the pallet-form component
+  onPalletFormUpdate() {
+    this.palletService.getAllReceivedPallets();
   }
 }

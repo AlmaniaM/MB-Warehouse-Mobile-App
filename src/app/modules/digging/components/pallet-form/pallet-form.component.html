@@ -1,16 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title size="small">
-      @if (formType() === 'view') {
-        Pallet Details
-      }
-      @if (formType() === 'update') {
-        Edit Pallet
-      }
-      @if (formType() === 'new') {
-        New Pallet
-      }
-    </ion-title>
+    <ion-title size="small">{{ formTitle() }}</ion-title>
   </ion-toolbar>
 </ion-header>
 @if (isFetchingData()) {
@@ -45,8 +35,7 @@
     </ion-input>
   </ion-item>
   <ion-item>
-    <ion-checkbox 
-      [checked]="archive"
+    <ion-checkbox
       [disabled]="isFetchingData() || !isEditing()"
       [(ngModel)]="archive">
       Archived

@@ -57,11 +57,9 @@ export class DiggingLayoutComponent {
   selectedPalletService: SelectedPalletService = inject(SelectedPalletService);
   selectedPallet: Signal<Pallet | null> = toSignal(this.selectedPalletService.selectedPallet$, { initialValue: null });
 
-  selectedPalletContentsService: SelectedPalletContentsService = inject(SelectedPalletContentsService);
-  selectedPalletContents: Signal<PalletContent[] | null> = this.selectedPalletContentsService.selectedPalletContents;
 
   constructor() {
-    this.palletService.getAllPallets();
+    this.palletService.getAllReceivedPallets();
     this.palletContentsService.getAllPalletContents();
     this.varietyService.getVarieties();
     this.rootstockService.getRootstocks();

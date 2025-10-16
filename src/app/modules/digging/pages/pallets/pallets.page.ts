@@ -4,7 +4,8 @@ import {
   inject, 
   signal, 
   Signal, 
-  WritableSignal
+  WritableSignal,
+  effect
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -28,10 +29,11 @@ import {
   IonButtons, 
   IonTitle,
   IonToolbar,
-  IonHeader
+  IonHeader,
+  IonChip
 } from '@ionic/angular/standalone';
 
-import { Pallet, PalletService } from 'src/app/modules/digging/services/pallet.service';
+import { Pallet, ReceivedPallet, PalletService } from 'src/app/modules/digging/services/pallet.service';
 import { SelectedPalletService } from 'src/app/modules/digging/services/selected-pallet.service';
 
 import { PageTopbarComponent } from 'src/app/modules/global/components/page-topbar/page-topbar.component';
@@ -63,6 +65,7 @@ import { PalletFormComponent } from 'src/app/modules/digging/components/pallet-f
     IonText, 
     IonNote,
     IonCheckbox,
+    IonChip,
     PageTopbarComponent,
     ContentTopbarComponent,
     PalletFormComponent
@@ -79,26 +82,29 @@ export class PalletsPage {
     return ['fetching', 'creating', 'updating', 'deleting'].includes(this.palletServiceStatus());
   });
 
-  pallets: Signal<Pallet[]> = toSignal(this.palletService.pallets, { initialValue: [] });
+  receivedPallets: Signal<ReceivedPallet[]> = toSignal(this.palletService.receivedPallets, { initialValue: [] });
   isCreatingPallet: WritableSignal<boolean> = signal(false);
 
   constructor() {
-    this.palletService.getAllPallets();
+    this.palletService.getAllReceivedPallets();
   }
 
-  trackByPallet(index: number, pallet: Pallet) { 
+  trackByReceivedPallet(index: number, pallet: ReceivedPallet) { 
     return pallet.palletKey;
   }
 
-  setSelectedPallet(pallet: Pallet) {
-    this.selectedPalletService.setPallet(pallet);
+  setSelectedReceivedPallet(pallet: ReceivedPallet) {
+    const palletForSelection: Pallet = {
+      palletKey: pallet.palletKey,
+      palletNumber: pallet.palletNumber,
+      digDate: pallet.digDate,
+      deliveryYear: pallet.deliveryYear,
+      archive: pallet.archive,
+      autoTimestampInsertUTC: pallet.autoTimestampInsertUTC,
+      autoTimestampUpdateUTC: pallet.autoTimestampUpdateUTC
+    };
+    this.selectedPalletService.setPallet(palletForSelection);
     this.router.navigate(['/app/digging/pallet']); 
   }
 
-  toggleArchiveStatus(pallet: Pallet) {
-    const updatedPallet = { ...pallet, archive: !pallet.archive };
-    
-    // Update through the service
-    this.palletService.updatePallet(updatedPallet);
-  }
 }

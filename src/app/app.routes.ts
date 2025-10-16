@@ -172,6 +172,21 @@ export const routes: Routes = [
               {
                 path: 'details',
                 loadComponent: () => import('./modules/digging/pages/pallet-details/pallet-details.page').then(page => page.PalletDetailsPage)
+              },
+              {
+                path: 'content',
+                loadComponent: () => import('./modules/digging/components/pallet-content-details-layout/pallet-content-details-layout.component').then(component => component.PalletContentDetailsLayoutComponent),
+                children: [
+                  {
+                    path: '',
+                    redirectTo: 'details',
+                    pathMatch: 'full'
+                  },
+                  {
+                    path: 'details',
+                    loadComponent: () => import('./modules/digging/pages/pallet-contents-details/pallet-contents-details.page').then(page => page.PalletContentsDetailsPage)
+                  }
+                ]
               }
             ]
           }

@@ -1,0 +1,12 @@
+<app-page-topbar title="Pallet Content Details"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Pallet Content Details" [showRefresher]="false"></app-content-topbar>
+  <div id="content">
+    <app-pallet-contents-form
+      [formType]="'view'"
+      [initialPalletContent]="selectedPalletContent()"
+      (formUpdate)="onPalletContentFormUpdate()"
+      (formDelete)="onPalletContentFormDelete()">
+    </app-pallet-contents-form>
+  </div>
+</ion-content>

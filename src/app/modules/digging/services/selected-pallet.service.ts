@@ -10,8 +10,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 export class SelectedPalletService {
   
-  private cacheName = environment.appName +'SelectedPallet';
+  	private cacheName = `${environment.appName}-SelectedPallet`;
 	private selectedPalletSubject: BehaviorSubject<Pallet | null> = new BehaviorSubject<Pallet | null>(null);
+	
 	public readonly selectedPallet$: Observable<Pallet | null> = this.selectedPalletSubject.asObservable();
 	selectedPallet: Signal<Pallet | null> = toSignal(this.selectedPalletSubject.asObservable(), { initialValue: null });
 

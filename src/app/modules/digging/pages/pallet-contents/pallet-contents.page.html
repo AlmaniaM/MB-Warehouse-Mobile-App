@@ -3,59 +3,52 @@
   <app-content-topbar title="Pallet Contents" [showRefresher]="true"></app-content-topbar>
   <div id="content">
     @if (selectedPallet()) {
-      <ion-header>
-        <ion-list lines="full">
-          <ion-item>
-            <ion-label>
-              <strong>Pallet ID:</strong> {{ selectedPallet()!.palletKey }}
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              <strong>Pallet Number:</strong> {{ selectedPallet()!.palletNumber }}
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              <strong>Dig Date:</strong> {{ selectedPallet()!.digDate | date: 'MM/dd/yyyy' }}
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              <strong>Delivery Year:</strong> {{ selectedPallet()!.deliveryYear }}
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              <strong>Status:</strong> 
-              <ion-chip [color]="selectedPallet()!.archive ? 'medium' : 'success'">
-                {{ selectedPallet()!.archive ? 'Archived' : 'Active' }}
-              </ion-chip>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-header>
       <ion-list lines="full">
+        <ion-item>
+          <ion-label>
+            <strong>Pallet Number:</strong> {{ selectedPallet()!.palletNumber }}
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <strong>Dig Date:</strong> {{ selectedPallet()!.digDate | date: 'MM/dd/yyyy' }}
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <strong>Delivery Year:</strong> {{ selectedPallet()!.deliveryYear }}
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <strong>All Contents Received:</strong>
+            <ion-chip [color]="allContentsReceived() ? 'success' : 'warning'">
+              {{ allContentsReceived() ? 'Yes' : 'No' }}
+            </ion-chip>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      <ion-list lines="full" id="pallet-contents-list">
         @for (content of palletContents(); track trackByContent($index, content)) {
-          <ion-item>
+          <ion-item button [detail]="true" (click)="setSelectedPalletContent(content)">
             <ion-label>
               <strong>{{ content.varietyName }} - {{ content.rootstockName }}</strong><br />
-              <ion-text>Field: {{ content.fieldName }}</ion-text><br />
               <ion-text>Quantity: {{ content.quantity }}</ion-text><br />
-              <ion-text>Size: {{ content.digTreeSizeName }}</ion-text><br />
-              <ion-text>Type: {{ content.plantedTypeName }}</ion-text>
+              <ion-text>Field: {{ content.fieldName }}</ion-text><br />
+              <ion-text>Variety: {{ content.varietyName }}</ion-text><br />
+              <ion-text>Rootstock: {{ content.rootstockName }}</ion-text><br />
+              <ion-text>Dig Tree Size: {{ content.digTreeSizeName }}</ion-text><br />
+              <ion-text>Planted Type: {{ content.plantedTypeName }}</ion-text>
               @if (content.note) {
                 <br />
-                <ion-note>{{ content.note }}</ion-note>
+                <ion-note>Note: {{ content.note }}</ion-note>
               }
             </ion-label>
             <ion-label class="metadata-end-wrapper" slot="end">
               <ion-note class="ion-text-wrap">
-                <ion-checkbox 
-                  [checked]="content.isReceivedWarehouse ?? false"
-                  (ionChange)="onContentReceivedChange(content, $event.detail.checked)">
-                </ion-checkbox>
-                Received
+                <ion-chip [color]="content.isReceivedWarehouse ? 'success' : 'warning'">
+                  {{ content.isReceivedWarehouse ? 'Received' : 'Pending' }}
+                </ion-chip>
               </ion-note>
             </ion-label>
           </ion-item>
@@ -72,3 +65,35 @@
     }
   </div>
 </ion-content>
+
+<!-- FAB Button for creating new pallet content -->
+<ion-fab slot="fixed" horizontal="end" vertical="bottom">
+  <ion-fab-button color="success" (click)="isCreatingPalletContent.set(true)">
+    <ion-icon ios="add-outline" md="add-sharp"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+<!-- Modal for creating new pallet content -->
+<ion-modal aria-modal [isOpen]="isCreatingPalletContent()" (didDismiss)="isCreatingPalletContent.set(false)">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title size="small">New Pallet Content</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="isCreatingPalletContent.set(false)">
+            <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content id="new-pallet-content-container">
+      @if (isCreatingPalletContent()) {
+        <app-pallet-contents-form
+          [formType]="'new'"
+          [initialPalletContent]="null"
+          (formSubmit)="onPalletContentFormSubmit()">
+        </app-pallet-contents-form>
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>

@@ -4,7 +4,6 @@ import { BehaviorSubject, Observable, catchError } from 'rxjs';
 
 import { ToastService } from 'src/app/modules/global/services/toast.service';
 import { environment } from '../../../../environments/environment';
-import { Utils } from 'src/app/modules/global/classes/utils';
 
 export const defaultPlantedType: PlantedType = { 
 	id: -1,
@@ -15,7 +14,7 @@ export const defaultPlantedType: PlantedType = {
 }
 
 export interface PlantedType {
-  [key: string]: any;
+  	[key: string]: any;
 	id: number;
 	type: string ;
 	active: boolean;

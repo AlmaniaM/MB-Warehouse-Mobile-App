@@ -52,6 +52,11 @@ import {
   hammerOutline,
   documentTextSharp,
   documentTextOutline,
+  chevronForwardSharp,
+  chevronForwardOutline,
+  chevronForward,
+  checkmark,
+  close,
 } from 'ionicons/icons';
 
 @Component({
@@ -116,7 +121,12 @@ export class AppComponent {
       hammerSharp,
       hammerOutline,
       documentTextSharp,
-      documentTextOutline
+      documentTextOutline,
+      chevronForwardSharp,
+      chevronForwardOutline,
+      chevronForward,
+      checkmark,
+      close
     });
   }
 }

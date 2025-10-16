@@ -1,11 +1,8 @@
 import { 
   Component, 
   computed, 
-  effect, 
   inject, 
-  Signal, 
-  signal,
-  WritableSignal
+  Signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterEvent, NavigationEnd, RouterModule } from '@angular/router';
@@ -49,13 +46,14 @@ export class PalletDetailsLayoutComponent {
 
   selectedPallet: Signal<Pallet | null> = toSignal(this.selectedPalletService.selectedPallet$, { initialValue: null });
 
-  constructor() {
-    effect(() => {
-      console.log('selectedPallet', this.selectedPallet());
-    });
-  }
+  isInContentPage: Signal<boolean> = computed<boolean>(() => { 
+    if (this.routerNavigationEvent() === null) { return false; }
+    const url = (this.routerNavigationEvent() as NavigationEnd).urlAfterRedirects;
+    return url.includes('/pallet/content') && !url.includes('/pallet/contents');
+  });
   
   goBack() {
+    this.selectedPalletService.setPallet(null);
     this.router.navigate(['/app/digging/pallets']);
   }
 }

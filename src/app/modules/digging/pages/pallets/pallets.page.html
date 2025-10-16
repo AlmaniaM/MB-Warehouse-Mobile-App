@@ -2,7 +2,7 @@
 <ion-content>
   <app-content-topbar title="Pallet List" [showRefresher]="true"></app-content-topbar>
   <div id="content">
-    @if (pallets().length === 0) {
+    @if (receivedPallets().length === 0) {
       @if (isFetchingData()) {
         <ion-progress-bar type="indeterminate"></ion-progress-bar>
         <ion-list>
@@ -24,8 +24,8 @@
     } @else {
       <cdk-virtual-scroll-viewport class="ion-content-scroll-host" [itemSize]="78" [minBufferPx]="960" [maxBufferPx]="1440">
         <ion-list id="pallets-list">
-          <ion-item *cdkVirtualFor="let pallet of pallets(); trackBy: trackByPallet" 
-            button [detail]="true" (click)="setSelectedPallet(pallet)"> 
+          <ion-item *cdkVirtualFor="let pallet of receivedPallets(); trackBy: trackByReceivedPallet" 
+            button [detail]="true" (click)="setSelectedReceivedPallet(pallet)"> 
             <ion-label>
               <strong>Pallet Number: {{ pallet.palletNumber }}</strong><br />
               <ion-text>Dig Date: {{ pallet.digDate | date: 'M/d/yyyy h:mm a' }}</ion-text><br />
@@ -33,12 +33,9 @@
             </ion-label>
             <ion-label class="metadata-end-wrapper" slot="end">
               <ion-note class="ion-text-wrap">
-                <ion-checkbox 
-                  [checked]="pallet.archive"
-                  [disabled]="false"
-                  (ionChange)="toggleArchiveStatus(pallet)">
-                </ion-checkbox>
-                Archived
+                <ion-chip [color]="pallet.palletReceived ? 'success' : 'warning'">
+                  {{ pallet.palletReceived ? 'Received' : 'Pending' }}
+                </ion-chip>
               </ion-note>
             </ion-label>
           </ion-item>

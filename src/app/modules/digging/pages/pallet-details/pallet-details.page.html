@@ -3,11 +3,9 @@
   <div id="content">
     @if (selectedPallet()) {
       <app-pallet-form
-        [formType]="'update'"
+        [formType]="'view'"
         [initialPallet]="selectedPallet()!"
-        (formUpdate)="onFormUpdate()"
-        (formDelete)="onFormDelete()"
-        (formCancel)="onFormCancel()">
+        (formUpdate)="onPalletFormUpdate()">
       </app-pallet-form>
     } @else {
       <ion-list>

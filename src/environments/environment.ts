@@ -11,8 +11,9 @@ export const environment = {
   azureInventoryTrackingApiScope: 'api://f0da2fd6-f1e6-4e8f-abc4-f904dec3ec56/ReadWriteInventoryDevData',
   //For Local Development
   //azureInventoryTrackingApiBaseUrl: 'https://localhost:44368/api/',
+  azureInventoryTrackingApiBaseUrl: 'http://localhost:5087/api/',
   //azureReportServiceBaseUrl: 'http://localhost:3000/',
   //For Testing Live API Locally
-  azureInventoryTrackingApiBaseUrl: 'https://mbn-inventory-api-dev.delightfulglacier-f4e73e43.westus3.azurecontainerapps.io/api/',
+  // azureInventoryTrackingApiBaseUrl: 'https://mbn-inventory-api-dev.delightfulglacier-f4e73e43.westus3.azurecontainerapps.io/api/',
   azureReportServiceBaseUrl: 'https://mbn-inventory-report-service-dev.delightfulglacier-f4e73e43.westus3.azurecontainerapps.io/',
 };

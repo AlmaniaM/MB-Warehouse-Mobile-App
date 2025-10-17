@@ -1,0 +1,156 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title size="small">{{ formTitle() }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+@if (isFetchingData()) {
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+}
+<ion-list lines="full">
+  <ion-item>
+    <ion-input label="Pallet Number" labelPlacement="stacked" 
+      [disabled]="isFetchingData()"
+      [readonly]="!isEditing()"
+      [(ngModel)]="palletNumber">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>Dig Date</ion-label>
+    <ion-datetime-button [disabled]="!isEditing()" datetime="digDate"></ion-datetime-button>
+    <ion-popover [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime id="digDate"
+          (ionChange)="digDateChanged($event)"
+          [value]="digDateIso()">
+        </ion-datetime>
+      </ng-template>
+    </ion-popover>
+  </ion-item>
+  <ion-item>
+    <ion-input label="Delivery Year" labelPlacement="stacked" 
+      type="number" inputmode="numeric"
+      [disabled]="isFetchingData()"
+      [readonly]="!isEditing()"
+      [(ngModel)]="deliveryYear">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-checkbox
+      [disabled]="isFetchingData() || !isEditing()"
+      [(ngModel)]="archive">
+      Archived
+    </ion-checkbox>
+  </ion-item>
+</ion-list>
+@if (formType() === 'new') {
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+    <ion-fab-button color="success" 
+      [disabled]="!updatedPalletIsValid() || isFetchingData()" 
+      (click)="createPallet()">
+      <ion-icon ios="checkmark-outline" md="checkmark-sharp"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+}
+@if (formType() === 'update') {
+  @if (!isEditing()) {
+    <ion-fab slot="fixed" horizontal="start" vertical="bottom">
+      <ion-fab-button [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="isDeleting.set(true)">
+        <ion-icon ios="trash-outline" md="trash-sharp"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-fab slot="fixed" [horizontal]="'end'" vertical="bottom">
+      <ion-fab-button [color]="'primary'"
+        [disabled]="isFetchingData()"
+        (click)="isEditing.set(true)">
+        <ion-icon [ios]="'pencil-outline'" [md]="'pencil-sharp'"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+  @if (isEditing()) {
+    <ion-fab slot="fixed" [horizontal]="'start'" vertical="bottom">
+      <ion-fab-button [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="resetForm(); isEditing.set(false)">
+        <ion-icon [ios]="'close-outline'" [md]="'close-sharp'"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+      <ion-fab-button color="success" 
+        [disabled]="!updatedPalletIsValid() || isFetchingData()" 
+        (click)="updatePallet()">
+        <ion-icon ios="checkmark-outline" md="checkmark-sharp"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+}
+@if (formType() === 'view') {
+  @if (!isEditing()) {
+    <ion-fab slot="fixed" horizontal="start" vertical="bottom">
+      <ion-fab-button [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="isDeleting.set(true)">
+        <ion-icon ios="trash-outline" md="trash-sharp"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-fab slot="fixed" [horizontal]="'end'" vertical="bottom">
+      <ion-fab-button [color]="'primary'"
+        [disabled]="isFetchingData()"
+        (click)="isEditing.set(true)">
+        <ion-icon [ios]="'pencil-outline'" [md]="'pencil-sharp'"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+  @if (isEditing()) {
+    <ion-fab slot="fixed" [horizontal]="'start'" vertical="bottom">
+      <ion-fab-button [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="resetForm(); isEditing.set(false)">
+        <ion-icon [ios]="'close-outline'" [md]="'close-sharp'"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+      <ion-fab-button color="success" 
+        [disabled]="!updatedPalletIsValid() || isFetchingData()" 
+        (click)="updatePallet()">
+        <ion-icon ios="checkmark-outline" md="checkmark-sharp"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+}
+
+<ion-modal aria-modal [isOpen]="isDeleting()" (didDismiss)="isDeleting.set(false)">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title size="small">Delete Pallet</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="isDeleting.set(false)">
+            <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-text>
+        <h4>You are about to delete this Pallet</h4>
+        <p>Are you sure you want to do this?</p>
+      </ion-text>
+    </ion-content>
+    <ion-footer class="ion-padding">
+      <ion-button expand="block" fill="outline" [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="isDeleting.set(false); deletePallet()">
+        Yes, Delete Pallet
+        <ion-icon slot="end" ios="trash-outline" md="trash-sharp"></ion-icon>
+      </ion-button>
+      <ion-button expand="block" fill="outline" 
+        [disabled]="isFetchingData()"
+        (click)="isDeleting.set(false)">
+        No, Cancel
+        <ion-icon slot="end" ios="close-outline" md="close-sharp"></ion-icon>
+      </ion-button>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

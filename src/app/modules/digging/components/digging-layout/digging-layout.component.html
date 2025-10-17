@@ -1,0 +1,14 @@
+<ion-tabs>
+  @if (!isInPalletPage() && !isInReportPage()) {
+    <ion-tab-bar slot="bottom" [color]="'primary'">
+      <ion-tab-button tab="pallets">
+        <ion-icon ios="cube-outline" md="cube-sharp"></ion-icon>
+        Pallets
+      </ion-tab-button>
+      <ion-tab-button tab="report">
+        <ion-icon ios="document-text-outline" md="document-text-sharp"></ion-icon>
+        Report
+      </ion-tab-button>
+    </ion-tab-bar>
+  }
+</ion-tabs>

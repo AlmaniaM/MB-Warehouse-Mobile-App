@@ -41,5 +41,6 @@ export class HomePage {
   appPages: AppPage[] = [
     { title: 'Budding', tabLabel: 'Budding', url: '/app/budding', fragment: '', icon: 'cube', isExternal: false, showInMenu: true },
     { title: 'Containers', tabLabel: 'Containers', url: '/app/container-tracking', fragment: '', icon: 'leaf', isExternal: false, showInMenu: true },
+    { title: 'Digging', tabLabel: 'Digging', url: '/app/digging', fragment: '', icon: 'hammer', isExternal: false, showInMenu: true },
   ];
 }

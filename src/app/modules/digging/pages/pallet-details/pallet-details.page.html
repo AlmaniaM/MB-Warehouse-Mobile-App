@@ -1,0 +1,20 @@
+<app-page-topbar title="Pallet Details"></app-page-topbar>
+<ion-content>
+  <div id="content">
+    @if (selectedPallet()) {
+      <app-pallet-form
+        [formType]="'view'"
+        [initialPallet]="selectedPallet()!"
+        (formUpdate)="onPalletFormUpdate()">
+      </app-pallet-form>
+    } @else {
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            No pallet selected
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    }
+  </div>
+</ion-content>

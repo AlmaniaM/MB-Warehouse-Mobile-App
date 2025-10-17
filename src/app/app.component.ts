@@ -48,6 +48,15 @@ import {
   arrowForwardCircleSharp,
   calculatorOutline,
   calculatorSharp,
+  hammerSharp,
+  hammerOutline,
+  documentTextSharp,
+  documentTextOutline,
+  chevronForwardSharp,
+  chevronForwardOutline,
+  chevronForward,
+  checkmark,
+  close,
 } from 'ionicons/icons';
 
 @Component({
@@ -108,7 +117,16 @@ export class AppComponent {
       arrowForwardCircleOutline,
       arrowForwardCircleSharp,
       calculatorOutline,
-      calculatorSharp
+      calculatorSharp,
+      hammerSharp,
+      hammerOutline,
+      documentTextSharp,
+      documentTextOutline,
+      chevronForwardSharp,
+      chevronForwardOutline,
+      chevronForward,
+      checkmark,
+      close
     });
   }
 }

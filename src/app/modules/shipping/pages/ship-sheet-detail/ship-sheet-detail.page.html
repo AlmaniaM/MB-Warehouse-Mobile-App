@@ -1,0 +1,12 @@
+<app-page-topbar title="Ship Sheet Detail"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Ship Sheet Detail" [showRefresher]="false"></app-content-topbar>
+  <div id="content">
+    <app-ship-sheet-detail-form
+      [formType]="'view'"
+      [initialShipSheetDetail]="selectedShipSheetDetail()"
+      (formUpdate)="onShipSheetDetailFormUpdate()"
+      (formDelete)="onShipSheetDetailFormDelete()">
+    </app-ship-sheet-detail-form>
+  </div>
+</ion-content>

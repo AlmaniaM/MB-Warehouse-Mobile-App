@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title size="small">{{ label() }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="selectionCancelledChanged.emit()">
+        <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar [(ngModel)]="searchFilter" placeholder="Search pallets..."></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">  
+  <ion-list>
+    @for (pallet of filteredPallets(); track pallet.palletKey) {
+      <ion-item>
+        <ion-checkbox [value]="pallet" 
+          [checked]="isChecked(pallet)"
+          (ionChange)="checkboxChange($event)">
+          <ion-label>
+            <strong>Pallet Number: {{ pallet.palletNumber }}</strong><br />
+            <ion-text>Dig Date: {{ pallet.digDate | date: 'MM/dd/yyyy' }}</ion-text><br />
+            <ion-text>Delivery Year: {{ pallet.deliveryYear }}</ion-text>
+          </ion-label>
+        </ion-checkbox>
+      </ion-item>
+    }
+    @if (filteredPallets().length === 0) {
+      <ion-item>
+        <ion-label>
+          <ion-text>No pallets found</ion-text>
+        </ion-label>
+      </ion-item>
+    }
+  </ion-list>
+</ion-content>
+<ion-footer class="ion-padding">
+  <ion-button expand="block" fill="outline" [color]="'success'"
+    [disabled]="selectedPallets().length === 0"
+    (click)="selectedPalletsChanged.emit(this.selectedPallets())">
+    Select ({{ selectedPallets().length }}) Pallets 
+    <ion-icon slot="end" ios="checkmark-outline" md="checkmark-sharp"></ion-icon>
+  </ion-button>
+  <ion-button expand="block" fill="outline" 
+    (click)="selectionCancelledChanged.emit()">
+    Cancel
+    <ion-icon slot="end" ios="close-outline" md="close-sharp"></ion-icon>
+  </ion-button>
+</ion-footer>

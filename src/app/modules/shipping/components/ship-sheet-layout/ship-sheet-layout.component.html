@@ -1,0 +1,14 @@
+<ion-tabs>
+  @if (!isInDetailPage()) {
+    <ion-tab-bar slot="bottom" [color]="'primary'">
+      <ion-tab-button (click)="goBack()">
+        <ion-icon ios="arrow-back-outline" md="arrow-back-sharp"></ion-icon>
+        Back
+      </ion-tab-button>
+      <ion-tab-button tab="sheet">
+        <ion-icon ios="document-text-outline" md="document-text-sharp"></ion-icon>
+        Sheet
+      </ion-tab-button>
+    </ion-tab-bar>
+  }
+</ion-tabs>

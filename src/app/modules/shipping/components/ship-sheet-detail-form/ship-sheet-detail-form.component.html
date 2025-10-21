@@ -1,0 +1,274 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title size="small">{{ formTitle() }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+@if (isFetchingData()) {
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+}
+
+<ion-list lines="full">
+  <ion-item button (click)="openVarietySelector()" [disabled]="isFetchingData() || !isEditing()">
+    <ion-label position="stacked">Variety</ion-label>
+    <ion-label slot="end">{{ getSelectedVarietyName() || 'Select Variety' }}</ion-label>
+    <ion-icon name="chevron-forward" slot="end"></ion-icon>
+  </ion-item>
+
+  <ion-item button (click)="openRootstockSelector()" [disabled]="isFetchingData() || !isEditing()">
+    <ion-label position="stacked">Rootstock</ion-label>
+    <ion-label slot="end">{{ getSelectedRootstockName() || 'Select Rootstock' }}</ion-label>
+    <ion-icon name="chevron-forward" slot="end"></ion-icon>
+  </ion-item>
+
+  <ion-item button (click)="openPlantedTypeSelector()" [disabled]="isFetchingData() || !isEditing()">
+    <ion-label position="stacked">Planted Type</ion-label>
+    <ion-label slot="end">{{ getSelectedPlantedTypeName() || 'Select Planted Type' }}</ion-label>
+    <ion-icon name="chevron-forward" slot="end"></ion-icon>
+  </ion-item>
+
+  <ion-item button (click)="openFieldSelector()" [disabled]="isFetchingData() || !isEditing()">
+    <ion-label position="stacked">Field</ion-label>
+    <ion-label slot="end">{{ getSelectedFieldName() || 'Select Field' }}</ion-label>
+    <ion-icon name="chevron-forward" slot="end"></ion-icon>
+  </ion-item>
+
+  <ion-item>
+    <ion-input 
+      label="Quantity" 
+      labelPlacement="stacked" 
+      type="number" 
+      inputmode="numeric"
+      [disabled]="isFetchingData()"
+      [readonly]="!isEditing()"
+      [(ngModel)]="quantity"
+      placeholder="Enter quantity">
+    </ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-input 
+      label="Note" 
+      labelPlacement="stacked" 
+      [disabled]="isFetchingData()"
+      [readonly]="!isEditing()"
+      [(ngModel)]="note"
+      placeholder="Enter note">
+    </ion-input>
+  </ion-item>
+
+  <ion-item button (click)="openDigTreeSizeSelector()" [disabled]="isFetchingData() || !isEditing()">
+    <ion-label position="stacked">Dig Tree Size</ion-label>
+    <ion-label slot="end">{{ getSelectedDigTreeSizeName() || 'Select Dig Tree Size' }}</ion-label>
+    <ion-icon name="chevron-forward" slot="end"></ion-icon>
+  </ion-item>
+
+  <ion-item button (click)="openContainerTypeSelector()" [disabled]="isFetchingData() || !isEditing()">
+    <ion-label position="stacked">Container Type</ion-label>
+    <ion-label slot="end">{{ getSelectedContainerTypeName() || 'Select Container Type' }}</ion-label>
+    <ion-icon name="chevron-forward" slot="end"></ion-icon>
+  </ion-item>
+
+  <ion-item>
+    <ion-input 
+      label="Pallet Number" 
+      labelPlacement="stacked" 
+      type="number" 
+      inputmode="numeric"
+      [disabled]="isFetchingData()"
+      [readonly]="!isEditing()"
+      [(ngModel)]="palletNumber"
+      placeholder="Enter pallet number">
+    </ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Is Shipped</ion-label>
+    <ion-toggle 
+      [disabled]="isFetchingData() || !isEditing()"
+      [(ngModel)]="isShipped"
+      slot="end">
+    </ion-toggle>
+  </ion-item>
+</ion-list>
+
+@if (formType() === 'new') {
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+    <ion-fab-button color="success" 
+      [disabled]="!updatedShipSheetDetailIsValid() || isFetchingData()" 
+      (click)="createShipSheetDetail()">
+      <ion-icon ios="checkmark-outline" md="checkmark-sharp"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+}
+
+@if (formType() === 'update') {
+  @if (!isEditing()) {
+    <ion-fab slot="fixed" horizontal="start" vertical="bottom">
+      <ion-fab-button [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="deleteShipSheetDetail()">
+        <ion-icon ios="trash-outline" md="trash-sharp"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-fab slot="fixed" [horizontal]="'end'" vertical="bottom">
+      <ion-fab-button [color]="'primary'"
+        [disabled]="isFetchingData()"
+        (click)="isEditing.set(true)">
+        <ion-icon [ios]="'pencil-outline'" [md]="'pencil-sharp'"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+  @if (isEditing()) {
+    <ion-fab slot="fixed" [horizontal]="'start'" vertical="bottom">
+      <ion-fab-button [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="resetForm(); isEditing.set(false)">
+        <ion-icon [ios]="'close-outline'" [md]="'close-sharp'"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+      <ion-fab-button color="success" 
+        [disabled]="!updatedShipSheetDetailIsValid() || isFetchingData()" 
+        (click)="updateShipSheetDetail()">
+        <ion-icon ios="checkmark-outline" md="checkmark-sharp"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+}
+
+@if (formType() === 'view') {
+  @if (!isEditing()) {
+    <ion-fab slot="fixed" horizontal="start" vertical="bottom">
+      <ion-fab-button [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="isDeleting.set(true)">
+        <ion-icon ios="trash-outline" md="trash-sharp"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-fab slot="fixed" [horizontal]="'end'" vertical="bottom">
+      <ion-fab-button [color]="'primary'"
+        [disabled]="isFetchingData()"
+        (click)="isEditing.set(true)">
+        <ion-icon [ios]="'pencil-outline'" [md]="'pencil-sharp'"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+  @if (isEditing()) {
+    <ion-fab slot="fixed" [horizontal]="'start'" vertical="bottom">
+      <ion-fab-button [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="resetForm(); isEditing.set(false)">
+        <ion-icon [ios]="'close-outline'" [md]="'close-sharp'"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+      <ion-fab-button color="success" 
+        [disabled]="!updatedShipSheetDetailIsValid() || isFetchingData()" 
+        (click)="updateShipSheetDetail()">
+        <ion-icon ios="checkmark-outline" md="checkmark-sharp"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+}
+
+<ion-modal [isOpen]="isVarietySelectorOpen()" (didDismiss)="isVarietySelectorOpen.set(false)">
+  <ng-template>
+    <app-variety-selector
+      [label]="'Variety'"
+      [selectMultiple]="false"
+      (selectedVarietiesChanged)="onVarietySelected($event)"
+      (selectionCancelledChanged)="isVarietySelectorOpen.set(false)">
+    </app-variety-selector>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="isRootstockSelectorOpen()" (didDismiss)="isRootstockSelectorOpen.set(false)">
+  <ng-template>
+    <app-rootstock-selector
+      [label]="'Rootstock'"
+      [selectMultiple]="false"
+      (selectedRootstocksChanged)="onRootstockSelected($event)"
+      (selectionCancelledChanged)="isRootstockSelectorOpen.set(false)">
+    </app-rootstock-selector>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="isPlantedTypeSelectorOpen()" (didDismiss)="isPlantedTypeSelectorOpen.set(false)">
+  <ng-template>
+    <app-planted-type-selector
+      [label]="'Planted Type'"
+      [selectMultiple]="false"
+      (selectedPlantedTypesChanged)="onPlantedTypeSelected($event)"
+      (selectionCancelledChanged)="isPlantedTypeSelectorOpen.set(false)">
+    </app-planted-type-selector>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="isFieldSelectorOpen()" (didDismiss)="isFieldSelectorOpen.set(false)">
+  <ng-template>
+    <app-planted-field-selector
+      [label]="'Field'"
+      [selectMultiple]="false"
+      (selectedPlantedFieldsChanged)="onFieldSelected($event)"
+      (selectionCancelledChanged)="isFieldSelectorOpen.set(false)">
+    </app-planted-field-selector>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="isDigTreeSizeSelectorOpen()" (didDismiss)="isDigTreeSizeSelectorOpen.set(false)">
+  <ng-template>
+    <app-dig-tree-size-selector
+      [label]="'Dig Tree Size'"
+      [selectMultiple]="false"
+      (selectedDigTreeSizesChanged)="onDigTreeSizeSelected($event)"
+      (selectionCancelledChanged)="isDigTreeSizeSelectorOpen.set(false)">
+    </app-dig-tree-size-selector>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="isContainerTypeSelectorOpen()" (didDismiss)="isContainerTypeSelectorOpen.set(false)">
+  <ng-template>
+    <app-container-type-selector
+      [label]="'Container Type'"
+      [selectMultiple]="false"
+      (selectedContainerTypesChanged)="onContainerTypeSelected($event)"
+      (selectionCancelledChanged)="isContainerTypeSelectorOpen.set(false)">
+    </app-container-type-selector>
+  </ng-template>
+</ion-modal>
+
+<ion-modal aria-modal [isOpen]="isDeleting()" (didDismiss)="isDeleting.set(false)">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title size="small">Delete Ship Sheet Detail</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="isDeleting.set(false)">
+            <ion-icon slot="icon-only" ios="close-outline" md="close-sharp"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-text>
+        <h4>You are about to delete this Ship Sheet Detail</h4>
+        <p>Are you sure you want to do this?</p>
+      </ion-text>
+    </ion-content>
+    <ion-footer class="ion-padding">
+      <ion-button expand="block" fill="outline" [color]="'danger'"
+        [disabled]="isFetchingData()"
+        (click)="isDeleting.set(false); deleteShipSheetDetail()">
+        Yes, Delete Ship Sheet Detail
+        <ion-icon slot="end" ios="trash-outline" md="trash-sharp"></ion-icon>
+      </ion-button>
+      <ion-button expand="block" fill="outline" 
+        [disabled]="isFetchingData()"
+        (click)="isDeleting.set(false)">
+        No, Cancel
+        <ion-icon slot="end" ios="close-outline" md="close-sharp"></ion-icon>
+      </ion-button>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

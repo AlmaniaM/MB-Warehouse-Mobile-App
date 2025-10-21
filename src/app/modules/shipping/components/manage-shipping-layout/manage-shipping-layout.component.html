@@ -1,0 +1,14 @@
+<ion-tabs>
+  @if (!isInShipSheetPage()) {
+    <ion-tab-bar slot="bottom" [color]="'primary'">
+      <ion-tab-button (click)="navigateToShippingSheets()">
+        <ion-icon ios="document-text-outline" md="document-text-sharp"></ion-icon>
+        Shipping Sheets
+      </ion-tab-button>
+      <ion-tab-button (click)="navigateToPullSheets()">
+        <ion-icon ios="list-outline" md="list-sharp"></ion-icon>
+        Pull Sheets
+      </ion-tab-button>
+    </ion-tab-bar>
+  }
+</ion-tabs>

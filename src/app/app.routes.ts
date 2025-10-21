@@ -191,6 +191,55 @@ export const routes: Routes = [
             ]
           }
         ]
+      },
+      {
+        path: 'shipping',
+        loadComponent: () => import('./modules/shipping/components/manage-shipping-layout/manage-shipping-layout.component').then(component => component.ManageShippingLayoutComponent),
+        children: [
+          {
+            path: '',
+            redirectTo: 'shipping-sheets',
+            pathMatch: 'full'
+          },
+          {
+            path: 'shipping-sheets',
+            loadComponent: () => import('./modules/shipping/pages/shipping-sheets/shipping-sheets.page').then(page => page.ShippingSheetsPage),
+          },
+          {
+            path: 'pull-sheets',
+            loadComponent: () => import('./modules/shipping/pages/pull-sheets/pull-sheets.page').then(page => page.PullSheetsPage)
+          },
+          {
+            path: 'ship-sheet',
+            loadComponent: () => import('./modules/shipping/components/ship-sheet-layout/ship-sheet-layout.component').then(component => component.ShipSheetLayoutComponent),
+            children: [
+              {
+                path: '',
+                redirectTo: 'sheet',
+                pathMatch: 'full'
+              },
+              {
+                path: 'sheet',
+                loadComponent: () => import('./modules/shipping/pages/ship-sheet/ship-sheet.page').then(page => page.ShipSheetPage)
+              },
+              {
+                path: 'detail',
+                loadComponent: () => import('./modules/shipping/components/ship-sheet-detail-layout/ship-sheet-detail-layout.component').then(component => component.ShipSheetDetailLayoutComponent),
+                children: [
+                  {
+                    path: '',
+                    redirectTo: 'details',
+                    pathMatch: 'full'
+                  },
+                  {
+                    path: 'details',
+                    loadComponent: () => import('./modules/shipping/pages/ship-sheet-detail/ship-sheet-detail.page').then(page => page.ShipSheetDetailPage)
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ]
   },

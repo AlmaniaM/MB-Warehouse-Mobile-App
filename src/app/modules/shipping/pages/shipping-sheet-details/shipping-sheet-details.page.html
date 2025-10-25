@@ -1,0 +1,21 @@
+<app-page-topbar title="Shipping Sheet Details"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Edit Shipping Sheet" [showRefresher]="true"></app-content-topbar>
+  <div id="content">
+    @if (selectedShippingSheet()) {
+      <app-shipping-sheet-form
+        [formType]="'view'"
+        [initialShippingSheet]="selectedShippingSheet()!"
+        (formUpdate)="onShippingSheetFormUpdate()">
+      </app-shipping-sheet-form>
+    } @else {
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            No shipping sheet selected
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    }
+  </div>
+</ion-content>

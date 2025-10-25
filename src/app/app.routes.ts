@@ -191,6 +191,59 @@ export const routes: Routes = [
             ]
           }
         ]
+      },
+      {
+        path: 'shipping',
+        loadComponent: () => import('./modules/shipping/components/manage-shipping-layout/manage-shipping-layout.component').then(component => component.ManageShippingLayoutComponent),
+        children: [
+          {
+            path: '',
+            redirectTo: 'shipping-sheets',
+            pathMatch: 'full'
+          },
+          {
+            path: 'shipping-sheets',
+            loadComponent: () => import('./modules/shipping/pages/shipping-sheets/shipping-sheets.page').then(page => page.ShippingSheetsPage),
+          },
+          {
+            path: 'pull-sheets',
+            loadComponent: () => import('./modules/shipping/pages/pull-sheets/pull-sheets.page').then(page => page.PullSheetsPage)
+          },
+          {
+            path: 'shipping-sheet',
+            loadComponent: () => import('./modules/shipping/components/shipping-sheet-layout/shipping-sheet-layout.component').then(component => component.ShippingSheetLayoutComponent),
+            children: [
+              {
+                path: '',
+                redirectTo: 'sheet',
+                pathMatch: 'full'
+              },
+              {
+                path: 'sheet',
+                loadComponent: () => import('./modules/shipping/pages/shipping-sheet/shipping-sheet.page').then(page => page.ShippingSheetPage)
+              },
+              {
+                path: 'details',
+                loadComponent: () => import('./modules/shipping/pages/shipping-sheet-details/shipping-sheet-details.page').then(page => page.ShippingSheetDetailsPage)
+              },
+              {
+                path: 'content',
+                loadComponent: () => import('./modules/shipping/components/shipping-sheet-content-layout/shipping-sheet-content-layout.component').then(component => component.ShippingSheetContentLayoutComponent),
+                children: [
+                  {
+                    path: '',
+                    redirectTo: 'details',
+                    pathMatch: 'full'
+                  },
+                  {
+                    path: 'details',
+                    loadComponent: () => import('./modules/shipping/pages/shipping-sheet-content/shipping-sheet-content.page').then(page => page.ShippingSheetContentPage)
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ]
   },

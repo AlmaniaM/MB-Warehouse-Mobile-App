@@ -1,0 +1,17 @@
+#content {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+ion-searchbar {
+  padding-top: 15px;
+}
+cdk-virtual-scroll-viewport {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+}
+#shipping-sheet-details-list {
+  height: 100%;
+  width: 100%;
+}

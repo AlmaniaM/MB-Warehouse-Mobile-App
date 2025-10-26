@@ -1,0 +1,19 @@
+<ion-tabs>
+  @if (isInPullSheetPage()) {
+    <ion-tab-bar slot="bottom" [color]="'primary'">
+      <ion-tab-button (click)="goBack()">
+        <ion-icon ios="arrow-back-outline" md="arrow-back-sharp"></ion-icon>
+        Back
+      </ion-tab-button>
+      <ion-tab-button tab="content">
+        <ion-icon ios="document-text-outline" md="document-text-sharp"></ion-icon>
+        Content
+      </ion-tab-button>
+      <ion-tab-button tab="details">
+        <ion-icon ios="pencil-outline" md="pencil-sharp"></ion-icon>
+        Details
+      </ion-tab-button>
+    </ion-tab-bar>
+  }
+  <ion-router-outlet></ion-router-outlet>
+</ion-tabs>

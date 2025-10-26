@@ -1,0 +1,69 @@
+<app-page-topbar title="Pull Sheet Shipment Summary"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Pull Sheet Shipment Summary" [showRefresher]="false"></app-content-topbar>
+  <div id="content">
+    @if (isLoading()) {
+      <ion-progress-bar type="indeterminate"></ion-progress-bar>
+    }
+    
+    @if (selectedPullSheetMain()) {
+      <ion-list lines="full">
+        <!-- Header Section -->
+        <ion-item>
+          <ion-label>
+            <strong>Pull Sheet Number: {{ selectedPullSheetMain()!.pullSheetNumber }}</strong><br />
+            <ion-text>Customer: {{ customer()?.name || 'Unknown Customer' }}</ion-text>
+          </ion-label>
+          <ion-button slot="end" fill="outline" (click)="navigateToDetails()">
+            View Details
+          </ion-button>
+        </ion-item>
+
+        <!-- Pull Sheet Detail Item -->
+        @if (pullSheetDetails() && pullSheetDetails()!.length > 0) {
+          @for (detail of pullSheetDetails(); track trackByDetail($index, detail)) {
+            <ion-item>
+              <ion-label>
+                <strong>{{ detail.varietyName || 'Unknown Variety' }}</strong><br />
+                <ion-text>Rootstock: {{ detail.rootstockName || 'Unknown Rootstock' }}</ion-text><br />
+                <ion-text>Size: {{ detail.sizeName || 'Unknown Size' }}</ion-text><br />
+                <ion-text>Tree Type: {{ detail.treeTypeName || 'Unknown Tree Type' }}</ion-text><br />
+                <ion-text>Field: {{ detail.fieldName || 'Unknown Field' }}</ion-text>
+              </ion-label>
+            </ion-item>
+          }
+        } @else {
+          <ion-item>
+            <ion-label>
+              <ion-text>No pull sheet details found</ion-text>
+            </ion-label>
+          </ion-item>
+        }
+
+        <!-- Counts Section -->
+        <ion-item>
+          <ion-label>
+            <strong>Ordered: {{ orderedCount() }}</strong><br />
+            <ion-text>Shipped: {{ shippedCount() }}</ion-text><br />
+            <ion-text>Remaining: {{ remainingCount() }}</ion-text>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    } @else {
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <ion-text>No pull sheet selected</ion-text>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    }
+  </div>
+</ion-content>
+
+<!-- FAB Button for View Ship Sheets (placeholder) -->
+<ion-fab slot="fixed" horizontal="end" vertical="bottom">
+  <ion-fab-button color="primary" (click)="onViewShipSheets()">
+    <ion-icon ios="eye-outline" md="eye-sharp"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

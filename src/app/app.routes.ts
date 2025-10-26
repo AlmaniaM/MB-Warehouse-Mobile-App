@@ -242,6 +242,25 @@ export const routes: Routes = [
                 ]
               }
             ]
+          },
+          {
+            path: 'pull-sheet',
+            loadComponent: () => import('./modules/shipping/components/pull-sheet-layout/pull-sheet-layout.component').then(component => component.PullSheetLayoutComponent),
+            children: [
+              {
+                path: '',
+                redirectTo: 'content',
+                pathMatch: 'full'
+              },
+              {
+                path: 'content',
+                loadComponent: () => import('./modules/shipping/pages/pull-sheet-content/pull-sheet-content.page').then(page => page.PullSheetContentPage)
+              },
+              {
+                path: 'details',
+                loadComponent: () => import('./modules/shipping/pages/pull-sheet-details/pull-sheet-details.page').then(page => page.PullSheetDetailsPage)
+              }
+            ]
           }
         ]
       }

@@ -61,6 +61,8 @@ import {
   boatOutline,
   cameraOutline,
   cameraSharp,
+  chevronDownOutline,
+  chevronDownSharp,
 } from 'ionicons/icons';
 
 @Component({
@@ -135,6 +137,8 @@ export class AppComponent {
       boatOutline,
       cameraSharp,
       cameraOutline,
+      chevronDownSharp,
+      chevronDownOutline,
     });
   }
 }

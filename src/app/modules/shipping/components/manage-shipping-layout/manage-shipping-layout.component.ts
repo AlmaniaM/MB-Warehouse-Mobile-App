@@ -13,6 +13,8 @@ import {
 import { SelectedShippingSheetService } from 'src/app/modules/shipping/services/selected-shipping-sheet.service';
 import { ShippingSheet, ShippingSheetService } from 'src/app/modules/shipping/services/shipping-sheet.service';
 import { ShippingSheetDetailService } from 'src/app/modules/shipping/services/shipping-sheet-detail.service';
+import { PullSheetMainService } from 'src/app/modules/shipping/services/pull-sheet-main.service';
+import { PullSheetDetailService } from 'src/app/modules/shipping/services/pull-sheet-detail.service';
 import { VarietyService } from 'src/app/modules/sourcelists/services/variety.service';
 import { RootstockService } from 'src/app/modules/sourcelists/services/rootstock.service';
 import { PlantedTypeService } from 'src/app/modules/sourcelists/services/planted-type.service';
@@ -46,6 +48,8 @@ export class ManageShippingLayoutComponent {
 
   shippingSheetService: ShippingSheetService = inject(ShippingSheetService);
   shippingSheetDetailService: ShippingSheetDetailService = inject(ShippingSheetDetailService);
+  pullSheetMainService: PullSheetMainService = inject(PullSheetMainService);
+  pullSheetDetailService: PullSheetDetailService = inject(PullSheetDetailService);
   varietyService: VarietyService = inject(VarietyService);
   rootstockService: RootstockService = inject(RootstockService);
   plantedTypeService: PlantedTypeService = inject(PlantedTypeService);
@@ -64,11 +68,11 @@ export class ManageShippingLayoutComponent {
 
 
   navigateToShippingSheets() {
-    this.router.navigate(['/app/shipping/manage/shipping-sheets']);
+    this.router.navigate(['/app/shipping/shipping-sheets']);
   }
 
   navigateToPullSheets() {
-    this.router.navigate(['/app/shipping/manage/pull-sheets']);
+    this.router.navigate(['/app/shipping/pull-sheets']);
   }
 
   setSelectedShippingSheet(shippingSheet: ShippingSheet) {
@@ -79,6 +83,8 @@ export class ManageShippingLayoutComponent {
   constructor() {
     this.shippingSheetService.getAllShippingSheets();
     this.shippingSheetDetailService.getAllShippingSheetDetails();
+    this.pullSheetMainService.getAllPullSheetMains();
+    this.pullSheetDetailService.getAllPullSheetDetails();
     this.varietyService.getVarieties();
     this.rootstockService.getRootstocks();
     this.plantedTypeService.getPlantedTypes();

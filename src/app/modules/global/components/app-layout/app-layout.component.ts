@@ -58,6 +58,7 @@ export class AppLayoutComponent {
     { title: 'Budding', tabLabel: 'Budding', url: '/app/budding', fragment: '', icon: 'leaf', isExternal: false, showInMenu: true },
     { title: 'Containers', tabLabel: 'Containers', url: '/app/container-tracking', fragment: '', icon: 'cube', isExternal: false, showInMenu: true },
     { title: 'Digging', tabLabel: 'Digging', url: '/app/digging', fragment: '', icon: 'hammer', isExternal: false, showInMenu: true },
+    { title: 'Shipping', tabLabel: 'Shipping', url: '/app/shipping', fragment: '', icon: 'boat', isExternal: false, showInMenu: true },
   ];
 
   azureAuthService: AzureAuthenticationService = inject(AzureAuthenticationService);

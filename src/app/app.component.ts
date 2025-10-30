@@ -57,6 +57,10 @@ import {
   chevronForward,
   checkmark,
   close,
+  boatSharp,
+  boatOutline,
+  cameraOutline,
+  cameraSharp,
 } from 'ionicons/icons';
 
 @Component({
@@ -126,7 +130,11 @@ export class AppComponent {
       chevronForwardOutline,
       chevronForward,
       checkmark,
-      close
+      close,
+      boatSharp,
+      boatOutline,
+      cameraSharp,
+      cameraOutline,
     });
   }
 }

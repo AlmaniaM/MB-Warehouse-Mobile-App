@@ -23,10 +23,10 @@ Portal/Report Service Updates
 - Report Service not in PDT/PST local time, now is
 - Shipping Sheet Report customer name bug fix
 - Recieved Roots table archive checkbox bug fix
-- Couple format refinements in Pull/Ship Sheet reports
+- Couple format refinements in Pull/Shipping Sheet reports
 - Added page numbers to report PDFs
 - Added quantity "Sum" headers to several tables 
-- Changed location of inspection label on Ship Sheet report
+- Changed location of inspection label on Shipping Sheet report
 - Pallet table archive checkbox bug fix
 - Pull Sheet version number not increasing in Pull Sheet Form component
 - Money formatting refinement

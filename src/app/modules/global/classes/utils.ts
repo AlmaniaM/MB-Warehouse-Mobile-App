@@ -1,6 +1,16 @@
 import { Signal, signal, effect } from "@angular/core";
 
 export class Utils {
+  static yearFromDate(date: Date): string {
+    if (!date) {
+      return '';
+    }
+    if (isNaN(date.getTime())) {
+      return '';
+    }
+    
+    return date.getFullYear().toString();
+  }
 
   static generateUUID(characterLength: number = 12): string { 
     return crypto.randomUUID().slice(0, characterLength);

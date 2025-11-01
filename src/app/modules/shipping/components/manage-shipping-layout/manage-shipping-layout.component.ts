@@ -40,10 +40,11 @@ export class ManageShippingLayoutComponent {
   router: Router = inject(Router);
 	routerNavigationEvent: Signal<RouterEvent | null> = toSignal(this.router.events.pipe(filter(event => event instanceof NavigationEnd)), { initialValue: null });
 
-  isInShippingSheetPage: Signal<boolean> = computed<boolean>(() => { 
+  isInManageShippingPage: Signal<boolean> = computed<boolean>(() => { 
     if (this.routerNavigationEvent() === null) { return false; }
     const url = (this.routerNavigationEvent() as NavigationEnd).urlAfterRedirects;
-    return url.includes('/shipping-sheet/');
+    const urlSegments = url.split('/').filter(segment => segment.length);
+    return (urlSegments.includes('shipping-sheets') || urlSegments.includes('pull-sheets')) && urlSegments.length < 4;
   });
 
   shippingSheetService: ShippingSheetService = inject(ShippingSheetService);

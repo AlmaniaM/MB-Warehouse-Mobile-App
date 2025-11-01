@@ -1,46 +1,56 @@
 <app-page-topbar title="Pull Sheet Details"></app-page-topbar>
 <ion-content>
-  <app-content-topbar title="Pull Sheet Details" [showRefresher]="false"></app-content-topbar>
+  <app-content-topbar title="Pull Sheet Details" role="banner" [showRefresher]="false"></app-content-topbar>
   <div id="content">
-    @if (isLoading()) {
-      <ion-progress-bar type="indeterminate"></ion-progress-bar>
-    }
-    
     @if (selectedPullSheetMain()) {
-      <ion-list lines="full">
-        <!-- Pull Sheet Information -->
-        <ion-item>
-          <ion-label>
-            <strong>Pull Sheet Number: {{ selectedPullSheetMain()!.pullSheetNumber }}</strong><br />
-            <ion-text>Customer: {{ customer()?.name || 'Unknown Customer' }}</ion-text><br />
-            <ion-text>Pickup Date: {{ selectedPullSheetMain()!.pickupDate | date: 'M/d/yyyy h:mm a' }}</ion-text><br />
-            <ion-text>Version Number: {{ selectedPullSheetMain()!.versionNumber || 'N/A' }}</ion-text>
-          </ion-label>
-        </ion-item>
-
-        <!-- Order Fully Shipped -->
-        <ion-item>
-          <ion-label>
-            <strong>Order Fully Shipped</strong>
-          </ion-label>
-          <ion-checkbox 
-            slot="end" 
-            [checked]="selectedPullSheetMain()!.orderFullyShipped" 
-            [disabled]="true">
-          </ion-checkbox>
-        </ion-item>
-
-        <!-- Special Instructions -->
-        @if (selectedPullSheetMain()!.specialInstructions) {
+      <ion-header>
+        <ion-list>
           <ion-item>
             <ion-label>
-              <strong>Special Instructions</strong><br />
-              <ion-text>{{ selectedPullSheetMain()!.specialInstructions }}</ion-text>
+              <strong>Pull Sheet Number: {{ selectedPullSheetMain()!.pullSheetNumber }}</strong>
             </ion-label>
           </ion-item>
-        }
-
-        <!-- Pull Sheet Detail Items -->
+          <ion-item>
+            <ion-label>
+              <ion-text><strong>Customer:</strong> {{ customer()?.name || 'Unknown Customer' }}</ion-text>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <ion-text><strong>Pickup Date:</strong> {{ selectedPullSheetMain()!.pickupDate | date: 'M/d/yyyy h:mm a' }}</ion-text>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <ion-text><strong>Version Number:</strong> {{ selectedPullSheetMain()!.versionNumber || 'N/A' }}</ion-text>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <ion-text><strong>Order Fully Shipped:</strong></ion-text>
+            </ion-label>
+            <ion-checkbox 
+              slot="end" 
+              [checked]="selectedPullSheetMain()!.orderFullyShipped" 
+              [disabled]="true">
+            </ion-checkbox>
+          </ion-item>
+  
+          @if (selectedPullSheetMain()!.specialInstructions) {
+            <ion-item lines="none">
+              <ion-text><strong>Special Instructions:</strong></ion-text>
+            </ion-item>
+            <ion-item>
+              <ion-text readonly>{{ selectedPullSheetMain()!.specialInstructions }}</ion-text>
+            </ion-item>
+          }
+        </ion-list>
+      </ion-header>
+      @if (isLoading()) {
+        <ion-progress-bar type="indeterminate"></ion-progress-bar>
+      }
+      
+      <ion-list lines="full">
         @if (pullSheetDetails() && pullSheetDetails()!.length > 0) {
           @for (detail of pullSheetDetails(); track trackByDetail($index, detail)) {
             <ion-item>

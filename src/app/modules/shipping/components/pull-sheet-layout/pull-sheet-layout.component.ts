@@ -53,12 +53,14 @@ export class PullSheetLayoutComponent {
   isInPullSheetPage: Signal<boolean> = computed<boolean>(() => { 
     if (this.routerNavigationEvent() === null) { return false; }
     const url = (this.routerNavigationEvent() as NavigationEnd).urlAfterRedirects;
-    return url.includes('/pull-sheet/content') || url.includes('/pull-sheet/details');
+    return url.includes('/pull-sheet/summary') || 
+           url.includes('/pull-sheet/shipping-sheets') ||
+           url.includes('/pull-sheet/details');
   });
   
   goBack() {
     this.selectedPullSheetMainService.setPullSheetMain(null);
-    this.router.navigate(['/app/shipping']);
+    this.router.navigate(['/app/shipping/pull-sheets']);
   }
 
   constructor() {

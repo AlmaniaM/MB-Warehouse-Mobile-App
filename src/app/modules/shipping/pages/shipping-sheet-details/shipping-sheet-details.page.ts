@@ -10,7 +10,8 @@ import {
   IonContent,
   IonList,
   IonItem,
-  IonLabel
+  IonLabel,
+  NavController
 } from '@ionic/angular/standalone';
 
 import { ShippingSheet, ShippingSheetService } from 'src/app/modules/shipping/services/shipping-sheet.service';
@@ -37,13 +38,14 @@ export class ShippingSheetDetailsPage {
   
   shippingSheetService: ShippingSheetService = inject(ShippingSheetService);
   selectedShippingSheetService: SelectedShippingSheetService = inject(SelectedShippingSheetService);
+  private navController: NavController = inject(NavController);
   
   selectedShippingSheet: Signal<ShippingSheet | null> = toSignal(this.selectedShippingSheetService.selectedShippingSheet$, { initialValue: null });
 
   shippingSheetServicePreviousDataOperationEffect = effect(() => {
     if (this.shippingSheetService.previousDataOperationSubject.value === 'deleted') {
       this.selectedShippingSheetService.setShippingSheet(null);
-      window.history.back();
+      this.navController.back();
     }
   });
 

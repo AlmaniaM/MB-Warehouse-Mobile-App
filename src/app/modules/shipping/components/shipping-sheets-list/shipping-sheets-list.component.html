@@ -1,0 +1,41 @@
+@if (shippingSheetsDisplay().length === 0) {
+  @if (isFetchingData()) {
+    <ion-progress-bar type="indeterminate"></ion-progress-bar>
+    <ion-list>
+      <ion-item>
+        <ion-label>
+          Loading Shipping Sheets... 
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  } @else {
+    <ion-list>
+      <ion-item>
+        <ion-label>
+          No Shipping Sheets Found... 
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  }
+} @else {
+  <cdk-virtual-scroll-viewport class="ion-content-scroll-host" [itemSize]="78" [minBufferPx]="960" [maxBufferPx]="1440">
+    <ion-list id="shipping-sheets-list">
+      <ion-item *cdkVirtualFor="let shippingSheetDisplay of shippingSheetsDisplay(); trackBy: trackByShippingSheet" 
+        button [detail]="true" (click)="onShippingSheetClick(shippingSheetDisplay)"> 
+        <ion-label>
+          <strong>Shipment #{{ shippingSheetDisplay.shipmentNum }} - {{ shippingSheetDisplay.shipmentYear }}</strong><br />
+          <ion-text>Date: {{ shippingSheetDisplay.shipmentDate | date: 'M/d/yyyy h:mm a' }}</ion-text><br />
+          <ion-text>Customer: {{ shippingSheetDisplay.customerName }}</ion-text>
+        </ion-label>
+        <ion-label class="metadata-end-wrapper" slot="end">
+          <ion-note class="ion-text-wrap">
+            <ion-chip [color]="shippingSheetDisplay.isShipped ? 'success' : 'warning'">
+              {{ shippingSheetDisplay.isShipped ? 'Shipped' : 'Pending' }}
+            </ion-chip>
+          </ion-note>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </cdk-virtual-scroll-viewport>
+}
+

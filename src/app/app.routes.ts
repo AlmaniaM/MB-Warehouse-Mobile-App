@@ -249,12 +249,16 @@ export const routes: Routes = [
             children: [
               {
                 path: '',
-                redirectTo: 'content',
+                redirectTo: 'summary',
                 pathMatch: 'full'
               },
               {
-                path: 'content',
+                path: 'summary',
                 loadComponent: () => import('./modules/shipping/pages/pull-sheet-content/pull-sheet-content.page').then(page => page.PullSheetContentPage)
+              },
+              {
+                path: 'shipping-sheets',
+                loadComponent: () => import('./modules/shipping/pages/pull-sheet-shipping-sheets/pull-sheet-shipping-sheets.page').then(page => page.PullSheetShippingSheetsPage)
               },
               {
                 path: 'details',

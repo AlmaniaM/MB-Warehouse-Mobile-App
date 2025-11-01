@@ -18,9 +18,10 @@ import {
   IonText,
   IonChip,
   IonFab,
-  IonFabButton,
   IonProgressBar,
-  IonButton
+  IonFooter,
+  IonToolbar,
+  IonTitle
 } from '@ionic/angular/standalone';
 
 import { PullSheetMain, PullSheetMainService } from 'src/app/modules/shipping/services/pull-sheet-main.service';
@@ -48,9 +49,10 @@ import { ContentTopbarComponent } from 'src/app/modules/global/components/conten
     IonText,
     IonChip,
     IonFab,
-    IonFabButton,
     IonProgressBar,
-    IonButton,
+    IonFooter,
+    IonToolbar,
+    IonTitle,
     PageTopbarComponent,
     ContentTopbarComponent,
   ]
@@ -112,10 +114,6 @@ export class PullSheetContentPage {
 
   setSelectedPullSheetDetail(detail: PullSheetDetailDisplay) {
     this.selectedPullSheetDetailService.setPullSheetDetail(detail);
-  }
-
-  navigateToDetails() {
-    this.router.navigate(['/app/shipping/pull-sheet/details']);
   }
 
   onViewShipSheets() {

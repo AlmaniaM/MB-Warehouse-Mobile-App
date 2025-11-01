@@ -2,7 +2,7 @@
 <ion-content>
   <app-content-topbar title="Pull Sheets" [showRefresher]="true"></app-content-topbar>
   <div id="content">
-    @if (pullSheetMains().length === 0) {
+    @if (pullSheetMainsDisplay().length === 0) {
       @if (isFetchingData()) {
         <ion-progress-bar type="indeterminate"></ion-progress-bar>
         <ion-list>
@@ -24,12 +24,12 @@
     } @else {
       <cdk-virtual-scroll-viewport class="ion-content-scroll-host" [itemSize]="78" [minBufferPx]="960" [maxBufferPx]="1440">
         <ion-list id="pull-sheets-list">
-          <ion-item *cdkVirtualFor="let pullSheetMain of pullSheetMains(); trackBy: trackByPullSheetMain" 
+          <ion-item *cdkVirtualFor="let pullSheetMain of pullSheetMainsDisplay(); trackBy: trackByPullSheetMain" 
             button [detail]="true" (click)="setSelectedPullSheetMain(pullSheetMain)"> 
             <ion-label>
               <strong>Number: {{ pullSheetMain.pullSheetNumber }}</strong><br />
               <ion-text>Pick Up Date: {{ pullSheetMain.pickupDate | date: 'M/d/yyyy h:mm a' }}</ion-text><br />
-              <ion-text>Customer: {{ pullSheetMain.customerId }}</ion-text>
+              <ion-text id="customer-name">Customer: {{ pullSheetMain.customerName }}</ion-text>
             </ion-label>
             <ion-label class="metadata-end-wrapper" slot="end">
               <ion-note class="ion-text-wrap">

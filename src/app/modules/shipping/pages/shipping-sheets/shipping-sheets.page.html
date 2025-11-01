@@ -1,49 +1,7 @@
 <app-page-topbar title="All Shipping Sheets"></app-page-topbar>
 <ion-content>
-  <app-content-topbar title="Shipping Sheets" [showRefresher]="true"></app-content-topbar>
-  <div id="content">
-    @if (shippingSheets().length === 0) {
-      @if (isFetchingData()) {
-        <ion-progress-bar type="indeterminate"></ion-progress-bar>
-        <ion-list>
-          <ion-item>
-            <ion-label>
-              Loading Shipping Sheets... 
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      } @else {
-        <ion-list>
-          <ion-item>
-            <ion-label>
-              No Shipping Sheets Found... 
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      }
-    } @else {
-      <cdk-virtual-scroll-viewport class="ion-content-scroll-host" [itemSize]="78" [minBufferPx]="960" [maxBufferPx]="1440">
-        <ion-list id="shipping-sheets-list">
-          <ion-item *cdkVirtualFor="let shippingSheet of shippingSheets(); trackBy: trackByShippingSheet" 
-            button [detail]="true" (click)="setSelectedShippingSheet(shippingSheet)"> 
-            <ion-label>
-              <strong>Shipment #{{ shippingSheet.shipmentNum }} - {{ shippingSheet.shipmentYear }}</strong><br />
-              <ion-text>Date: {{ shippingSheet.shipmentDate | date: 'M/d/yyyy h:mm a' }}</ion-text><br />
-              <ion-text>Customer ID: {{ shippingSheet.customerId || 'N/A' }}</ion-text>
-            </ion-label>
-            <ion-label class="metadata-end-wrapper" slot="end">
-              <ion-note class="ion-text-wrap">
-                <ion-chip [color]="shippingSheet.isShipped ? 'success' : 'warning'">
-                  {{ shippingSheet.isShipped ? 'Shipped' : 'Pending' }}
-                </ion-chip>
-              </ion-note>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </cdk-virtual-scroll-viewport>
-    }
-  </div>
-</ion-content>
+  <app-content-topbar title="Shipping Sheets" [showRefresher]="true" />
+  <app-shipping-sheets-list (shippingSheetClick)="onShippingSheetClick($event)" />
 <ion-fab slot="fixed" horizontal="end" vertical="bottom">
   <ion-fab-button color="success" (click)="isCreatingShippingSheet.set(true)">
     <ion-icon ios="add-outline" md="add-sharp"></ion-icon>

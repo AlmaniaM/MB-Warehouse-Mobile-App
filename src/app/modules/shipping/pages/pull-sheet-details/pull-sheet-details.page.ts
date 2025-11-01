@@ -15,7 +15,12 @@ import {
   IonNote,
   IonText,
   IonCheckbox,
-  IonProgressBar
+  IonProgressBar,
+  IonHeader,
+  IonFooter,
+  IonToolbar,
+  IonTitle,
+  IonChip,
 } from '@ionic/angular/standalone';
 
 import { PullSheetMain, PullSheetMainService } from 'src/app/modules/shipping/services/pull-sheet-main.service';
@@ -42,6 +47,11 @@ import { ContentTopbarComponent } from 'src/app/modules/global/components/conten
     IonText,
     IonCheckbox,
     IonProgressBar,
+    IonHeader,
+    IonFooter,
+    IonToolbar,
+    IonTitle,
+    IonChip,
     PageTopbarComponent,
     ContentTopbarComponent,
   ]
@@ -74,13 +84,12 @@ export class PullSheetDetailsPage {
            mainStatus === 'deleting';
   });
 
-  // Customer name resolution
-  customers: Signal<Customer[] | null> = toSignal(this.customerService.customers, { initialValue: null });
   customer: Signal<Customer | null> = computed(() => {
     const selectedPullSheet = this.selectedPullSheetMain();
-    const customerList = this.customers();
-    if (!selectedPullSheet || !customerList) { return null; }
-    return customerList.find(c => c.id === selectedPullSheet.customerId) || null;
+    const customersMap = this.customerService.customersMap();
+    if (!selectedPullSheet || !customersMap) { return null; }
+    
+    return customersMap.get(selectedPullSheet.customerId!) || null;
   });
 
   trackByDetail(index: number, detail: PullSheetDetailDisplay) {

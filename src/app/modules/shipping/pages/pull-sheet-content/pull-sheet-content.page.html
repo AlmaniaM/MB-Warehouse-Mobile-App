@@ -14,9 +14,6 @@
             <strong>Pull Sheet Number: {{ selectedPullSheetMain()!.pullSheetNumber }}</strong><br />
             <ion-text>Customer: {{ customer()?.name || 'Unknown Customer' }}</ion-text>
           </ion-label>
-          <ion-button slot="end" fill="outline" (click)="navigateToDetails()">
-            View Details
-          </ion-button>
         </ion-item>
 
         <!-- Pull Sheet Detail Item -->
@@ -39,15 +36,6 @@
             </ion-label>
           </ion-item>
         }
-
-        <!-- Counts Section -->
-        <ion-item>
-          <ion-label>
-            <strong>Ordered: {{ orderedCount() }}</strong><br />
-            <ion-text>Shipped: {{ shippedCount() }}</ion-text><br />
-            <ion-text>Remaining: {{ remainingCount() }}</ion-text>
-          </ion-label>
-        </ion-item>
       </ion-list>
     } @else {
       <ion-list>
@@ -60,10 +48,33 @@
     }
   </div>
 </ion-content>
-
-<!-- FAB Button for View Ship Sheets (placeholder) -->
-<ion-fab slot="fixed" horizontal="end" vertical="bottom">
-  <ion-fab-button color="primary" (click)="onViewShipSheets()">
-    <ion-icon ios="eye-outline" md="eye-sharp"></ion-icon>
-  </ion-fab-button>
-</ion-fab>
+<ion-footer>
+  <ion-toolbar>
+    <ion-item lines="none">
+      <ion-label>
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+          <ion-chip [color]="orderedCount() > 0 ? 'success' : 'danger'" style="margin-bottom: 8px;">
+            {{ orderedCount().toLocaleString() }}
+          </ion-chip>
+          <strong>Ordered</strong>
+        </div>
+      </ion-label>
+      <ion-label>
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+          <ion-chip [color]="shippedCount() > 0 ? 'success' : 'danger'" style="margin-bottom: 8px;">
+            {{ shippedCount().toLocaleString() }}
+          </ion-chip>
+          <strong>Shipped</strong>
+        </div>
+      </ion-label>
+      <ion-label>
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+          <ion-chip [color]="remainingCount() > 0 ? 'success' : 'danger'" style="margin-bottom: 8px;">
+            {{ remainingCount().toLocaleString() }}
+          </ion-chip>
+          <strong>Remaining</strong>
+        </div>
+      </ion-label>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

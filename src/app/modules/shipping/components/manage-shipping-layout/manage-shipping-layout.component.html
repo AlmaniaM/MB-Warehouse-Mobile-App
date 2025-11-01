@@ -1,5 +1,5 @@
 <ion-tabs>
-  @if (!isInShippingSheetPage()) {
+  @if (isInManageShippingPage()) {
     <ion-tab-bar slot="bottom" [color]="'primary'">
       <ion-tab-button (click)="navigateToShippingSheets()">
         <ion-icon ios="document-text-outline" md="document-text-sharp"></ion-icon>

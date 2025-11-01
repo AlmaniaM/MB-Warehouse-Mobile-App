@@ -125,7 +125,6 @@ export class PullSheetsPage {
   }
 
   setSelectedPullSheetMain(pullSheetMain: PullSheetMainDisplay) {
-    // Extract base PullSheetMain for service (without customerName)
     const basePullSheetMain: PullSheetMain = {
       id: pullSheetMain.id,
       pullSheetNumber: pullSheetMain.pullSheetNumber,

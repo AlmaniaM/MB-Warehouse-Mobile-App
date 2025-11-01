@@ -1,10 +1,12 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, computed, inject } from '@angular/core';
 import { BehaviorSubject, Observable, catchError } from 'rxjs';
 
 import { ToastService } from 'src/app/modules/global/services/toast.service';
 import { environment } from '../../../../environments/environment';
 import { Utils } from 'src/app/modules/global/classes/utils';
+import { MemoizationService } from '../../global/services/memoize.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 export const defaultCustomer: Customer = {
   id: -1,
@@ -44,10 +46,16 @@ export class CustomerService {
 	
 	private httpClient: HttpClient = inject(HttpClient);
 	private toastService: ToastService = inject(ToastService);
+	private memoizationService: MemoizationService = new MemoizationService();
 
 	private customersSubject: BehaviorSubject<Customer[]> = new BehaviorSubject<Customer[]>(<Customer[]> []);
 	public statusSubject: BehaviorSubject<'fetching' | 'error' | 'stable'> = new BehaviorSubject<'fetching' | 'error' | 'stable'>('stable');
 	public requestErrorSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+	public readonly customersMap = this.memoizationService.computedMemo(
+		() => new Map(this.customersSubject.value.map(customer => [customer.id, customer])),
+		[toSignal(this.customersSubject)],
+		{ key: 'customersMap' }
+	);
 
 	public readonly customers: Observable<Customer[]> = this.customersSubject.asObservable();
 	public readonly status: Observable<'fetching' |  'error' | 'stable'> = this.statusSubject.asObservable();

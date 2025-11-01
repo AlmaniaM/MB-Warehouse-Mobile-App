@@ -14,7 +14,8 @@ import {
   IonTabs,
   IonTabBar,
   IonTabButton,
-  IonLabel
+  IonLabel,
+  NavController
 } from '@ionic/angular/standalone';
 
 import { SelectedShippingSheetService } from 'src/app/modules/shipping/services/selected-shipping-sheet.service';
@@ -40,6 +41,8 @@ import { PalletContentsService } from 'src/app/modules/digging/services/pallet-c
 export class ShippingSheetLayoutComponent {
   
   router: Router = inject(Router);
+  private navController: NavController = inject(NavController);
+  
   selectedShippingSheetService: SelectedShippingSheetService = inject(SelectedShippingSheetService);
   shippingSheetDetailService: ShippingSheetDetailService = inject(ShippingSheetDetailService);
   palletService: PalletService = inject(PalletService);
@@ -60,7 +63,9 @@ export class ShippingSheetLayoutComponent {
   
   goBack() {
     this.selectedShippingSheetService.setShippingSheet(null);
-    this.router.navigate(['/app/shipping']);
+    
+    // TODO: How do we want to handle back navigation when coming from a pull sheet details page?
+    this.navController.back();
   }
 
   constructor() {

@@ -1,0 +1,34 @@
+<app-page-topbar title="Ship Sheets List"></app-page-topbar>
+<ion-content>
+  <app-content-topbar title="Ship Sheets List" [showRefresher]="false"></app-content-topbar>
+  <div id="content">
+    @if (isLoading()) {
+      <ion-progress-bar type="indeterminate"></ion-progress-bar>
+    }
+    
+    @if (selectedPullSheetMain()) {
+      <ion-list lines="full">
+        <ion-item>
+          <ion-label>
+            <strong>Pull Sheet Number: {{ selectedPullSheetMain()!.pullSheetNumber }}</strong><br />
+            <ion-text>Customer: {{ customer()?.name || 'Unknown Customer' }}</ion-text>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+      <app-shipping-sheets-list 
+        [pullSheetId]="pullSheetId()"
+        (shippingSheetClick)="onShippingSheetClick($event)">
+      </app-shipping-sheets-list>
+    } @else {
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <ion-text>No pull sheet selected</ion-text>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    }
+  </div>
+</ion-content>
+

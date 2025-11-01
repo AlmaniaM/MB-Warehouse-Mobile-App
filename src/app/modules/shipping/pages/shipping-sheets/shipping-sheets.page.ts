@@ -1,52 +1,37 @@
 import { 
   Component, 
-  computed, 
   inject, 
   signal, 
-  Signal, 
   WritableSignal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { CommonModule, DatePipe } from '@angular/common';
-import { ScrollingModule } from '@angular/cdk/scrolling';
 import { Router } from '@angular/router';
 
 import { 
   IonContent,
-  IonList,
-  IonItem, 
-  IonLabel, 
   IonIcon, 
   IonFab, 
   IonFabButton, 
   IonModal, 
-  IonProgressBar,
-  IonText, 
-  IonNote,
-  IonCheckbox,
   IonButton, 
   IonButtons, 
   IonTitle,
   IonToolbar,
   IonHeader,
-  IonChip
 } from '@ionic/angular/standalone';
 
-import { ShippingSheet, ShippingSheetService } from 'src/app/modules/shipping/services/shipping-sheet.service';
+import { ShippingSheet } from 'src/app/modules/shipping/services/shipping-sheet.service';
 import { SelectedShippingSheetService } from 'src/app/modules/shipping/services/selected-shipping-sheet.service';
 
 import { PageTopbarComponent } from 'src/app/modules/global/components/page-topbar/page-topbar.component';
 import { ContentTopbarComponent } from 'src/app/modules/global/components/content-topbar/content-topbar.component';
 import { ShippingSheetFormComponent } from 'src/app/modules/shipping/components/shipping-sheet-form/shipping-sheet-form.component';
+import { ShippingSheetsListComponent } from 'src/app/modules/shipping/components/shipping-sheets-list/shipping-sheets-list.component';
 
 @Component({
   selector: 'app-shipping-sheets',
   templateUrl: './shipping-sheets.page.html',
   styleUrls: ['./shipping-sheets.page.scss'],
   imports: [
-    CommonModule,
-    ScrollingModule,
-    DatePipe,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -54,41 +39,23 @@ import { ShippingSheetFormComponent } from 'src/app/modules/shipping/components/
     IonButton,
     IonIcon,
     IonContent,
-    IonList,
-    IonItem, 
-    IonLabel,
     IonFab, 
     IonFabButton, 
     IonModal, 
-    IonProgressBar,
-    IonText, 
-    IonNote,
-    IonCheckbox,
-    IonChip,
     PageTopbarComponent,
     ContentTopbarComponent,
     ShippingSheetFormComponent,
+    ShippingSheetsListComponent,
   ]
 })
 export class ShippingSheetsPage {
   
   router: Router = inject(Router);
-  shippingSheetService: ShippingSheetService = inject(ShippingSheetService);
   selectedShippingSheetService: SelectedShippingSheetService = inject(SelectedShippingSheetService);
 
-  shippingSheetServiceStatus: Signal<'fetching' | 'creating' | 'updating' | 'deleting' | 'error' | 'stable'> = toSignal(this.shippingSheetService.statusSubject, { requireSync: true });
-  isFetchingData: Signal<boolean> = computed(() => {
-    return ['fetching', 'creating', 'updating', 'deleting'].includes(this.shippingSheetServiceStatus());
-  });
-
-  shippingSheets: Signal<ShippingSheet[]> = toSignal(this.shippingSheetService.shippingSheets, { initialValue: [] });
   isCreatingShippingSheet: WritableSignal<boolean> = signal(false);
 
-  trackByShippingSheet(index: number, shippingSheet: ShippingSheet) { 
-    return `${shippingSheet.shipmentNum}-${shippingSheet.shipmentYear}`;
-  }
-
-  setSelectedShippingSheet(shippingSheet: ShippingSheet) {
+  onShippingSheetClick(shippingSheet: ShippingSheet) {
     this.selectedShippingSheetService.setShippingSheet(shippingSheet);
     this.router.navigate(['/app/shipping/shipping-sheet']); 
   }
